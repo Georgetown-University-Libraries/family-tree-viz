@@ -2,19 +2,19 @@
 # No embedded commas supported in fields
 # Indicates a comment
 Id,Name,Link
-1,Homer Simpson,
-2,Marge Simpson,
-3,Bart Simpson,
-4,Lisa Simpson,
-5,Maggie Simpson,
-6,Grandpa Simpson,
-7,Patty Bouvier,
-8,Selma Bouvier,
-9,Mrs Bouvier,
-10,Ned Flanders,
-11,Maude Flanders,
-12,Rodd Flanders,
-13,Todd Flanders,
+1,Homer Simpson,nolink
+2,Marge Simpson,nolink
+3,Bart Simpson,nolink
+4,Lisa Simpson,nolink
+5,Maggie Simpson,nolink
+6,Grandpa Simpson,nolink
+7,Patty Bouvier,nolink
+8,Selma Bouvier,nolink
+9,Mrs Bouvier,nolink
+10,Ned Flanders,nolink
+11,Maude Flanders,nolink
+12,Rodd Flanders,nolink
+13,Todd Flanders,nolink
 
 # A new header starts after a blank line
 Id,Relation,Id2
