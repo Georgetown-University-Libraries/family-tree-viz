@@ -237,6 +237,10 @@ function dofocus(cid) {
 
 var familyTree;
 function init(){
+  $.get("data.yaml", function(data){
+    var doc = jsyaml.load(data);
+    alert(doc);
+  }, "text");
   $.get("data.csv", function(data){
     var familyTree = new FamilyTree();
     familyTree.processPeopleData(data);
