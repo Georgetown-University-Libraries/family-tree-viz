@@ -71,7 +71,13 @@ var Person = function(id, name, link) {
     } else if (direction == "parents") {
       this.decorateNode(p, "#00b5e2", "Ancestor", "right");
     } else if (direction == "spouses") {
-      this.decorateNode(p, "#bbbcbc", "Spouse", "top");
+      var dir = "top";
+      if (base.spouses) {
+        if (base.spouses.length > 1) {
+          dir = "right";
+        }
+      }
+      this.decorateNode(p, "#bbbcbc", "Spouse", dir);
     } else if (base.id == 0){
       this.decorateNode(p, "#d6d2c4", "Top Ancestor", i % 2 == 0 ? "left" : "right");
     } else {
@@ -208,13 +214,29 @@ var FamilyTree = function() {
   }
   
   this.getAllJson = function() {
-    var top = new Person(0, "All Ancestors", this.BASEURL);
+    var tops = [];
     for(var i=0; i<this.People.length; i++) {
       if (this.People[i]) {
         var person = this.People[i];
         if (person.parents.length == 0) {
-          top.children.push(person);
+          tops.push(person);
         }
+      }
+    }
+    var top = new Person(0, "All Ancestors", this.BASEURL);
+    if (tops.length > 10) {
+      var ttop = top;
+      for(var i=0; i<tops.length; i++) {
+        if (i % 10 == 0 ){
+          var bucket = (i/10)+1;
+          ttop = new Person(this.People.length+bucket, "Top Bucket " + bucket , this.BASEURL);
+          top.children.push(ttop);
+        }
+        ttop.children.push(tops[i]);
+      }
+    } else {
+      for(var i=0; i<tops.length; i++) {
+        top.children.push(tops[i]);
       }
     }
     return top.asTopVisNode();
