@@ -1,4 +1,4 @@
-People: 
+People:
 - Id: 1
   Name: Homer Simpson
   Children: [3,4,5]
