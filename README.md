@@ -9,3 +9,5 @@ Convert a CSV family tree table into a visualization.
 
 ## Credit
 This is built with the InfoVis toolkit: http://philogb.github.io/infovis using the Spacetree visualization: https://philogb.github.io/jit/static/v20/Jit/Examples/Spacetree/example1.html
+
+This code uses js-yaml.js.  https://github.com/nodeca/js-yaml

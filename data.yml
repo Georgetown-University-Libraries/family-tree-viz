@@ -1,0 +1,35 @@
+People:
+- Id: 1
+  Name: Homer Simpson
+  Children: [3,4,5]
+  Spouse: [2]
+- Id: 2
+  Name: Marge Simpson
+  Children: [3,4,5]
+- Id: 3
+  Name: Bart Simpson
+- Id: 4
+  Name: Lisa Simpson
+- Id: 5
+  Name: Maggie Simpson
+- Id: 6
+  Name: Grandpa Simpson
+  Children: [1]
+- Id: 7
+  Name: Patty Bouvier
+- Id: 8
+  Name: Selma Bouvier
+- Id: 9
+  Name: Mrs Bouvier
+  Children: [2,8,9]
+- Id: 10
+  Name: Ned Flanders
+  Spouse: [11]
+  Children: [12,13]
+- Id: 11
+  Name: Maude Flanders
+  Children: [12,13]
+- Id: 12
+  Name: Rodd Flanders
+- Id: 13
+  Name: Todd Flanders
