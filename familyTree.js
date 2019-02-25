@@ -139,6 +139,18 @@ var FamilyTree = function() {
     return p;
   }
 
+  /*
+  # This is a very simplistic CSV file currently
+  # No embedded commas supported in fields
+  # Indicates a comment
+  Id,Name,Link
+  1,Homer Simpson,nolink
+  3,Bart Simpson,nolink
+
+  # A new header starts after a blank line
+  Id,Relation,Id2
+  1,Parent Of,3
+  */
   this.processCsvInputData = function(data) {
     var rows = data.split(/\r?\n/);
 
@@ -178,39 +190,81 @@ var FamilyTree = function() {
       }
     }
   }
+  
 
-  //Json input data generated from Yaml input
-  this.processJsonInputData = function(data) {
-    var arr = data.People;
-    for(var i=0; i<arr.length; i++) {
-      var cp = arr[i];
+  this.processPeopleObject = function(cp, processObj) {
+    if ((processObj) && (cp instanceof Object)) {
       var id = Number(cp.Id);
-      this.People[id] = new Person(id, cp.Name, this.BASEURL+cp.Link);
-    }
-    for(var i=0; i<arr.length; i++) {
-      var cp = arr[i];
+      var p = new Person(id, cp.Name, this.BASEURL+cp.Link);
+      this.People[id] = p;
+      
+      this.processChildArray(cp, p, processObj);
+      this.processSpouseArray(cp, p, processObj);
+      return p;
+    } else if (cp instanceof Object) {
       var p = this.People[cp.Id];
-      if (cp.Children) {
-        for(var li=0; li<cp.Children.length; li++) {
-          var lid = cp.Children[li];
-          var lp = this.People[lid];
-          if (lp) {
-            lp.parents.push(p);
-            p.children.push(lp);
-          }
-        }
+      if (p) {
+        this.processChildArray(cp, p, processObj);
+        this.processSpouseArray(cp, p, processObj);
       }
-      if (cp.Spouse) {
-        for(var li=0; li<cp.Spouse.length; li++) {
-          var lid = cp.Spouse[li];
-          var lp = this.People[lid];
-          if (lp) {
-            lp.spouses.push(p);
-            p.spouses.push(lp);
-          }
-        }
+      //return null, the oject has already been processed
+      return null;
+    } else if (!processObj) {
+      var p = this.People[cp];
+      if (p) {
+        this.processChildArray(cp, p, processObj);
+        this.processSpouseArray(cp, p, processObj);
+      }
+      return p;
+    }
+  }
+  
+  this.processPeopleArray = function(arrIn, processObj) {
+    for(var i=0; i<arrIn.length; i++) {
+      this.processPeopleObject(arrIn[i], processObj);
+    }
+  }
+
+  this.processChildArray = function(cp, objViz, processObj) {
+    if (!cp.Children) return;
+    for(var i=0; i<cp.Children.length; i++) {
+      var p = this.processPeopleObject(cp.Children[i], processObj);
+      if (p) {
+        objViz.children.push(p);
+        p.parents.push(objViz);
       }
     }
+  }
+
+  this.processSpouseArray = function(cp, objViz, processObj) {
+    if (!cp.Spouse) return;
+    for(var i=0; i<cp.Spouse.length; i++) {
+      var p = this.processPeopleObject(cp.Spouse[i], processObj);
+      if (p) {
+        objViz.spouses.push(p);
+        p.spouses.push(objViz);
+      }
+    }
+  }
+
+
+  /*
+  Json input data generated from Yaml input.
+  
+  People:
+  - Id: 1
+    Name: Homer Simpson
+    Children: [3,4,5]
+    Spouse: [2]
+  - Id: 2
+    Name: Marge Simpson
+    Children: [3,4,5]
+  - Id: 3
+    Name: Bart Simpson
+  */
+  this.processJsonInputData = function(data) {
+    this.processPeopleArray(data.People, true);
+    this.processPeopleArray(data.People, false);
   }
   
   this.getAllJson = function() {
