@@ -3,11 +3,13 @@ Convert a CSV family tree table into a visualization.
 
 - [Sample Data with Simpsons Characters](data.csv)
 - [Sample Data with Simpsons Characters as YAML file](data.yml)
+- [Sample Data with Simpsons Characters in indented YAML file](indented.yml)
 
 ![Family Tree Diagram](documentation/familytree.png)
 
 - [Demo: data.csv](https://georgetown-university-libraries.github.io/family-tree-viz/?doc=data.csv)
 - [Demo: data.yml](https://georgetown-university-libraries.github.io/family-tree-viz/?doc=data.yml)
+- [Demo: indented.yml](https://georgetown-university-libraries.github.io/family-tree-viz/?doc=indented.yml)
 - [Demo with 75 people: big.yml](https://georgetown-university-libraries.github.io/family-tree-viz/?doc=big.yml)
 
 ## Credit
