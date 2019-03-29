@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>dTree Demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.js"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/semantic-ui-css@2/semantic.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui-css@2/semantic.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/d3@4/build/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-dtree/dist/dTree.min.js"></script>
+  <style type="text/css">
+    body {
+	    font: 10px sans-serif;
+	}
+	.linage {
+	    fill: none;
+	    stroke: #000;
+	}
+	.marriage {
+	    fill: none;
+	    stroke: black;
+	}
+	.man, .woman, .parent {
+	    background-color: yellow;
+			border-style: solid;
+			border-width: 1px;
+			box-sizing: border-box;
+	}
+	.emphasis{
+			font-style: italic;
+	}
+	p {
+		padding:0;
+		margin:0;
+	}
+	svg {
+		border-style: solid;
+		border-width: 1px;
+	}
+  </style>
+  <script type="text/javascript">
+$(document).ready(function(){
+  var treeData = [{
+"name": "Niclasaaaaaaa Superlongsurnameaaaaaaa",
+"class": "man",
+"textClass": "emphasis",
+"marriages": [{
+  "spouse": {
+    "name": "Iliana",
+    "class": "woman",
+    "extra": {
+      "nickname": "Illi"
+    }
+  },
+  "children": [{
+    "name": "James",
+    "class": "man",
+    "marriages": [{
+      "spouse": {
+        "name": "Alexandra",
+        "class": "woman"
+      },
+      "children": [{
+        "name": "Eric",
+        "class": "man",
+        "marriages": [{
+          "spouse": {
+            "name": "Eva",
+            "class": "woman"
+          }
+        }]
+      }, {
+        "name": "Jane",
+        "class": "woman"
+      }, {
+        "name": "Jasper",
+        "class": "man"
+      }, {
+        "name": "Emma",
+        "class": "woman"
+      }, {
+        "name": "Julia",
+        "class": "woman"
+      }, {
+        "name": "Jessica",
+        "class": "woman"
+      }]
+    }]
+  }]
+}]
+}];
+  dTree.init(treeData, {
+  target: "#graph",
+  debug: true,
+  height: 800,
+  width: 1200,
+  callbacks: {
+    nodeClick: function(name, extra) {
+      console.log(name);
+    },
+    textRenderer: function(name, extra, textClass) {
+    	// THis callback is optinal but can be used to customize
+      // how the text is rendered without having to rewrite the entire node
+      // from screatch.
+    	if (extra && extra.nickname)
+      	name = name + " (" + extra.nickname + ")";
+    	return "<p align='center' class='" + textClass + "'>" + name + "</p>";
+    },
+    nodeRenderer: function(name, x, y, height, width, extra, id, nodeClass, textClass, textRenderer) {
+      // This callback is optional but can be used to customize the
+      // node element using HTML.
+      let node = '';
+      node += '<div ';
+      node += 'style="height:100%;width:100%;" ';
+      node += 'class="' + nodeClass + '" ';
+      node += 'id="node' + id + '">\n';
+      node += textRenderer(name, extra, textClass);
+      node += '</div>';
+      return node;
+  }
+  }
+  });
+});
+
+  </script>
+</head>
+<body>
+  <h1>dTree Demo</h1>
+  <div id="graph"></div>
+  <script>
+  </script>
+</body>
+</html>
