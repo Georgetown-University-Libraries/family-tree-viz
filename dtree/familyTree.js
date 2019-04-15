@@ -1,4 +1,6 @@
 var UNKNOWN = "Unknown";
+var PlacedPerson = [];
+
 var Person = function(id, name, link) {
   this.id = id;
   this.name = name;
@@ -10,12 +12,16 @@ var Person = function(id, name, link) {
 
 var FTPerson = function(p) {
   this.id = p.id;
+  if (this.id >= 0) {
+    PlacedPerson[this.id] = this;
+  }
   this.name = p.name;
   this.link = p.link;
   this.class = "person";
   this.marriages = [];
 
   this.addChild = function(p) {
+    var cp = PlacedPerson[p.id] ? PlacedPerson[p.id] : new FTPerson(p);
     var p1 = (p.parents.length > 0) ? p.parents[0].id : -1;
     var p2 = (p.parents.length > 1) ? p.parents[1].id : -1;
     if (p1 == this.id) p1 = -1;
@@ -25,11 +31,7 @@ var FTPerson = function(p) {
     for(var i=0; i<this.marriages.length; i++) {
       var sp = this.marriages[i].spouse;
       if (sp.id == par || sp.name == UNKNOWN) {
-        this.marriages[i].children.push({
-          id: p.id,
-          name: p.name,
-          class: "person"
-        });
+        this.marriages[i].children.push(cp);
         placed = true;
         break;
       }
@@ -41,11 +43,9 @@ var FTPerson = function(p) {
           name: UNKNOWN,
           class: "person"
         },
-        children: [{
-          id: p.id,
-          name: p.name,
-          class: "person"
-        }]
+        children: [
+          cp
+        ]
       });
     }
   }
@@ -59,11 +59,7 @@ var FTPerson = function(p) {
 }
 
 var FTMarriage = function(spouse) {
-  this.spouse = {
-    id: spouse.id,
-    name: spouse.name,
-    class: "person"
-  };
+  this.spouse = PlacedPerson[spouse.id] ? PlacedPerson[spouse.id] : new FTPerson(spouse);
   this.children = [];
 }
 
@@ -225,15 +221,10 @@ var FamilyTree = function() {
       }
     }
     var arr = [];
-    var shown = [];
     for(var i=0; i<tops.length; i++) {
       var p = tops[i];
-      if (!shown[p.id]) {
+      if (!PlacedPerson[p.id]) {
         arr.push(new FTPerson(p));
-        shown[p.id] = true;
-        for(var j=0; j<p.spouses.length; j++) {
-          shown[p.spouses[j].id] = true;
-        }
       }
     }
     return arr;
