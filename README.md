@@ -5,7 +5,7 @@ Convert a CSV family tree table into a visualization.
 - [Sample Data with Simpsons Characters as YAML file](data.yml)
 - [Sample Data with Simpsons Characters in indented YAML file](indented.yml)
 
-![Family Tree Diagram](documentation/familytree.png)
+![Family Tree Diagram](infoviz/documentation/familytree.png)
 
 ## InfoViz Demos
 _These demos are built with the InfoVis toolkit._
