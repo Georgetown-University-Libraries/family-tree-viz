@@ -34,7 +34,7 @@ function dofocus(cid) {
 var familyTree;
 function init(){
   var params = (new URL(document.location)).searchParams;
-  var doc = params.get("doc") ? params.get("doc") : "data.csv";
+  var doc = params.get("doc") ? params.get("doc") : "../data.csv";
   if (doc.match(/\.yml$/)) {
     $.get(doc, function(data){
       var json = jsyaml.load(data);
