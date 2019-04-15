@@ -1,3 +1,4 @@
+var UNKNOWN = "Unknown";
 var Person = function(id, name, link) {
   this.id = id;
   this.name = name;
@@ -5,120 +6,66 @@ var Person = function(id, name, link) {
   this.children = [];
   this.parents = [];
   this.spouses = [];
-  this.refcount = 0;
-  this.node;
-
-  this.createNode = function(id, name, link) {
-    this.node = {
-      id: id,
-      name: name,
-      data: {
-        link: link,
-        mycolor: "#d6d2c4",
-        myorn: "right"
-      },
-      children: []
-    }
-    return this.node;
-  }
-
-  this.asFocusVisNode = function() {
-    var p = this.asBaseVisNode();
-    this.decorateNode(p, "#d6d2c4", "Focus", "right");
-    p.data.focus = true;
-
-    this.directVisNode(this, p, "spouses", false, true);
-    this.directVisNode(this, p, "children", true, true);
-    this.directVisNode(this, p, "parents", true, true);
-
-    return p;
-  }
-
-  this.asVisNode = function() {
-    return this.asDirectedVisNode(this, "children", true, true, 0);
-  }
-
-  this.asTopVisNode = function() {
-    //process all top level items first before walking the descendant tree
-    var p = this.asDirectedVisNode(this, "children", false, true, 0);
-    for(var i=0; i < this.children.length; i++) {
-      this.children[i].directVisNode(this, this.children[i].node, "children", true, true);
-    }
-    return p;
-  }
-
-  this.decorateNode = function(p, color, label, orn) {
-    //placement overrides are not yet working
-    p.data.myorn = orn;
-
-    if (!p.data.mycolor) {
-      p.data.mycolor = color;
-    }
-    if (p.data.mycolor != "white") {
-      p.data.mycolor = color;
-    }
-    if (!p.name) {
-      p.name = label;
-    } else if (label != ""){
-      p.name += "<br/>(" + label + ")";
-    }
-  }
-
-  this.asDirectedVisNode = function(base, direction, isRecursive, showNext, i) {
-    var p = this.asBaseVisNode();
-    if (direction == "parents" && !showNext) {
-      this.decorateNode(p, "#d6d2c4", "Other Parent", "left");
-    } else if (direction == "parents") {
-      this.decorateNode(p, "#00b5e2", "Ancestor", "right");
-    } else if (direction == "spouses") {
-      var dir = "top";
-      if (base.spouses) {
-        if (base.spouses.length > 1) {
-          dir = "right";
-        }
-      }
-      this.decorateNode(p, "#bbbcbc", "Spouse", dir);
-    } else if (base.id == 0){
-      this.decorateNode(p, "#d6d2c4", "Top Ancestor", i % 2 == 0 ? "left" : "right");
-    } else {
-      this.decorateNode(p, "#f8e08e", "Descendant", "left");
-    }
-
-    if (showNext) {
-      p = this.directVisNode(base, p, direction, isRecursive, showNext);
-      if (direction == "children") {
-        p = this.directVisNode(base, p, "parents", false, true);
-      }
-    }
-    return p;
-  }
-
-  this.asBaseVisNode = function() {
-    var p = this.createNode("node" + this.id, this.name, this.link);
-    //var p = this.createNode("node" + this.id, this.name + " ("+this.id+")", this.link);
-    if (this.refcount > 0) {
-      p.data.cid = p.id;
-      p.id += "_" + this.refcount;
-      p.name += "*";
-      p.data.mycolor = "#d6d2c4";
-    }
-    this.refcount++;
-    return p;
-  }
-
-  this.directVisNode = function(base, p, direction, isRecursive, showNext) {
-    if (this[direction]) {
-      for(var i = 0; i<this[direction].length; i++) {
-        var n = this[direction][i];
-        if (n.id == base.id) continue;
-        p.children.push(n.asDirectedVisNode(this, direction, isRecursive, isRecursive, i));
-      }
-    }
-    return p;
-  }
-
 }
 
+var FTPerson = function(p) {
+  this.id = p.id;
+  this.name = p.name;
+  this.link = p.link;
+  this.class = "person";
+  this.marriages = [];
+
+  this.addChild = function(p) {
+    var p1 = (p.parents.length > 0) ? p.parents[0].id : -1;
+    var p2 = (p.parents.length > 1) ? p.parents[1].id : -1;
+    if (p1 == this.id) p1 = -1;
+    if (p2 == this.id) p2 = -1;
+    var par = (p1 != -1) ? p1 : p2;
+    var placed = false;
+    for(var i=0; i<this.marriages.length; i++) {
+      var sp = this.marriages[i].spouse;
+      if (sp.id == par || sp.name == UNKNOWN) {
+        this.marriages[i].children.push({
+          id: p.id,
+          name: p.name,
+          class: "person"
+        });
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) {
+      this.marriages.push({
+        spouse: {
+          id: -this.id,
+          name: UNKNOWN,
+          class: "person"
+        },
+        children: [{
+          id: p.id,
+          name: p.name,
+          class: "person"
+        }]
+      });
+    }
+  }
+
+  for(var i=0; i<p.spouses.length; i++) {
+    this.marriages.push(new FTMarriage(p.spouses[i]));
+  }
+  for(var i=0; i<p.children.length; i++) {
+    this.addChild(p.children[i]);
+  }
+}
+
+var FTMarriage = function(spouse) {
+  this.spouse = {
+    id: spouse.id,
+    name: spouse.name,
+    class: "person"
+  };
+  this.children = [];
+}
 
 var FamilyTree = function() {
   this.BASEURL = ""; //Set this to the base url for links
@@ -277,23 +224,19 @@ var FamilyTree = function() {
         }
       }
     }
-    var top = new Person(0, "All Ancestors", this.BASEURL);
-    if (tops.length > 10) {
-      var ttop = top;
-      for(var i=0; i<tops.length; i++) {
-        if (i % 10 == 0 ){
-          var bucket = (i/10)+1;
-          ttop = new Person(this.People.length+bucket, "Top Bucket " + bucket , this.BASEURL);
-          top.children.push(ttop);
+    var arr = [];
+    var shown = [];
+    for(var i=0; i<tops.length; i++) {
+      var p = tops[i];
+      if (!shown[p.id]) {
+        arr.push(new FTPerson(p));
+        shown[p.id] = true;
+        for(var j=0; j<p.spouses.length; j++) {
+          shown[p.spouses[j].id] = true;
         }
-        ttop.children.push(tops[i]);
-      }
-    } else {
-      for(var i=0; i<tops.length; i++) {
-        top.children.push(tops[i]);
       }
     }
-    return top.asTopVisNode();
+    return arr;
   }
 
   this.getPersonJson = function(id) {
@@ -303,14 +246,14 @@ var FamilyTree = function() {
     return new Person(0, "Person not found", this.BASEURL).asVisNode();
   }
   this.getJson = function() {
-    //return this.getAllJson();
+    var retobj = [];
     var cid = location.hash.replace("#","");
     if (cid == "") {
-      return this.getAllJson();
+      retobj = this.getAllJson();
+    } else {
+      var cid = $.isNumeric(cid) ? Number(cid) : 152;
+      retobj = this.getPersonJson(cid);
     }
-    var cid = $.isNumeric(cid) ? Number(cid) : 152;
-    return this.getPersonJson(cid);
-    //return this.getPersonJson(155);
-    //return this.getPersonJson(168);
+    return retobj;
   }
 }

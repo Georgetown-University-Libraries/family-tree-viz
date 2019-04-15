@@ -21,7 +21,7 @@ People:
   Name: Selma Bouvier
 - Id: 9
   Name: Mrs Bouvier
-  Children: [2,8,9]
+  Children: [2,7,8]
 - Id: 10
   Name: Ned Flanders
   Spouse: [11]

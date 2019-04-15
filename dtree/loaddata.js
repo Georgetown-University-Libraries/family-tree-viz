@@ -3,7 +3,7 @@ function ftinit(){
   var params = (new URL(document.location)).searchParams;
 
   if (!params.get("doc")) {
-    return getSampleData();
+    return showDTree(getSampleData());
   }
   var doc = params.get("doc");
   if (doc.match(/\.yml$/)) {
