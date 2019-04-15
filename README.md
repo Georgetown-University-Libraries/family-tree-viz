@@ -17,6 +17,10 @@ _These demos are built with the InfoVis toolkit._
 
 ## DTree Demos
 _These demos are built with the dTree visualization libraries._
+- [Demo: data.csv](https://georgetown-university-libraries.github.io/family-tree-viz/dtree/?doc=../data.csv)
+- [Demo: data.yml](https://georgetown-university-libraries.github.io/family-tree-viz/dtree/?doc=../data.yml)
+- [Demo: indented.yml](https://georgetown-university-libraries.github.io/family-tree-viz/dtree/?doc=../indented.yml)
+- [Demo with 75 people: big.yml](https://georgetown-university-libraries.github.io/family-tree-viz/dtree/?doc=../big.yml)
 
 ## Credits
 
