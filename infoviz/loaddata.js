@@ -42,6 +42,12 @@ function init(){
       familyTree.processJsonInputData(json);
       initDiagram(familyTree.getJson());
     }, "text");
+  } else if (doc.match(/\.json$/)) {
+    $.get(doc, function(data){
+      var familyTree = new FamilyTree();
+      familyTree.processDrupalInputData(data);
+      initDiagram(familyTree.getJson());
+    }, "json");
   } else {
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
