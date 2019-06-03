@@ -190,14 +190,38 @@ var FamilyTree = function() {
       }
     }
   }
-  
+
+  this.processDrupalInputData = function(data) {
+    for(var i=0; i<data.length; i++) {
+      var rel = data[i];
+      var id1 = Number(rel.field_person_or_group_a);
+      var name1 = rel.title_1;
+      var link1 = rel.view_node;
+      if (!this.People[id1]) {
+        this.People[id1] = new Person(id1, name1, this.BASEURL+link1);
+      }
+      var id2 = Number(rel.field_person_or_group_b);
+      var name2 = rel.title_2;
+      var link2 = rel.view_node_1;
+      if (!this.People[id2]) {
+        this.People[id2] = new Person(id2, name2, this.BASEURL+link2);
+      }
+      if (rel.title = "Biological Parent of") {
+        this.People[id1].children.push(this.People[id2]);
+        this.People[id2].parents.push(this.People[id1]);
+      } else if (rel.title = "Spouse of") {
+        this.People[id1].spouses.push(this.People[id2]);
+        this.People[id2].spouses.push(this.People[id1]);
+      }
+    }
+  }
 
   this.processPeopleObject = function(cp, processObj) {
     if ((processObj) && (cp instanceof Object)) {
       var id = Number(cp.Id);
       var p = new Person(id, cp.Name, this.BASEURL+cp.Link);
       this.People[id] = p;
-      
+
       this.processChildArray(cp, p, processObj);
       this.processSpouseArray(cp, p, processObj);
       return p;
@@ -218,7 +242,7 @@ var FamilyTree = function() {
       return p;
     }
   }
-  
+
   this.processPeopleArray = function(arrIn, processObj) {
     for(var i=0; i<arrIn.length; i++) {
       this.processPeopleObject(arrIn[i], processObj);
@@ -250,7 +274,7 @@ var FamilyTree = function() {
 
   /*
   Json input data generated from Yaml input.
-  
+
   People:
   - Id: 1
     Name: Homer Simpson
@@ -266,7 +290,7 @@ var FamilyTree = function() {
     this.processPeopleArray(data.People, true);
     this.processPeopleArray(data.People, false);
   }
-  
+
   this.getAllJson = function() {
     var tops = [];
     for(var i=0; i<this.People.length; i++) {

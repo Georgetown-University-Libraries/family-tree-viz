@@ -13,6 +13,12 @@ function ftinit(){
       familyTree.processJsonInputData(json);
       return showDTree(familyTree.getJson());
     }, "text");
+  } else if (doc.match(/\.json$/)) {
+    $.get(doc, function(data){
+      var familyTree = new FamilyTree();
+      familyTree.processDrupalInputData(data);
+      return showDTree(familyTree.getJson());
+    }, "json");
   } else {
     $.get(doc, function(data){
       var familyTree = new FamilyTree();

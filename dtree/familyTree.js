@@ -134,6 +134,30 @@ var FamilyTree = function() {
     }
   }
 
+  this.processDrupalInputData = function(data) {
+    for(var i=0; i<data.length; i++) {
+      var rel = data[i];
+      var id1 = Number(rel.field_person_or_group_a);
+      var name1 = rel.title_1;
+      var link1 = rel.view_node;
+      if (!this.People[id1]) {
+        this.People[id1] = new Person(id1, name1, this.BASEURL+link1);
+      }
+      var id2 = Number(rel.field_person_or_group_b);
+      var name2 = rel.title_2;
+      var link2 = rel.view_node_1;
+      if (!this.People[id2]) {
+        this.People[id2] = new Person(id2, name2, this.BASEURL+link2);
+      }
+      if (rel.title = "Biological Parent of") {
+        this.People[id1].children.push(this.People[id2]);
+        this.People[id2].parents.push(this.People[id1]);
+      } else if (rel.title = "Spouse of") {
+        this.People[id1].spouses.push(this.People[id2]);
+        this.People[id2].spouses.push(this.People[id1]);
+      }
+    }
+  }
 
   this.processPeopleObject = function(cp, processObj) {
     if ((processObj) && (cp instanceof Object)) {
