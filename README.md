@@ -22,6 +22,13 @@ _These demos are built with the dTree visualization libraries._
 - [Demo: indented.yml](https://georgetown-university-libraries.github.io/family-tree-viz/dtree/?doc=../indented.yml)
 - [Demo with 75 people: big.yml](https://georgetown-university-libraries.github.io/family-tree-viz/dtree/?doc=../big.yml)
 
+## GEDCOM Demos
+_These demos will generate GEDCOM for use in genealogy applications._
+- [Demo: data.csv](https://georgetown-university-libraries.github.io/family-tree-viz/gedcom/?doc=../data.csv)
+- [Demo: data.yml](https://georgetown-university-libraries.github.io/family-tree-viz/gedcom/?doc=../data.yml)
+- [Demo: indented.yml](https://georgetown-university-libraries.github.io/family-tree-viz/gedcom/?doc=../indented.yml)
+- [Demo with 75 people: big.yml](https://georgetown-university-libraries.github.io/family-tree-viz/gedcom/?doc=../big.yml)
+
 ## Credits
 
 ### Visualization
