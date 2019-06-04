@@ -6,6 +6,8 @@ var Person = function(id, name, link) {
   this.parents = [];
   this.spouses = [];
   this.refcount = 0;
+  this.relSpouseOrCoparent = [];
+  this.relParent = null;
   this.node;
 
   this.createNode = function(id, name, link) {
@@ -107,11 +109,10 @@ var Person = function(id, name, link) {
   }
 
   this.directVisNode = function(base, p, direction, isRecursive, showNext) {
-    if (this[direction]) {
-      for(var i = 0; i<this[direction].length; i++) {
-        var n = this[direction][i];
-        if (n.id == base.id) continue;
-        p.children.push(n.asDirectedVisNode(this, direction, isRecursive, isRecursive, i));
+    if (direction == "parents") {
+      var rel = base.relParent;
+      if (rel != null) {
+        p.children.push(rel.createNode(rel.id));
       }
     }
     return p;
@@ -119,10 +120,90 @@ var Person = function(id, name, link) {
 
 }
 
+var Relationship = function(p1, p2) {
+  this.p1 = p1;
+  this.p2 = p2;
+  this.id1 = p1 == null ? null : p1.id;
+  this.id2 = p2 == null ? null : p2.id;
+  this.children = [];
+  this.matches = function(p1, p2) {
+    var id1 = p1 == null ? null : p1.id;
+    var id2 = p2 == null ? null : p2.id;
+    if (this.id1 == id1 && this.id2 == id2) {
+      return true;
+    }
+    if (this.id1 == id2 && this.id2 == id1) {
+      return true;
+    }
+    return false;
+  }
+  this.node;
+  this.createNode = function(id) {
+    this.node = {
+      id: id,
+      name: "parents",
+      data: {
+        link: "",
+        mycolor: "tan",
+        myorn: "bottom"
+      },
+      children: []
+    }
+    return this.node;
+  }
+}
 
 var FamilyTree = function() {
   this.BASEURL = ""; //Set this to the base url for links
   this.People = [];
+  this.Relationships = [];
+
+  this.findOrCreateRel = function(p1, p2) {
+    for(var i=0; i<this.Relationships.length; i++) {
+      var pr = this.Relationships[i];
+      if (pr.matches(p1, p2)) {
+        return pr;
+      }
+    }
+    pr = new Relationship(p1, p2);
+    this.Relationships.push(pr);
+    if (p1 != null) {
+      p1.relSpouseOrCoparent.push(pr);
+    }
+    if (p2 != null) {
+      p2.relSpouseOrCoparent.push(pr);
+    }
+    return pr;
+  }
+
+  this.findOrCreateRelParent = function(p) {
+    var ip = p.parents;
+    if (ip.length == 0) {
+      return null;
+    }
+    var p1 = ip[0];
+    var p2 = ip.length > 1 ? ip[1] : null;
+    var pr = this.findOrCreateRel(p1, p2);
+    pr.children.push(p);
+    p.relParent = pr;
+    return pr;
+  }
+
+  this.makeRelationships = function() {
+    for(var i=0; i<this.People.length; i++) {
+      var p = this.People[i];
+      if (p == null) continue;
+      for(var j=0; j<p.spouses.length; j++) {
+        var ps = p.spouses[j];
+        this.findOrCreateRel(p, ps);
+      }
+    }
+    for(var i=0; i<this.People.length; i++) {
+      var p = this.People[i];
+      if (p == null) continue;
+      this.findOrCreateRelParent(p);
+    }
+  }
 
   this.parsePerson = function(cols) {
     var id = (cols[0]) ? Number(cols[0]) : 0;
@@ -317,10 +398,12 @@ var FamilyTree = function() {
         top.children.push(tops[i]);
       }
     }
+    this.makeRelationships();
     return top.asTopVisNode();
   }
 
   this.getPersonJson = function(id) {
+    this.makeRelationships();
     if (this.People[id]) {
       return this.People[id].asFocusVisNode();
     }
