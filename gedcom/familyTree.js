@@ -1,5 +1,14 @@
 var UNKNOWN = "Unknown";
-var PlacedPerson = [];
+
+var MarrOrParentalRel = function(fid, id1, id2) {
+  this.id1 = id1;
+  this.id2 = id2;
+  this.fid = fid;
+  this.gedcomid = function() {
+    return "@F" + this.fid + "@";
+  }
+  this.children = [];
+}
 
 var Person = function(id, name, link) {
   this.id = id;
@@ -8,64 +17,15 @@ var Person = function(id, name, link) {
   this.children = [];
   this.parents = [];
   this.spouses = [];
-}
-
-var FTPerson = function(p) {
-  this.id = p.id;
-  if (this.id >= 0) {
-    PlacedPerson[this.id] = this;
+  this.gedcomid = function() {
+    return "@I" + this.id + "@";
   }
-  this.name = p.name;
-  this.link = p.link;
-  this.class = "person";
-  this.marriages = [];
-
-  this.addChild = function(p) {
-    var cp = PlacedPerson[p.id] ? PlacedPerson[p.id] : new FTPerson(p);
-    var p1 = (p.parents.length > 0) ? p.parents[0].id : -1;
-    var p2 = (p.parents.length > 1) ? p.parents[1].id : -1;
-    if (p1 == this.id) p1 = -1;
-    if (p2 == this.id) p2 = -1;
-    var par = (p1 != -1) ? p1 : p2;
-    var placed = false;
-    for(var i=0; i<this.marriages.length; i++) {
-      var sp = this.marriages[i].spouse;
-      if (sp.id == par || sp.name == UNKNOWN) {
-        this.marriages[i].children.push(cp);
-        placed = true;
-        break;
-      }
-    }
-    if (!placed) {
-      this.marriages.push({
-        spouse: {
-          id: -this.id,
-          name: UNKNOWN,
-          class: "person"
-        },
-        children: [
-          cp
-        ]
-      });
-    }
-  }
-
-  for(var i=0; i<p.spouses.length; i++) {
-    this.marriages.push(new FTMarriage(p.spouses[i]));
-  }
-  for(var i=0; i<p.children.length; i++) {
-    this.addChild(p.children[i]);
-  }
-}
-
-var FTMarriage = function(spouse) {
-  this.spouse = PlacedPerson[spouse.id] ? PlacedPerson[spouse.id] : new FTPerson(spouse);
-  this.children = [];
 }
 
 var FamilyTree = function() {
   this.BASEURL = ""; //Set this to the base url for links
   this.People = [];
+  this.MarrOrParentalRels = []
 
   this.parsePerson = function(cols) {
     var id = (cols[0]) ? Number(cols[0]) : 0;
@@ -82,6 +42,32 @@ var FamilyTree = function() {
     return p;
   }
 
+  this.findOrCreateRel = function(id1, id2) {
+    for(var i=0; i<this.MarrOrParentalRels.length; i++) {
+      var pr = this.MarrOrParentalRels[i];
+      if (pr.id1 == id1 && pr.id2 == id2) {
+        return pr;
+      }
+      if (pr.id1 == id2 && pr.id2 == id1) {
+        return pr;
+      }
+    }
+    pr = new MarrOrParentalRel(this.MarrOrParentalRels.length, id1, id2);
+    this.MarrOrParentalRels.push(pr);
+    return pr;
+  }
+
+  this.findOrCreateRelParent = function(p) {
+    var ip = p.parents;
+    if (ip.length == 0) {
+      return null;
+    }
+    var id1 = ip[0].id;
+    var id2 = ip.length > 1 ? ip[1].id : null;
+    var pr = this.findOrCreateRel(id1, id2);
+    pr.children.push(p);
+    return pr;
+  }
   /*
   # This is a very simplistic CSV file currently
   # No embedded commas supported in fields
@@ -235,40 +221,41 @@ var FamilyTree = function() {
   }
 
   this.getAllJson = function() {
-    var tops = [];
+    var recs = [];
     for(var i=0; i<this.People.length; i++) {
       if (this.People[i]) {
         var person = this.People[i];
-        if (person.parents.length == 0) {
-          tops.push(person);
+        recs.push("0 " + person.gedcomid() + " INDI");
+        recs.push("1 NAME "+person.name);
+        var f = this.findOrCreateRelParent(person);
+        if (f != null) {
+          recs.push("1 FAMC " + f.gedcomid());
+        }
+        for(var j=0; j<person.spouses.length; j++) {
+          var ps = person.spouses[j];
+          var f = this.findOrCreateRel(person.id, ps.id);
+          recs.push("1 FAMS " + f.gedcomid());
         }
       }
     }
-    var arr = [];
-    for(var i=0; i<tops.length; i++) {
-      var p = tops[i];
-      if (!PlacedPerson[p.id]) {
-        arr.push(new FTPerson(p));
+    for(var i=0; i<this.MarrOrParentalRels.length; i++) {
+      var f = this.MarrOrParentalRels[i];
+      recs.push("0 " + f.gedcomid() + " FAM");
+      if (f.id1 != null) {
+        recs.push("1 HUSB " + this.People[f.id1].gedcomid());
+      }
+      if (f.id2 != null) {
+        recs.push("1 WIFE " + this.People[f.id2].gedcomid());
+      }
+      for(var j=0; j<f.children.length; j++) {
+        recs.push("1 CHIL " + f.children[j].gedcomid());
       }
     }
-    return arr;
+    return recs.join('\n');
   }
 
-  this.getPersonJson = function(id) {
-    if (this.People[id]) {
-      return this.People[id].asFocusVisNode();
-    }
-    return new Person(0, "Person not found", this.BASEURL).asVisNode();
-  }
   this.getJson = function() {
-    var retobj = [];
-    var cid = location.hash.replace("#","");
-    if (cid == "") {
-      retobj = this.getAllJson();
-    } else {
-      var cid = $.isNumeric(cid) ? Number(cid) : 152;
-      retobj = this.getPersonJson(cid);
-    }
-    return retobj;
+    return this.getAllJson();
   }
+
 }

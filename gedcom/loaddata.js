@@ -25,5 +25,5 @@ function init(){
 
 }
 function showGedcom(json){
-    $("#gedcom").text(JSON.stringify(json));
+    $("#gedcom").text(json);
 }
