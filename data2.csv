@@ -1,0 +1,187 @@
+# This is a very simplistic CSV file currently
+# No embedded commas supported in fields
+# Indicates a comment
+Id,Name,Link
+1,A1M,nolink
+2,A1F,nolink
+3,A2M,nolink
+4,A2F,nolink
+5,A3M,nolink
+6,A3F,nolink
+7,A4M,nolink
+8,A4F,nolink
+9,A5M,nolink
+10,A5F,nolink
+11,A6M,nolink
+12,A6F,nolink
+13,A7M,nolink
+14,A7F,nolink
+15,A8M,nolink
+16,A8F,nolink
+17,B1,nolink
+18,B2,nolink
+19,B3,nolink
+20,C1,nolink
+21,C2,nolink
+22,C3,nolink
+23,D1,nolink
+24,D2,nolink
+25,D3,nolink
+26,E1,nolink
+27,E2,nolink
+28,E3,nolink
+29,F1,nolink
+30,F2,nolink
+31,F3,nolink
+32,G1,nolink
+33,G2,nolink
+34,G3,nolink
+35,H1,nolink
+36,H2,nolink
+37,H3,nolink
+38,I1,nolink
+39,I2,nolink
+30,I3,nolink
+41,BC1,nolink
+42,BC2,nolink
+43,BC3,nolink
+44,DE1,nolink
+45,DE2,nolink
+46,DE3,nolink
+47,FG1,nolink
+48,FG2,nolink
+49,FG3,nolink
+50,HI1,nolink
+51,HI2,nolink
+52,HI3,nolink
+53,BCDE1,nolink
+54,BCDE2,nolink
+55,BCDE3,nolink
+56,FGHI1,nolink
+57,FGHI2,nolink
+58,FGHI3,nolink
+59,X1,nolink
+60,X2,nolink
+61,X3,nolink
+
+# A new header starts after a blank line
+Id,Relation,Id2
+1,Spouse Of,2
+1,Parent Of,17
+1,Parent Of,18
+1,Parent Of,19
+2,Parent Of,17
+2,Parent Of,18
+2,Parent Of,19
+#
+3,Spouse Of,4
+3,Parent Of,20
+3,Parent Of,21
+3,Parent Of,22
+4,Parent Of,20
+4,Parent Of,21
+4,Parent Of,22
+#
+5,Spouse Of,6
+5,Parent Of,23
+5,Parent Of,24
+5,Parent Of,26
+6,Parent Of,23
+6,Parent Of,24
+6,Parent Of,25
+#
+7,Spouse Of,8
+7,Parent Of,26
+7,Parent Of,27
+7,Parent Of,28
+8,Parent Of,26
+8,Parent Of,27
+8,Parent Of,28
+#
+9,Spouse Of,10
+9,Parent Of,29
+9,Parent Of,30
+9,Parent Of,31
+10,Parent Of,29
+10,Parent Of,30
+10,Parent Of,31
+#
+11,Spouse Of,12
+11,Parent Of,32
+11,Parent Of,33
+11,Parent Of,34
+12,Parent Of,32
+12,Parent Of,33
+12,Parent Of,34
+#
+13,Spouse Of,14
+13,Parent Of,35
+13,Parent Of,36
+13,Parent Of,37
+14,Parent Of,35
+14,Parent Of,36
+14,Parent Of,37
+#
+15,Spouse Of,16
+15,Parent Of,38
+15,Parent Of,39
+15,Parent Of,40
+16,Parent Of,38
+16,Parent Of,39
+16,Parent Of,40
+#
+17,Spouse Of,20
+17,Parent Of,41
+17,Parent Of,42
+17,Parent Of,43
+20,Parent Of,41
+20,Parent Of,42
+20,Parent Of,43
+#
+23,Spouse Of,26
+23,Parent Of,44
+23,Parent Of,45
+23,Parent Of,46
+26,Parent Of,44
+26,Parent Of,45
+26,Parent Of,46
+#
+29,Spouse Of,32
+29,Parent Of,47
+29,Parent Of,48
+29,Parent Of,49
+32,Parent Of,47
+32,Parent Of,48
+32,Parent Of,49
+#
+35,Spouse Of,38
+35,Parent Of,50
+35,Parent Of,51
+35,Parent Of,52
+38,Parent Of,50
+38,Parent Of,51
+38,Parent Of,52
+#
+41,Spouse Of,44
+41,Parent Of,53
+41,Parent Of,54
+41,Parent Of,55
+44,Parent Of,53
+44,Parent Of,54
+44,Parent Of,55
+#
+47,Spouse Of,50
+47,Parent Of,56
+47,Parent Of,57
+47,Parent Of,58
+50,Parent Of,56
+50,Parent Of,57
+50,Parent Of,58
+#
+53,Spouse Of,56
+53,Parent Of,59
+53,Parent Of,60
+53,Parent Of,61
+56,Parent Of,59
+56,Parent Of,60
+56,Parent Of,61
