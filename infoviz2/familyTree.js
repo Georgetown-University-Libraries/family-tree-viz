@@ -133,14 +133,11 @@ var Person = function(id, name, link) {
         var altpar = coparrel.getAltParent(base);
         var pp = coparrel.asVisNode(this, altpar);
         p.children.push(pp);
-        /*
-        var altpar = copar.getAltParent(base);
         if (altpar) {
           var ppp = altpar.asBaseVisNode();
-          altpar.decorateNode(ppp, "pink", "Parent", "bottom")
+          altpar.decorateNode(ppp, "pink", "Parent", "left")
           pp.children.push(ppp);
         }
-        */
         coparrel.directVisNode(coparrel, pp, direction, isRecursive, showNext);
       }
     }

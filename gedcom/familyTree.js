@@ -135,10 +135,10 @@ var FamilyTree = function() {
       if (!this.People[id2]) {
         this.People[id2] = new Person(id2, name2, this.BASEURL+link2);
       }
-      if (rel.title = "Biological Parent of") {
+      if (rel.title == "Biological Parent of") {
         this.People[id1].children.push(this.People[id2]);
         this.People[id2].parents.push(this.People[id1]);
-      } else if (rel.title = "Spouse of") {
+      } else if (rel.title == "Spouse of") {
         this.People[id1].spouses.push(this.People[id2]);
         this.People[id2].spouses.push(this.People[id1]);
       }
