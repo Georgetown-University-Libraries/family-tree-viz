@@ -1,0 +1,13 @@
+.draw {
+  fill:white;
+  stroke-width:2;
+  stroke:rgb(0,0,0);
+}
+
+.draw:hover {
+  fill:yellow;
+}
+
+.text {
+  stroke:red;
+}
