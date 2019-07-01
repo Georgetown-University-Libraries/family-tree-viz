@@ -4,10 +4,16 @@
   stroke:rgb(0,0,0);
 }
 
+.wrap {
+  fill: #DDD;
+}
+
 .draw:hover {
   fill:yellow;
 }
 
 .text {
   stroke:red;
+  font-size: .7em;
+  font-weight: lighter;
 }

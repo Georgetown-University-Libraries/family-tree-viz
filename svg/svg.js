@@ -1,7 +1,7 @@
-var WIDTH=100;
-var HEIGHT=30;
-var HGAP=10;
-var VGAP=20;
+var WIDTH=120;
+var HEIGHT=40;
+var HGAP=20;
+var VGAP=40;
 var TOFF = 5;
 
 var SVG;
@@ -28,6 +28,18 @@ function drawBox(r, c, label) {
     .attr("y", y + HEIGHT - TOFF)
     .text(label)
     .addClass("text")
+    .appendTo(SVG);
+}
+
+function drawWrapBox(r, c, h, w) {
+  var y = (r - 1) * (HEIGHT + VGAP) - (.25 * VGAP);
+  var x = (c - 1) * (WIDTH +  HGAP) - (.5 * HGAP);
+  var rect = makeSvgEl("rect")
+    .attr("height", h * (HEIGHT + VGAP))
+    .attr("width", w * (WIDTH + HGAP))
+    .attr("x", x)
+    .attr("y", y)
+    .addClass("wrap")
     .appendTo(SVG);
 }
 
@@ -65,14 +77,17 @@ $(document).ready(function(){
   drawBox(1, 2, "Maternal GF");
   drawBox(1, 4, "Paternal GM");
   drawBox(1, 5, "Paternal GF");
+  drawWrapBox(2, 1.5, 2, 1);
   drawBox(2, 1.5, "Mother");
   connect(1, 1, 2, 1.5);
   connect(1, 2, 2, 1.5);
+  drawWrapBox(2, 4.5, 2, 1);
   drawBox(2, 4.5, "Father");
   connect(1, 4, 2, 4.5);
   connect(1, 5, 2, 4.5);
   drawBox(3, 1.5, "Maternal Sib");
   drawBox(3, 4.5, "Paternal Sib");
+  drawWrapBox(3, 3, 3, 1);
   drawBox(3, 3, "Focus");
   connect(2, 1.5, 3, 3);
   connect(2, 4.5, 3, 3);
