@@ -113,10 +113,11 @@ var SvgHelper = function() {
     return box;
   }
 
-  this.drawFocusBox = function(r, c, person, name) {
+  this.drawFocusBox = function(r, c, person, arr) {
     var box = new Box(this, r, c);
     var sbox = box.drawBox("focus");
-    box.drawText(name, "ftext", 1);
+    box.drawText(arr[0], "ftext", 1);
+    box.drawText(arr[1], "ftext", 2);
     sbox.on("click", function(){
       location.hash = person.id;
       location.reload();
@@ -314,8 +315,8 @@ var FamilyViz = function() {
       var cop = coparents[i];
       var cs = childsets[i];
       var pre = cs.length == 1 ? "1 child with " : cs.length + " children with ";
-      var name = pre + (cop ? cop.name : "Undefined");
-      var pgp = svgHelp.drawFocusBox(this.rfocus + i + 1, this.cfocus, cs[0], name);
+      var name = cop ? cop.name : "Undefined";
+      var pgp = svgHelp.drawFocusBox(this.rfocus + i + 1, this.cfocus, cs[0], [pre, name]);
     }
   }
 }

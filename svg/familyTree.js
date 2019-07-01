@@ -97,23 +97,12 @@ var Person = function(id, name, link) {
       if (!c) continue;
       var p = c.getAltParent(this);
       var found = false;
-      for(var j=0; j<this.coparents.length; j++) {
-        var cop = this.coparents[j];
-        if (p == null && cop == null) {
-          found = true;
-          this.childsets[j].push(c);
-          break;
-        }
-        if (p.id == cop.id) {
-          found = true;
-          this.childsets[j].push(c);
-          break;
-        }
-      }
-      if (!found) {
+      if (this.coparents.indexOf(p) == -1) {
         this.coparents.push(p);
-        this.childsets.push([c]);
+        this.childsets.push([]);
       }
+      var j = this.coparents.indexOf(p);
+      this.childsets[j].push(c);
     }
   }
 }
