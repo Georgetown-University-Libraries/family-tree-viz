@@ -66,6 +66,8 @@ Id,Name,Link
 62,X4,nolink
 63,X5,nolink
 64,X6,nolink
+65,B1A,nolink
+66,B1B,nolink
 
 # A new header starts after a blank line
 Id,Relation,Id2
@@ -202,3 +204,8 @@ Id,Relation,Id2
 41,Spouse Of,45
 41,Spouse Of,46
 42,Spouse Of,46
+#
+1,Parent Of,65
+1,Parent Of,66
+3,Parent Of,65
+5,Parent Of,66

@@ -1,19 +1,29 @@
-.draw {
+.draw, .focus {
   fill:white;
   stroke-width:2;
   stroke:rgb(0,0,0);
+}
+
+.drawfocus {
+  fill:white;
+  stroke-width:2;
+  stroke: green;
 }
 
 .wrap {
   fill: #DDD;
 }
 
-.draw:hover {
+.draw:hover, .drawfocus:hover, .focus:hover {
   fill:yellow;
 }
 
-.text {
+.text, .focustext, .ftext {
   stroke:red;
   font-size: .7em;
   font-weight: lighter;
+}
+
+.focus, .ftext {
+  display: none;
 }

@@ -13,18 +13,21 @@ function init(){
       var familyTree = new FamilyTree();
       familyTree.processJsonInputData(json);
       initDiagram(familyTree.getPersonFromHash());
+      showDirectory(familyTree);
     }, "text");
   } else if (doc.match(/\.json$/)) {
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processDrupalInputData(data);
       initDiagram(familyTree.getPersonFromHash());
+      showDirectory(familyTree);
     }, "json");
   } else {
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processCsvInputData(data);
       initDiagram(familyTree.getPersonFromHash());
+      showDirectory(familyTree);
     }, "text");
   }
 
@@ -62,29 +65,21 @@ function initDiagram(person){
     }
   }
   family.draw();
-  /*
-  family
-    .setFocus("Focus")
-    .addSibling("Sibling 1")
-    .addSibling("Sibling 2")
-    .addSibling("Sibling 3")
-    .addSibling("Sibling 4")
-    .addSibling("Sibling 5")
-    .setMother("Mother")
-    .addMaternalSibling("M Sibling 1")
-    .addMaternalSibling("M Sibling 2")
-    .addMaternalSibling("M Sibling 3")
-    .setFather("Father")
-    .addPaternalSibling("P Sibling 1")
-    .addPaternalSibling("P Sibling 2")
-    .addMaternalGP("Maternal GM")
-    .addMaternalGP("Maternal GF")
-    .addPaternalGP("Paternal GM")
-    .addPaternalGP("Paternal GF")
-    .draw();
-  */
 }
 
 $(document).ready(function(){
   init();
 });
+
+function showDirectory(familyTree) {
+  for(var i=0; i<familyTree.People.length; i++) {
+    var per = familyTree.People[i];
+    if (!per) continue;
+    var n = $("<li/>");
+    $("<a/>").attr("href","#"+per.id).text(per.name).appendTo(n).on("click",function(){
+      location.hash=$(this).attr("href");
+      location.reload();
+    });
+    $("#people").append(n);
+  }
+}

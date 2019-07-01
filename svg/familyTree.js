@@ -6,7 +6,18 @@ var Person = function(id, name, link) {
   this.parents = [];
   this.spouses = [];
   this.refcount = 0;
+  this.coparents = null;
+  this.childsets = null;
   this.node;
+
+  this.getName = function() {
+    if (this.children.length == 0)
+      return this.name;
+    else if (this.children.length == 1)
+      return this.name + " (1 child)";
+    else
+    return this.name + " (" + this.children.length + " children)";
+  }
 
   this.getMom = function() {
     if (this.parents.length > 0) {
@@ -29,13 +40,8 @@ var Person = function(id, name, link) {
         var ms = mch[i];
         if (!ms) continue;
         if (ms.id == this.id) continue;
-        for(var j=0; j < fch.length; j++) {
-          var ps = fch[j];
-          if (!ps) continue;
-          if (ms.id == ps.id) {
-            sibs.push(ms);
-            break;
-          }
+        if (fch.indexOf(ms) > -1) {
+          sibs.push(ms);
         }
       }
     } else if (this.getMom()) {
@@ -54,6 +60,45 @@ var Person = function(id, name, link) {
       }
     }
     return sibs;
+  }
+
+  this.getAltParent = function(p) {
+    if (!p) return null;
+    for(var i=0; i < this.parents.length; i++) {
+      if (this.parents[i].id != p.id) {
+        return this.parents[i];
+      }
+    }
+    return null;
+  }
+
+  this.getChildSets = function() {
+    this.makeChildSets();
+    return this.childsets;
+  }
+
+  this.getCoparents = function() {
+    this.makeChildSets();
+    return this.coparents;
+  }
+
+  this.makeChildSets = function() {
+    if (this.childsets != null) {
+      return;
+    }
+    this.coparents = [];
+    this.childsets = [];
+    for(var i=0; i<this.children.length; i++) {
+      var c = this.children[i];
+      if (!c) continue;
+      var p = c.getAltParent(this);
+      if (this.coparents.indexOf(p) == -1) {
+        this.coparents.push(p);
+        this.childsets.push([]);
+      }
+      var j = this.coparents.indexOf(p);
+      this.childsets[j].push(c);
+    }
   }
 }
 
@@ -144,10 +189,10 @@ var FamilyTree = function() {
       if (!this.People[id2]) {
         this.People[id2] = new Person(id2, name2, this.BASEURL+link2);
       }
-      if (rel.title = "Biological Parent of") {
+      if (rel.title == "Biological Parent of") {
         this.People[id1].children.push(this.People[id2]);
         this.People[id2].parents.push(this.People[id1]);
-      } else if (rel.title = "Spouse of") {
+      } else if (rel.title == "Spouse of") {
         this.People[id1].spouses.push(this.People[id2]);
         this.People[id2].spouses.push(this.People[id1]);
       }
@@ -237,7 +282,7 @@ var FamilyTree = function() {
   }
   this.getPersonFromHash = function() {
     var DEF = 152;
-    DEF = 3;
+    DEF = 12;
     var cid = location.hash.replace("#","");
     var cid = $.isNumeric(cid) ? Number(cid) : DEF;
     return this.getPerson(cid);

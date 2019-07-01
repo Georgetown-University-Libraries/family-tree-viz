@@ -52,7 +52,7 @@ var Box = function(svgHelper, r, c) {
   this.drawBoxOffset = function(bclass, yoff, xoff, yadd, xadd){
     var y = this.getTop();
     var x = this.getLeft();
-    var rect = this.svgHelper.makeSvgEl("rect")
+    return this.svgHelper.makeSvgEl("rect")
       .attr("height", this.getHeight() + yadd)
       .attr("width", this.getWidth() + xadd)
       .attr("x", x + xoff)
@@ -69,14 +69,14 @@ var Box = function(svgHelper, r, c) {
     return this.getBottom() - this.svgHelper.TOFF;
   }
 
-  this.drawText = function(label) {
-    this.svgHelper.makeSvgEl("text")
+  this.drawText = function(label, tclass) {
+    return this.svgHelper.makeSvgEl("text")
       .attr("height", this.getHeight())
       .attr("width", this.getWidth())
       .attr("x", this.getTextX())
       .attr("y", this.getTextY())
       .text(label)
-      .addClass("text")
+      .addClass(tclass ? tclass : "text")
       .appendTo(this.svgHelper.SVG);
   }
 }
@@ -94,13 +94,33 @@ var SvgHelper = function() {
   this.classBox = "draw";
   this.classWrapBox = "wrap";
 
-  this.drawBox = function(r, c, label) {
+  this.drawBox = function(r, c, person, classbox) {
     var box = new Box(this, r, c);
-    box.drawBox(this.classBox);
-    box.drawText(label);
+    var sbox = box.drawBox(classbox ? classbox: this.classBox);
+    box.drawText(person.getName(), classbox == "drawfocus" ? "focustext" : "text");
+    if (person.children.length > 0) {
+      sbox.on("click", function(){
+        location.hash = person.id;
+        if (sbox.hasClass("drawfocus")) {
+          $(".draw, .text, .focus, .ftext, .wrap").toggle();
+        } else {
+          location.reload();
+        }
+      });
+    }
     return box;
   }
 
+  this.drawFocusBox = function(r, c, person, name) {
+    var box = new Box(this, r, c);
+    var sbox = box.drawBox("focus");
+    box.drawText(name, "ftext");
+    sbox.on("click", function(){
+      location.hash = person.id;
+      location.reload();
+    });
+    return box;
+  }
   this.drawWrapBox = function(r, c, rh, cw) {
     var box = new Box(this, r, c);
     box.setCellHeight(rh);
@@ -246,44 +266,53 @@ var FamilyViz = function() {
     if (!this.p_focus) return;
 
     svgHelp.drawWrapBox(this.rfocus, this.cfocus, 1 + this.p_sib.length, 1);
-    var focus = svgHelp.drawBox(this.rfocus, this.cfocus, this.p_focus.name);
+    var focus = svgHelp.drawBox(this.rfocus, this.cfocus, this.p_focus, "drawfocus");
 
     for(var i=0; i < this.p_sib.length; i++) {
-      svgHelp.drawBox(this.rfocus + i + 1, this.cfocus, this.p_sib[i].name);
+      svgHelp.drawBox(this.rfocus + i + 1, this.cfocus, this.p_sib[i]);
     }
 
     if (this.p_m) {
       svgHelp.drawWrapBox(this.rp, this.cm, 1 + this.p_msib.length, 1);
-      var m = svgHelp.drawBox(this.rp, this.cm, this.p_m.name);
+      var m = svgHelp.drawBox(this.rp, this.cm, this.p_m);
       for(var i=0; i < this.p_msib.length; i++) {
-        svgHelp.drawBox(this.rp + i + 1, this.cm, this.p_msib[i].name);
+        svgHelp.drawBox(this.rp + i + 1, this.cm, this.p_msib[i]);
       }
       svgHelp.rconnect(m, focus);
       if (this.p_mgp.length > 0) {
-        var mgp = svgHelp.drawBox(this.rgp, this.cmgm, this.p_mgp[0].name);
+        var mgp = svgHelp.drawBox(this.rgp, this.cmgm, this.p_mgp[0]);
         svgHelp.connect(mgp, m);
       }
       if (this.p_mgp.length > 1) {
-        var mgp = svgHelp.drawBox(this.rgp, this.cmgf, this.p_mgp[1].name);
+        var mgp = svgHelp.drawBox(this.rgp, this.cmgf, this.p_mgp[1]);
         svgHelp.connect(mgp, m);
       }
     }
 
     if (this.p_f) {
       svgHelp.drawWrapBox(this.rp, this.cf, 1 + this.p_psib.length, 1);
-      var f = svgHelp.drawBox(this.rp, this.cf, this.p_f.name);
+      var f = svgHelp.drawBox(this.rp, this.cf, this.p_f);
       for(var i=0; i < this.p_psib.length; i++) {
-        svgHelp.drawBox(this.rp + i + 1, this.cf, this.p_psib[i].name);
+        svgHelp.drawBox(this.rp + i + 1, this.cf, this.p_psib[i]);
       }
       svgHelp.lconnect(f, focus);
       if (this.p_pgp.length > 0) {
-        var pgp = svgHelp.drawBox(this.rgp, this.cpgm, this.p_pgp[0].name);
+        var pgp = svgHelp.drawBox(this.rgp, this.cpgm, this.p_pgp[0]);
         svgHelp.connect(pgp, f);
       }
       if (this.p_pgp.length > 1) {
-        var pgp = svgHelp.drawBox(this.rgp, this.cpgf, this.p_pgp[1].name);
+        var pgp = svgHelp.drawBox(this.rgp, this.cpgf, this.p_pgp[1]);
         svgHelp.connect(pgp, f);
       }
+    }
+
+    var childsets = this.p_focus.getChildSets();
+    var coparents = this.p_focus.getCoparents();
+    for (var i=0; i < coparents.length; i++) {
+      var cop = coparents[i];
+      var cs = childsets[i];
+      var name = cop ? cs.length + " children with " + cop.name : "Children with Undefined";
+      var pgp = svgHelp.drawFocusBox(this.rfocus + i + 1, this.cfocus, cs[0], name);
     }
   }
 }
