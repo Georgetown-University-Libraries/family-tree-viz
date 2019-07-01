@@ -5,9 +5,23 @@ Convert a CSV family tree table into a visualization.
 - [Sample Data with Simpsons Characters as YAML file](data.yml)
 - [Sample Data with Simpsons Characters in indented YAML file](indented.yml)
 
-![Family Tree Diagram](infoviz/documentation/familytree.png)
+## SVG Demos
+_These demos are built with the InfoVis toolkit._
 
-## InfoViz Demos
+- [Demo: data.csv](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../data.csv)
+- [Demo: data.yml](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../data.yml)
+- [Demo: indented.yml](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../indented.yml)
+- [Demo with 75 people: big.yml](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../big.yml)
+
+## InfoViz Demos - Veritcal Display
+_These demos are built with the InfoVis toolkit._
+
+- [Demo: data.csv](https://georgetown-university-libraries.github.io/family-tree-viz/infoviz2/?doc=../data.csv)
+- [Demo: data.yml](https://georgetown-university-libraries.github.io/family-tree-viz/infoviz2/?doc=../data.yml)
+- [Demo: indented.yml](https://georgetown-university-libraries.github.io/family-tree-viz/infoviz2/?doc=../indented.yml)
+- [Demo with 75 people: big.yml](https://georgetown-university-libraries.github.io/family-tree-viz/infoviz2/?doc=../big.yml)
+
+## InfoViz Demos - Horizontal Display
 _These demos are built with the InfoVis toolkit._
 
 - [Demo: data.csv](https://georgetown-university-libraries.github.io/family-tree-viz/infoviz/?doc=../data.csv)
