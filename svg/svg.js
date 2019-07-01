@@ -186,45 +186,127 @@ var SvgHelper = function() {
   }
 }
 
+var Family = function() {
+  this.rgp    = 1;
+  this.rp     = 2;
+  this.rfocus = 3;
+
+  this.cmgm = 1;
+  this.cmgf = 2;
+  this.cpgm = 4;
+  this.cpgf = 5;
+  this.cm = 1.5;
+  this.cf = 4.5;
+  this.cfocus = 3;
+
+  this.p_mgp = [];
+  this.p_pgp = [];
+  this.p_m;
+  this.p_f;
+  this.p_focus;
+  this.p_sib = [];
+  this.p_msib = [];
+  this.p_psib = [];
+
+  this.setFocus = function(p) {
+    this.p_focus = p;
+    return this;
+  }
+  this.setMother = function(p) {
+    this.p_m = p;
+    return this;
+  }
+  this.setFather = function(p) {
+    this.p_f = p;
+    return this;
+  }
+  this.addSibling = function(p) {
+    this.p_sib.push(p);
+    return this;
+  }
+  this.addMaternalSibling = function(p) {
+    this.p_msib.push(p);
+    return this;
+  }
+  this.addPaternalSibling = function(p) {
+    this.p_psib.push(p);
+    return this;
+  }
+  this.addMaternalGP = function(p) {
+    this.p_mgp.push(p);
+    return this;
+  }
+  this.addPaternalGP = function(p) {
+    this.p_pgp.push(p);
+    return this;
+  }
+
+  this.draw = function() {
+    var svgHelp = new SvgHelper();
+    if (!this.p_focus) return;
+
+    svgHelp.drawWrapBox(this.rfocus, this.cfocus, 1 + this.p_sib.length, 1);
+    var focus = svgHelp.drawBox(this.rfocus, this.cfocus, this.p_focus);
+
+    for(var i=0; i < this.p_sib.length; i++) {
+      svgHelp.drawBox(this.rfocus + i + 1, this.cfocus, this.p_sib[i]);
+    }
+
+    if (this.p_m) {
+      svgHelp.drawWrapBox(this.rp, this.cm, 1 + this.p_msib.length, 1);
+      var m = svgHelp.drawBox(this.rp, this.cm, this.p_m);
+      for(var i=0; i < this.p_msib.length; i++) {
+        svgHelp.drawBox(this.rp + i + 1, this.cm, this.p_msib[i]);
+      }
+      svgHelp.rconnect(m, focus);
+      if (this.p_mgp.length > 0) {
+        var mgp = svgHelp.drawBox(this.rgp, this.cmgm, this.p_mgp[0]);
+        svgHelp.connect(mgp, m);
+      }
+      if (this.p_mgp.length > 1) {
+        var mgp = svgHelp.drawBox(this.rgp, this.cmgf, this.p_mgp[1]);
+        svgHelp.connect(mgp, m);
+      }
+    }
+
+    if (this.p_f) {
+      svgHelp.drawWrapBox(this.rp, this.cf, 1 + this.p_psib.length, 1);
+      var f = svgHelp.drawBox(this.rp, this.cf, this.p_f);
+      for(var i=0; i < this.p_psib.length; i++) {
+        svgHelp.drawBox(this.rp + i + 1, this.cf, this.p_psib[i]);
+      }
+      svgHelp.lconnect(f, focus);
+      if (this.p_pgp.length > 0) {
+        var pgp = svgHelp.drawBox(this.rgp, this.cpgm, this.p_pgp[0]);
+        svgHelp.connect(pgp, f);
+      }
+      if (this.p_pgp.length > 1) {
+        var pgp = svgHelp.drawBox(this.rgp, this.cpgf, this.p_pgp[1]);
+        svgHelp.connect(pgp, f);
+      }
+    }
+  }
+}
+
 $(document).ready(function(){
-  var rgp    = 1;
-  var rp     = 2;
-  var rfocus = 3;
-
-  var cmgm = 1;
-  var cmgf = 2;
-  var cpgm = 4;
-  var cpgf = 5;
-  var cm = 1.5;
-  var cf = 4.5;
-  var cfocus = 3;
-
-  var svgHelp = new SvgHelper();
-  var mgm = svgHelp.drawBox(rgp, cmgm, "Maternal GM");
-  var mgf = svgHelp.drawBox(rgp, cmgf, "Maternal GF");
-  var pgm = svgHelp.drawBox(rgp, cpgm, "Paternal GM");
-  var pgf = svgHelp.drawBox(rgp, cpgf, "Paternal GF");
-
-  svgHelp.drawWrapBox(rp, cm, 2, 1);
-
-  var m = svgHelp.drawBox(rp, cm, "Mother");
-  svgHelp.connect(mgm, m);
-  svgHelp.connect(mgf, m);
-
-  svgHelp.drawWrapBox(rp, cf, 2, 1);
-
-  var f = svgHelp.drawBox(rp, cf, "Father");
-  svgHelp.connect(pgm, f);
-  svgHelp.connect(pgf, f);
-
-  svgHelp.drawBox(rfocus, cm, "Maternal Sib");
-  svgHelp.drawBox(rfocus, cf, "Paternal Sib");
-
-  svgHelp.drawWrapBox(rfocus, cfocus, 3, 1);
-  var focus = svgHelp.drawBox(rfocus, cfocus, "Focus");
-  svgHelp.rconnect(m, focus);
-  svgHelp.lconnect(f, focus);
-
-  svgHelp.drawBox(rfocus + 1, cfocus, "Sibling");
-  svgHelp.drawBox(rfocus + 2, cfocus, "Sibling");
+  var family = new Family();
+  family
+    .setFocus("Focus")
+    .addSibling("Sibling 1")
+    .addSibling("Sibling 2")
+    .addSibling("Sibling 3")
+    .addSibling("Sibling 4")
+    .addSibling("Sibling 5")
+    .setMother("Mother")
+    .addMaternalSibling("M Sibling 1")
+    .addMaternalSibling("M Sibling 2")
+    .addMaternalSibling("M Sibling 3")
+    .setFather("Father")
+    .addPaternalSibling("P Sibling 1")
+    .addPaternalSibling("P Sibling 2")
+    .addMaternalGP("Maternal GM")
+    .addMaternalGP("Maternal GF")
+    .addPaternalGP("Paternal GM")
+    .addPaternalGP("Paternal GF")
+    .draw();
 });
