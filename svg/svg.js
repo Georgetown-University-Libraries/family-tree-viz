@@ -57,8 +57,7 @@ var Box = function(svgHelper, r, c) {
       .attr("width", this.getWidth() + xadd)
       .attr("x", x + xoff)
       .attr("y", y + yoff)
-      .addClass(bclass)
-      .appendTo(this.svgHelper.SVG);
+      .addClass(bclass);
   }
 
   this.getTextX = function() {
@@ -76,8 +75,7 @@ var Box = function(svgHelper, r, c) {
       .attr("x", this.getTextX())
       .attr("y", this.getTextY() - this.getHeight() + line * .5 * this.getHeight())
       .text(label)
-      .addClass(tclass ? tclass : "text")
-      .appendTo(this.svgHelper.SVG);
+      .addClass(tclass ? tclass : "text");
   }
 }
 
@@ -95,19 +93,28 @@ var SvgHelper = function() {
   this.classWrapBox = "wrap";
 
   this.drawBox = function(r, c, person, classbox) {
+    var g = this.makeSvgEl("g").appendTo(this.SVG);
     var box = new Box(this, r, c);
-    var sbox = box.drawBox(classbox ? classbox: this.classBox);
+    var sbox = box.drawBox(classbox ? classbox: this.classBox)
+      .appendTo(g);
     var tclass = classbox == "drawfocus" ? "focustext" : "text";
-    box.drawText(person.getName(1), tclass, 1);
-    box.drawText(person.getName(2), tclass, 2);
+    var t1 = box.drawText(person.getName(1), tclass, 1)
+      .appendTo(g);
+    var t2 = box.drawText(person.getName(2), tclass, 2)
+      .appendTo(g);
     if (person.children.length > 0) {
-      sbox.on("click", function(){
-        location.hash = person.id;
+      g.on("click", function(){
         if (sbox.hasClass("drawfocus")) {
           $(".draw, .text, .focus, .ftext, .wrap").toggle();
         } else {
+          location.hash = person.id;
           location.reload();
         }
+      });
+    } else {
+      g.on("click", function(){
+        location.hash = person.id;
+        location.reload();
       });
     }
     return box;
@@ -115,9 +122,10 @@ var SvgHelper = function() {
 
   this.drawFocusBox = function(r, c, person, arr) {
     var box = new Box(this, r, c);
-    var sbox = box.drawBox("focus");
-    box.drawText(arr[0], "ftext", 1);
-    box.drawText(arr[1], "ftext", 2);
+    var g = this.makeSvgEl("g").appendTo(this.SVG);
+    var sbox = box.drawBox("focus").appendTo(g);
+    box.drawText(arr[0], "ftext", 1).appendTo(g);
+    box.drawText(arr[1], "ftext", 2).appendTo(g);
     sbox.on("click", function(){
       location.hash = person.id;
       location.reload();
@@ -128,7 +136,8 @@ var SvgHelper = function() {
     var box = new Box(this, r, c);
     box.setCellHeight(rh);
     box.setCellWidth(cw);
-    box.drawBoxOffset(this.classWrapBox, -.25 * this.VGAP, -.5 * this.HGAP, this.VGAP, this.HGAP);
+    box.drawBoxOffset(this.classWrapBox, -.25 * this.VGAP, -.5 * this.HGAP, this.VGAP, this.HGAP)
+      .appendTo(this.SVG);
     return box;
   }
 
