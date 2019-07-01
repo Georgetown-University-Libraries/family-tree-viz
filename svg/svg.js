@@ -311,7 +311,8 @@ var FamilyViz = function() {
     for (var i=0; i < coparents.length; i++) {
       var cop = coparents[i];
       var cs = childsets[i];
-      var name = cop ? cs.length + " children with " + cop.name : "Children with Undefined";
+      var pre = cs.length == 1 ? "1 child with " : cs.length + " children with ";
+      var name = pre + (cop ? cop.name : "Undefined");
       var pgp = svgHelp.drawFocusBox(this.rfocus + i + 1, this.cfocus, cs[0], name);
     }
   }
