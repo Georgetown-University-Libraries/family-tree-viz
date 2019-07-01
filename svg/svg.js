@@ -186,7 +186,7 @@ var SvgHelper = function() {
   }
 }
 
-var Family = function() {
+var FamilyViz = function() {
   this.rgp    = 1;
   this.rp     = 2;
   this.rfocus = 3;
@@ -246,67 +246,44 @@ var Family = function() {
     if (!this.p_focus) return;
 
     svgHelp.drawWrapBox(this.rfocus, this.cfocus, 1 + this.p_sib.length, 1);
-    var focus = svgHelp.drawBox(this.rfocus, this.cfocus, this.p_focus);
+    var focus = svgHelp.drawBox(this.rfocus, this.cfocus, this.p_focus.name);
 
     for(var i=0; i < this.p_sib.length; i++) {
-      svgHelp.drawBox(this.rfocus + i + 1, this.cfocus, this.p_sib[i]);
+      svgHelp.drawBox(this.rfocus + i + 1, this.cfocus, this.p_sib[i].name);
     }
 
     if (this.p_m) {
       svgHelp.drawWrapBox(this.rp, this.cm, 1 + this.p_msib.length, 1);
-      var m = svgHelp.drawBox(this.rp, this.cm, this.p_m);
+      var m = svgHelp.drawBox(this.rp, this.cm, this.p_m.name);
       for(var i=0; i < this.p_msib.length; i++) {
-        svgHelp.drawBox(this.rp + i + 1, this.cm, this.p_msib[i]);
+        svgHelp.drawBox(this.rp + i + 1, this.cm, this.p_msib[i].name);
       }
       svgHelp.rconnect(m, focus);
       if (this.p_mgp.length > 0) {
-        var mgp = svgHelp.drawBox(this.rgp, this.cmgm, this.p_mgp[0]);
+        var mgp = svgHelp.drawBox(this.rgp, this.cmgm, this.p_mgp[0].name);
         svgHelp.connect(mgp, m);
       }
       if (this.p_mgp.length > 1) {
-        var mgp = svgHelp.drawBox(this.rgp, this.cmgf, this.p_mgp[1]);
+        var mgp = svgHelp.drawBox(this.rgp, this.cmgf, this.p_mgp[1].name);
         svgHelp.connect(mgp, m);
       }
     }
 
     if (this.p_f) {
       svgHelp.drawWrapBox(this.rp, this.cf, 1 + this.p_psib.length, 1);
-      var f = svgHelp.drawBox(this.rp, this.cf, this.p_f);
+      var f = svgHelp.drawBox(this.rp, this.cf, this.p_f.name);
       for(var i=0; i < this.p_psib.length; i++) {
-        svgHelp.drawBox(this.rp + i + 1, this.cf, this.p_psib[i]);
+        svgHelp.drawBox(this.rp + i + 1, this.cf, this.p_psib[i].name);
       }
       svgHelp.lconnect(f, focus);
       if (this.p_pgp.length > 0) {
-        var pgp = svgHelp.drawBox(this.rgp, this.cpgm, this.p_pgp[0]);
+        var pgp = svgHelp.drawBox(this.rgp, this.cpgm, this.p_pgp[0].name);
         svgHelp.connect(pgp, f);
       }
       if (this.p_pgp.length > 1) {
-        var pgp = svgHelp.drawBox(this.rgp, this.cpgf, this.p_pgp[1]);
+        var pgp = svgHelp.drawBox(this.rgp, this.cpgf, this.p_pgp[1].name);
         svgHelp.connect(pgp, f);
       }
     }
   }
 }
-
-$(document).ready(function(){
-  var family = new Family();
-  family
-    .setFocus("Focus")
-    .addSibling("Sibling 1")
-    .addSibling("Sibling 2")
-    .addSibling("Sibling 3")
-    .addSibling("Sibling 4")
-    .addSibling("Sibling 5")
-    .setMother("Mother")
-    .addMaternalSibling("M Sibling 1")
-    .addMaternalSibling("M Sibling 2")
-    .addMaternalSibling("M Sibling 3")
-    .setFather("Father")
-    .addPaternalSibling("P Sibling 1")
-    .addPaternalSibling("P Sibling 2")
-    .addMaternalGP("Maternal GM")
-    .addMaternalGP("Maternal GF")
-    .addPaternalGP("Paternal GM")
-    .addPaternalGP("Paternal GF")
-    .draw();
-});
