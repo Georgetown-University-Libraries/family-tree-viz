@@ -10,13 +10,17 @@ var Person = function(id, name, link) {
   this.childsets = null;
   this.node;
 
-  this.getName = function() {
-    if (this.children.length == 0)
+  this.getName = function(line) {
+    if (line == 1) {
       return this.name;
+    }
+
+    if (this.children.length == 0)
+      return "";
     else if (this.children.length == 1)
-      return this.name + " (1 child)";
+      return "(1 child)";
     else
-    return this.name + " (" + this.children.length + " children)";
+    return "(" + this.children.length + " children)";
   }
 
   this.getMom = function() {
@@ -92,12 +96,24 @@ var Person = function(id, name, link) {
       var c = this.children[i];
       if (!c) continue;
       var p = c.getAltParent(this);
-      if (this.coparents.indexOf(p) == -1) {
-        this.coparents.push(p);
-        this.childsets.push([]);
+      var found = false;
+      for(var j=0; j<this.coparents.length; j++) {
+        var cop = this.coparents[j];
+        if (p == null && cop == null) {
+          found = true;
+          this.childsets[j].push(c);
+          break;
+        }
+        if (p.id == cop.id) {
+          found = true;
+          this.childsets[j].push(c);
+          break;
+        }
       }
-      var j = this.coparents.indexOf(p);
-      this.childsets[j].push(c);
+      if (!found) {
+        this.coparents.push(p);
+        this.childsets.push([c]);
+      }
     }
   }
 }

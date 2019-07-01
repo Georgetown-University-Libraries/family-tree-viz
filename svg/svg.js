@@ -69,12 +69,12 @@ var Box = function(svgHelper, r, c) {
     return this.getBottom() - this.svgHelper.TOFF;
   }
 
-  this.drawText = function(label, tclass) {
+  this.drawText = function(label, tclass, line) {
     return this.svgHelper.makeSvgEl("text")
-      .attr("height", this.getHeight())
+      .attr("height", this.getHeight() * .5)
       .attr("width", this.getWidth())
       .attr("x", this.getTextX())
-      .attr("y", this.getTextY())
+      .attr("y", this.getTextY() - this.getHeight() + line * .5 * this.getHeight())
       .text(label)
       .addClass(tclass ? tclass : "text")
       .appendTo(this.svgHelper.SVG);
@@ -97,7 +97,9 @@ var SvgHelper = function() {
   this.drawBox = function(r, c, person, classbox) {
     var box = new Box(this, r, c);
     var sbox = box.drawBox(classbox ? classbox: this.classBox);
-    box.drawText(person.getName(), classbox == "drawfocus" ? "focustext" : "text");
+    var tclass = classbox == "drawfocus" ? "focustext" : "text";
+    box.drawText(person.getName(1), tclass, 1);
+    box.drawText(person.getName(2), tclass, 2);
     if (person.children.length > 0) {
       sbox.on("click", function(){
         location.hash = person.id;
@@ -114,7 +116,7 @@ var SvgHelper = function() {
   this.drawFocusBox = function(r, c, person, name) {
     var box = new Box(this, r, c);
     var sbox = box.drawBox("focus");
-    box.drawText(name, "ftext");
+    box.drawText(name, "ftext", 1);
     sbox.on("click", function(){
       location.hash = person.id;
       location.reload();
