@@ -1,5 +1,7 @@
 ## Enhancement ideas
 
+- Data
+  - add optional birthdate, deathdate, gender into input files
 - Display
   - Reduce column separation
   - Increase text size
