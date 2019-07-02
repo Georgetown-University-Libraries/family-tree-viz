@@ -12,28 +12,32 @@ function init(){
       var json = jsyaml.load(data);
       var familyTree = new FamilyTree();
       familyTree.processJsonInputData(json);
-      initDiagram(familyTree.getPersonFromHash());
-      showDirectory(familyTree);
+      if (!initDiagram(familyTree.getPersonFromHash())) {
+        showDirectory(familyTree);
+      }
     }, "text");
   } else if (doc.match(/\.json$/)) {
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processDrupalInputData(data);
-      initDiagram(familyTree.getPersonFromHash());
-      showDirectory(familyTree);
+      if (!initDiagram(familyTree.getPersonFromHash())) {
+        showDirectory(familyTree);
+      }
     }, "json");
   } else {
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processCsvInputData(data);
-      initDiagram(familyTree.getPersonFromHash());
-      showDirectory(familyTree);
+      if (!initDiagram(familyTree.getPersonFromHash())) {
+        showDirectory(familyTree);
+      }
     }, "text");
   }
 
 }
 
 function initDiagram(person){
+  if (!person) return false;
   var family = new FamilyViz();
   family.setFocus(person);
   var mom = person.parents.length > 0 ? person.parents[0] : null;
@@ -65,6 +69,7 @@ function initDiagram(person){
     }
   }
   family.draw();
+  return true;
 }
 
 $(document).ready(function(){
@@ -72,6 +77,7 @@ $(document).ready(function(){
 });
 
 function showDirectory(familyTree) {
+  $("#svg").hide();
   for(var i=0; i<familyTree.People.length; i++) {
     var per = familyTree.People[i];
     if (!per) continue;

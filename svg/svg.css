@@ -21,7 +21,7 @@
 .text, .focustext, .ftext {
   fill:red;
   stroke-width:0;
-  font-size: .8em;
+  font-size: .6em;
 }
 
 .focus, .ftext {

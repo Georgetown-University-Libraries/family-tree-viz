@@ -283,13 +283,14 @@ var FamilyTree = function() {
     if (this.People[id]) {
       return this.People[id];
     }
-    return new Person(0, "Person not found", this.BASEURL);
+    return null;
   }
   this.getPersonFromHash = function() {
-    var DEF = 152;
-    DEF = 12;
     var cid = location.hash.replace("#","");
-    var cid = $.isNumeric(cid) ? Number(cid) : DEF;
-    return this.getPerson(cid);
+    if ($.isNumeric(cid)){
+      cid = Number(cid);
+      return this.getPerson(cid);
+    }
+    return null;
   }
 }
