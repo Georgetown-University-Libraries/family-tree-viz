@@ -36,36 +36,70 @@ function init(){
 
 }
 
-function initDiagram(person){
-  if (!person) return false;
+function initDiagram(fperson, fcopar){
+  if (!fperson) return false;
   var family = new FamilyViz();
-  family.setFocus(person);
-  var mom = person.parents.length > 0 ? person.parents[0] : null;
-  var dad = person.parents.length > 1 ? person.parents[1] : null;
-  var sibs = person.getSiblings();
-  for(var i=0; i<sibs.length; i++) {
-    family.addSibling(sibs[i]);
+
+  var childsets = fperson.getChildSets();
+  var copars = fperson.coparents;
+
+  var children = fcopar ? fperson.getChildSet(fcopar) : childsets[0];
+  if (childsets.length > 1) {
+    for(var i=0; i<childsets.length; i++) {
+      if (childsets[i] == children) continue;
+      family.addAltPar(copars[i]);
+    }
   }
-  if (mom) {
-    family.setMother(mom);
-    var msibs = mom.getSiblings();
+
+  if (children.length > 0) {
+    for(var i=0; i<children.length; i++) {
+      family.addChild(children[i]);
+    }
+    var mom = children[0].parents.length > 0 ? children[0].parents[0] : null;
+    var dad = children[0].parents.length > 1 ? children[0].parents[1] : null;
+    if (mom) {
+      family.setMother(mom);
+      var msibs = mom.getSiblings();
+      for(var i=0; i<msibs.length; i++) {
+        family.addMaternalSibling(msibs[i]);
+      }
+      var pars = mom.parents;
+      for(var i=0; i<pars.length; i++) {
+        family.addMaternalGP(pars[i]);
+      }
+    }
+    if (dad) {
+      family.setFather(dad);
+      var psibs = dad.getSiblings();
+      for(var i=0; i<psibs.length; i++) {
+        family.addPaternalSibling(psibs[i]);
+      }
+      var pars = dad.parents;
+      for(var i=0; i<pars.length; i++) {
+        family.addPaternalGP(pars[i]);
+      }
+    }
+  } else {
+    family.setMother(fperson);
+    var msibs = fperson.getSiblings();
     for(var i=0; i<msibs.length; i++) {
       family.addMaternalSibling(msibs[i]);
     }
-    var pars = mom.parents;
+    var pars = fperson.parents;
     for(var i=0; i<pars.length; i++) {
       family.addMaternalGP(pars[i]);
     }
-  }
-  if (dad) {
-    family.setFather(dad);
-    var psibs = dad.getSiblings();
-    for(var i=0; i<psibs.length; i++) {
-      family.addPaternalSibling(psibs[i]);
-    }
-    var pars = dad.parents;
-    for(var i=0; i<pars.length; i++) {
-      family.addPaternalGP(pars[i]);
+
+    if (fcopar) {
+      family.setFather(fcopar);
+      var msibs = copar.getSiblings();
+      for(var i=0; i<msibs.length; i++) {
+        family.addPaternalSibling(msibs[i]);
+      }
+      var pars = fcopar.parents;
+      for(var i=0; i<pars.length; i++) {
+        family.addPaternalGP(pars[i]);
+      }
     }
   }
   family.draw();

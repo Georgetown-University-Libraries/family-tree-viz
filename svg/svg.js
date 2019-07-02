@@ -104,21 +104,10 @@ var SvgHelper = function() {
       .appendTo(g);
     box.drawText(person.getName(2), tclass, 2)
       .appendTo(g);
-    if (person.children.length > 0) {
-      g.children().on("click", function(){
-        if (sbox.hasClass("drawfocus")) {
-          $(".draw, .text, .focus, .ftext, .wrap, .link").toggle();
-        } else {
-          location.hash = person.id;
-          location.reload();
-        }
-      });
-    } else {
-      g.children().on("click", function(){
-        location.hash = person.id;
-        location.reload();
-      });
-    }
+    g.children().on("click", function(){
+      location.hash = person.id;
+      location.reload();
+    });
     var link = person.link;
     link = link == null ? "" : link;
     if (link != "" && link != "nolink") {
@@ -231,7 +220,7 @@ var SvgHelper = function() {
 var FamilyViz = function() {
   this.rgp    = 1;
   this.rp     = 2;
-  this.rfocus = 3;
+  this.rchild = 3;
 
   this.cmgm = 1;
   this.cmgf = 2;
@@ -239,21 +228,17 @@ var FamilyViz = function() {
   this.cpgf = 4;
   this.cm = 1.5;
   this.cf = 3.5;
-  this.cfocus = 2.5;
+  this.cchild = 2.5;
 
   this.p_mgp = [];
   this.p_pgp = [];
   this.p_m;
   this.p_f;
-  this.p_focus;
   this.p_sib = [];
   this.p_msib = [];
   this.p_psib = [];
+  this.p_altpar = [];
 
-  this.setFocus = function(p) {
-    this.p_focus = p;
-    return this;
-  }
   this.setMother = function(p) {
     this.p_m = p;
     return this;
@@ -262,7 +247,7 @@ var FamilyViz = function() {
     this.p_f = p;
     return this;
   }
-  this.addSibling = function(p) {
+  this.addChild = function(p) {
     this.p_sib.push(p);
     return this;
   }
@@ -282,25 +267,32 @@ var FamilyViz = function() {
     this.p_pgp.push(p);
     return this;
   }
+  this.addAltPar = function(p) {
+    this.p_altpar.push(p);
+    return this;
+  }
 
   this.draw = function() {
     var svgHelp = new SvgHelper();
-    if (!this.p_focus) return;
 
-    svgHelp.drawWrapBox(this.rfocus, this.cfocus, 1 + this.p_sib.length, 1);
-    var focus = svgHelp.drawBox(this.rfocus, this.cfocus, this.p_focus, "drawfocus");
-
-    for(var i=0; i < this.p_sib.length; i++) {
-      svgHelp.drawBox(this.rfocus + i + 1, this.cfocus, this.p_sib[i]);
+    var focus = null;
+    if (this.p_sib.length > 0) {
+      svgHelp.drawWrapBox(this.rchild, this.cchild, this.p_sib.length, 1);
+      focus = svgHelp.drawBox(this.rchild , this.cchild, this.p_sib[0]);
+      for(var i=1; i < this.p_sib.length; i++) {
+        svgHelp.drawBox(this.rchild + i, this.cchild, this.p_sib[i]);
+      }
     }
 
     if (this.p_m) {
       svgHelp.drawWrapBox(this.rp, this.cm, 1 + this.p_msib.length, 1);
-      var m = svgHelp.drawBox(this.rp, this.cm, this.p_m);
+      var m = svgHelp.drawBox(this.rp, this.cm, this.p_m, "drawfocus");
       for(var i=0; i < this.p_msib.length; i++) {
         svgHelp.drawBox(this.rp + i + 1, this.cm, this.p_msib[i]);
       }
-      svgHelp.rconnect(m, focus);
+      if (focus) {
+        svgHelp.rconnect(m, focus);
+      }
       if (this.p_mgp.length > 0) {
         var mgp = svgHelp.drawBox(this.rgp, this.cmgm, this.p_mgp[0]);
         svgHelp.connect(mgp, m);
@@ -313,11 +305,13 @@ var FamilyViz = function() {
 
     if (this.p_f) {
       svgHelp.drawWrapBox(this.rp, this.cf, 1 + this.p_psib.length, 1);
-      var f = svgHelp.drawBox(this.rp, this.cf, this.p_f);
+      var f = svgHelp.drawBox(this.rp, this.cf, this.p_f, "drawfocus");
       for(var i=0; i < this.p_psib.length; i++) {
         svgHelp.drawBox(this.rp + i + 1, this.cf, this.p_psib[i]);
       }
-      svgHelp.lconnect(f, focus);
+      if (focus) {
+        svgHelp.lconnect(f, focus);
+      }
       if (this.p_pgp.length > 0) {
         var pgp = svgHelp.drawBox(this.rgp, this.cpgm, this.p_pgp[0]);
         svgHelp.connect(pgp, f);
@@ -328,6 +322,7 @@ var FamilyViz = function() {
       }
     }
 
+    /*
     var childsets = this.p_focus.getChildSets();
     var coparents = this.p_focus.getCoparents();
     for (var i=0; i < coparents.length; i++) {
@@ -337,5 +332,6 @@ var FamilyViz = function() {
       var name = cop ? cop.name : "Undefined";
       var pgp = svgHelp.drawFocusBox(this.rfocus + i + 1, this.cfocus, cs[0], [pre, name]);
     }
+    */
   }
 }

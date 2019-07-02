@@ -15,6 +15,7 @@
 - Navigation
   - Focus on line 2
   - Show alternate relationships next to focus coparents
+  - Illustrate spouses w/o children
 - Other viz
   - vessel and location
   - assertion timelines

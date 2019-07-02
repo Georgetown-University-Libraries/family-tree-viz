@@ -84,6 +84,15 @@ var Person = function(id, name, link) {
     return this.coparents;
   }
 
+  this.getChildSet = function(coparent) {
+    this.makeChildSets();
+    var i = this.coparents.indexOf(coparent);
+    if (i > -1) {
+      return this.childsets[i];
+    }
+    return [];
+  }
+
   this.makeChildSets = function() {
     if (this.childsets != null) {
       return;
@@ -101,6 +110,14 @@ var Person = function(id, name, link) {
       }
       var j = this.coparents.indexOf(p);
       this.childsets[j].push(c);
+    }
+    for(var i=0; i<this.spouses.length; i++) {
+      var s = this.spouses[i];
+      if (!s) continue;
+      if (this.coparents.indexOf(s) == -1) {
+        this.coparents.push(s);
+        this.childsets.push([]);
+      }
     }
   }
 }
