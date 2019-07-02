@@ -27,3 +27,7 @@
 .focus, .ftext {
   display: none;
 }
+
+div.dir {
+  margin-bottom: 10px;
+}
