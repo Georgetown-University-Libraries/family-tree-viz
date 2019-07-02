@@ -104,20 +104,27 @@ var SvgHelper = function() {
       .appendTo(g);
     box.drawText(person.getName(2), tclass, 2)
       .appendTo(g);
-    //box.drawText("Line 3", tclass, 3).appendTo(g);
     if (person.children.length > 0) {
-      g.on("click", function(){
+      g.children().on("click", function(){
         if (sbox.hasClass("drawfocus")) {
-          $(".draw, .text, .focus, .ftext, .wrap").toggle();
+          $(".draw, .text, .focus, .ftext, .wrap, .link").toggle();
         } else {
           location.hash = person.id;
           location.reload();
         }
       });
     } else {
-      g.on("click", function(){
+      g.children().on("click", function(){
         location.hash = person.id;
         location.reload();
+      });
+    }
+    var link = person.link;
+    link = link == null ? "" : link;
+    if (link != "") {
+      var linktext = box.drawText("Details page ", "link", 3).appendTo(g);
+      linktext.on("click",function(){
+        location = "http://dev-gu-lit-smr.pantheonsite.io" + link;
       });
     }
     return box;
