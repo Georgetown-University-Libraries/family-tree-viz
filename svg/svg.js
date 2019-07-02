@@ -70,18 +70,20 @@ var Box = function(svgHelper, r, c) {
 
   this.drawText = function(label, tclass, line) {
     return this.svgHelper.makeSvgEl("text")
-      .attr("height", this.getHeight() * .5)
+      .attr("height", this.getHeight() / this.svgHelper.LINES)
       .attr("width", this.getWidth())
       .attr("x", this.getTextX())
-      .attr("y", this.getTextY() - this.getHeight() + line * .5 * this.getHeight())
+      .attr("y", this.getTextY() - this.getHeight() + line * (this.getHeight() / this.svgHelper.LINES) + this.svgHelper.LINEOFF)
       .text(label)
       .addClass(tclass ? tclass : "text");
   }
 }
 
 var SvgHelper = function() {
+  this.LINES = 3;
+  this.LINEOFF = 2;
   this.SVG = $("#svg");
-  this.WIDTH=120;
+  this.WIDTH=160;
   this.HEIGHT=40;
   this.HGAP=20;
   this.VGAP=24;
@@ -98,10 +100,11 @@ var SvgHelper = function() {
     var sbox = box.drawBox(classbox ? classbox: this.classBox)
       .appendTo(g);
     var tclass = classbox == "drawfocus" ? "focustext" : "text";
-    var t1 = box.drawText(person.getName(1), tclass, 1)
+    box.drawText(person.getName(1), tclass + " bold", 1)
       .appendTo(g);
-    var t2 = box.drawText(person.getName(2), tclass, 2)
+    box.drawText(person.getName(2), tclass, 2)
       .appendTo(g);
+    //box.drawText("Line 3", tclass, 3).appendTo(g);
     if (person.children.length > 0) {
       g.on("click", function(){
         if (sbox.hasClass("drawfocus")) {

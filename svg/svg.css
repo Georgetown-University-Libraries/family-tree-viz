@@ -14,14 +14,18 @@
   fill: #DDD;
 }
 
-.draw:hover, .drawfocus:hover, .focus:hover {
+g:hover .draw, g:hover .drawfocus, g:hover .focus {
   fill:yellow;
 }
 
 .text, .focustext, .ftext {
-  fill:red;
+  xfill:red;
   stroke-width:0;
   font-size: .6em;
+}
+
+.bold {
+  font-weight: bold;
 }
 
 .focus, .ftext {
