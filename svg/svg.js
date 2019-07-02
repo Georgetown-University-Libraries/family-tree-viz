@@ -121,7 +121,7 @@ var SvgHelper = function() {
     }
     var link = person.link;
     link = link == null ? "" : link;
-    if (link != "") {
+    if (link != "" && link != "nolink") {
       var linktext = box.drawText("Details page ", "link", 3).appendTo(g);
       linktext.on("click",function(){
         location = "http://dev-gu-lit-smr.pantheonsite.io" + link;
