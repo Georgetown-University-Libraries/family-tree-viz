@@ -3,12 +3,15 @@
 - Data
   - add optional birthdate, deathdate, gender into input files
 - Display
-  - Reduce column separation
-  - Increase text size
-  - Leave room for gender and birth/death date on line 1
-  - add icons for children
-  - only 2 lines of data
-  - thicken focus box
+  - ~Reduce column separation~
+  - ~Increase text size~
+  - ~Leave room for gender and birth/death date on line 1~
+    - Using line 2
+  - ~add icons for children~
+    - asterix in place
+  - ~only 2 lines of data~
+    - retaining 3 lines
+  - ~thicken focus box~
 - Navigation
   - Focus on line 2
   - Show alternate relationships next to focus coparents

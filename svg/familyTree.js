@@ -14,13 +14,11 @@ var Person = function(id, name, link) {
     if (line == 1) {
       return this.name;
     }
-
-    if (this.children.length == 0)
-      return "";
-    else if (this.children.length == 1)
-      return "(1 child)";
-    else
-    return "(" + this.children.length + " children)";
+    var name = "♂♀ (1800-1900)";
+    if (this.children.length > 0) {
+      name += "*";
+    }
+    return name;
   }
 
   this.getMom = function() {

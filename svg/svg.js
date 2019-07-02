@@ -70,10 +70,10 @@ var Box = function(svgHelper, r, c) {
 
   this.drawText = function(label, tclass, line) {
     return this.svgHelper.makeSvgEl("text")
-      .attr("height", this.getHeight() / this.svgHelper.LINES)
+      .attr("height", (this.getHeight() - 2 * this.svgHelper.LINEOFF) / this.svgHelper.LINES)
       .attr("width", this.getWidth())
       .attr("x", this.getTextX())
-      .attr("y", this.getTextY() - this.getHeight() + line * (this.getHeight() / this.svgHelper.LINES) + this.svgHelper.LINEOFF)
+      .attr("y", this.getTextY() - this.getHeight() + line * ((this.getHeight() - 2 * this.svgHelper.LINEOFF) / this.svgHelper.LINES) + this.svgHelper.LINEOFF)
       .text(label)
       .addClass(tclass ? tclass : "text");
   }
@@ -83,10 +83,10 @@ var SvgHelper = function() {
   this.LINES = 3;
   this.LINEOFF = 2;
   this.SVG = $("#svg");
-  this.WIDTH=160;
-  this.HEIGHT=40;
-  this.HGAP=20;
-  this.VGAP=24;
+  this.WIDTH=168;
+  this.HEIGHT=50;
+  this.HGAP=40;
+  this.VGAP=32;
   this.TOFF = 5;
   this.makeSvgEl = function(tag) {
     return $(document.createElementNS('http://www.w3.org/2000/svg', tag));
@@ -100,7 +100,7 @@ var SvgHelper = function() {
     var sbox = box.drawBox(classbox ? classbox: this.classBox)
       .appendTo(g);
     var tclass = classbox == "drawfocus" ? "focustext" : "text";
-    box.drawText(person.getName(1), tclass + " bold", 1)
+    box.drawText(person.getName(1), tclass, 1)
       .appendTo(g);
     box.drawText(person.getName(2), tclass, 2)
       .appendTo(g);
@@ -146,7 +146,7 @@ var SvgHelper = function() {
     var box = new Box(this, r, c);
     box.setCellHeight(rh);
     box.setCellWidth(cw);
-    box.drawBoxOffset(this.classWrapBox, -.25 * this.VGAP, -.5 * this.HGAP, this.VGAP, this.HGAP)
+    box.drawBoxOffset(this.classWrapBox, -.25 * this.VGAP, -.25 * this.HGAP, .5 * this.VGAP, .5 * this.HGAP)
       .appendTo(this.SVG);
     return box;
   }
@@ -235,11 +235,11 @@ var FamilyViz = function() {
 
   this.cmgm = 1;
   this.cmgf = 2;
-  this.cpgm = 4;
-  this.cpgf = 5;
+  this.cpgm = 3;
+  this.cpgf = 4;
   this.cm = 1.5;
-  this.cf = 4.5;
-  this.cfocus = 3;
+  this.cf = 3.5;
+  this.cfocus = 2.5;
 
   this.p_mgp = [];
   this.p_pgp = [];

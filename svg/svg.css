@@ -6,8 +6,8 @@
 
 .drawfocus {
   fill:white;
-  stroke-width:2;
-  stroke: green;
+  stroke-width:4;
+  stroke:rgb(0,0,0);
 }
 
 .wrap {
@@ -21,14 +21,13 @@ g:hover .draw, g:hover .drawfocus, g:hover .focus {
 .text, .focustext, .ftext {
   xfill:red;
   stroke-width:0;
-  font-size: .6em;
+  font-size: .8em;
 }
 
 .link {
   fill:blue;
   stroke-width:0;
-  font-size: .6em;
-  text-decoration: underline;
+  font-size: .8em;
 }
 
 .link:hover {
@@ -45,4 +44,9 @@ g:hover .draw, g:hover .drawfocus, g:hover .focus {
 
 div.dir {
   margin-bottom: 10px;
+}
+
+svg {
+  margin: 10px;
+  overflow: scroll;
 }
