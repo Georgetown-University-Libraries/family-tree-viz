@@ -19,9 +19,9 @@
 }
 
 .text, .focustext, .ftext {
-  stroke:red;
+  fill:red;
+  stroke-width:0;
   font-size: .8em;
-  font-weight: lighter;
 }
 
 .focus, .ftext {
