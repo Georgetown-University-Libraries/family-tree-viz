@@ -40,6 +40,9 @@ function initDiagram(fperson, fcopar){
   if (!fperson) return false;
   var family = new FamilyViz();
 
+  mom = fperson;
+  dad = fcopar;
+
   var childsets = fperson.getChildSets();
   var copars = fperson.coparents;
 
@@ -49,8 +52,8 @@ function initDiagram(fperson, fcopar){
     for(var i=0; i<children.length; i++) {
       family.addChild(children[i]);
     }
-    var mom = children[0].parents.length > 0 ? children[0].parents[0] : null;
-    var dad = children[0].parents.length > 1 ? children[0].parents[1] : null;
+    mom = children[0].parents.length > 0 ? children[0].parents[0] : null;
+    dad = children[0].parents.length > 1 ? children[0].parents[1] : null;
     if (mom) {
       family.setMother(mom);
       var msibs = mom.getSiblings();
@@ -82,9 +85,6 @@ function initDiagram(fperson, fcopar){
       }
     }
   } else {
-    var mom = fperson;
-    var dad = fcopar;
-
     family.setMother(mom);
     var msibs = mom.getSiblings();
     for(var i=0; i<msibs.length; i++) {
