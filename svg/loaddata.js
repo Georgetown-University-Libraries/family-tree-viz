@@ -48,6 +48,10 @@ function initDiagram(fperson, fcopar){
 
   var children = fcopar ? fperson.getChildSet(fcopar) : childsets[0];
 
+  if (children == null) {
+    children = [];
+  }
+
   if (children.length > 0) {
     for(var i=0; i<children.length; i++) {
       family.addChild(children[i]);
