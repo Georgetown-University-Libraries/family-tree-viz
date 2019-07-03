@@ -69,13 +69,18 @@ var Box = function(svgHelper, r, c) {
   }
 
   this.drawText = function(label, tclass, line) {
-    return this.svgHelper.makeSvgEl("text")
+    var shape = this.svgHelper.makeSvgEl("text")
       .attr("height", (this.getHeight() - 2 * this.svgHelper.LINEOFF) / this.svgHelper.LINES)
       .attr("width", this.getWidth())
       .attr("x", this.getTextX())
       .attr("y", this.getTextY() - this.getHeight() + line * ((this.getHeight() - 2 * this.svgHelper.LINEOFF) / this.svgHelper.LINES) + this.svgHelper.LINEOFF)
       .text(label)
       .addClass(tclass ? tclass : "text");
+    if (this.svgHelper.addTabIndex) {
+      shape
+        .attr("tabindex", this.svgHelper.tabindex++);
+    }
+    return shape;
   }
 }
 
@@ -146,13 +151,18 @@ var Circle = function(svgHelper, r, c) {
 
   this.drawText = function(label, pos) {
     var y = this.getTextY() + (this.getHeight() * (.25 * pos));
-    return this.svgHelper.makeSvgEl("text")
+    var shape = this.svgHelper.makeSvgEl("text")
       .attr("height", this.getHeight() * .25)
       .attr("width", this.getHeight())
       .attr("x", this.getTextX())
       .attr("y", y)
       .text(label)
       .addClass("circletext");
+    if (this.svgHelper.addTabIndex) {
+      shape
+        .attr("tabindex", this.svgHelper.tabindex++);
+    }
+    return shape;
   }
 }
 
@@ -165,6 +175,8 @@ var SvgHelper = function() {
   this.HGAP=40;
   this.VGAP=32;
   this.TOFF = 5;
+  this.tabindex = 0;
+  this.addTabIndex = false;
   this.makeSvgEl = function(tag) {
     return $(document.createElementNS('http://www.w3.org/2000/svg', tag));
   }

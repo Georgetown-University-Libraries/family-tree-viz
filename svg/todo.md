@@ -13,12 +13,16 @@
     - retaining 3 lines
   - ~thicken focus box~
 - Navigation
-  - Focus on line 2
-  - Show alternate relationships next to focus coparents
-  - Illustrate spouses w/o children
+  - ~Focus on line 2~
+  - ~Show alternate relationships next to focus coparents~
+  - ~Illustrate spouses w/o children~
 - Other viz
   - vessel and location
   - assertion timelines
 - Accessibility
   - add semantic hints to Svg
-  - set tab control or keyboard shortcuts to items
+  - ~set tab control or keyboard shortcuts to items~
+- Refactor
+  - Common logic to Circle and box
+  - Enums for coordinates
+  - Move more parental calls to Person object
