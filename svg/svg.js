@@ -107,7 +107,7 @@ var Circle = function(svgHelper, r, c) {
   }
 
   this.getRight = function() {
-    return this.getLeft() + this.svgHelper.WIDTH;
+    return this.getLeft() + this.svgHelper.HEIGHT;
   }
 
   this.setCellHeight = function(x) {
@@ -144,14 +144,15 @@ var Circle = function(svgHelper, r, c) {
     return this.getMidVertical();
   }
 
-  this.drawText = function(label) {
+  this.drawText = function(label, pos) {
+    var y = this.getTextY() + (this.getHeight() * (.25 * pos));
     return this.svgHelper.makeSvgEl("text")
-      .attr("height", this.getHeight() / 2)
+      .attr("height", this.getHeight() * .25)
       .attr("width", this.getHeight())
       .attr("x", this.getTextX())
-      .attr("y", this.getTextY())
+      .attr("y", y)
       .text(label)
-      .addClass("text");
+      .addClass("circletext");
   }
 }
 
@@ -200,10 +201,12 @@ var SvgHelper = function() {
     var circle = new Circle(this, r, c);
     var scircle = circle.drawCircle()
       .appendTo(g);
-    circle.drawText(copar ? copar.getName(1) : "Undefined", "smalltext", 1)
+    circle.drawText("Children with", 0)
+      .appendTo(g);
+    circle.drawText(copar ? copar.getName(1) : "Undefined", 1)
       .appendTo(g);
     g.children().on("click", function(){
-      location.hash = person.id + (copar ? "-" + coparid : "");
+      location.hash = person.id + (copar ? "-" + copar.id : "");
       location.reload();
     });
     return circle;
@@ -293,6 +296,35 @@ var SvgHelper = function() {
       .addClass("draw")
       .appendTo(this.SVG);
   }
+
+  this.lsideconnect = function(b1, b2) {
+    var y1 = b1.getMidVertical()
+    var x1 = b1.getLeft()
+    var y2 = b2.getMidVertical();
+    var x2 = b2.getRight()
+    this.makeSvgEl("line")
+      .attr("x1", x1)
+      .attr("y1", y1)
+      .attr("x2", x2)
+      .attr("y2", y2)
+      .addClass("draw")
+      .appendTo(this.SVG);
+  }
+
+  this.rsideconnect = function(b1, b2) {
+    var y1 = b1.getMidVertical()
+    var x1 = b1.getRight()
+    var y2 = b2.getMidVertical();
+    var x2 = b2.getLeft()
+    this.makeSvgEl("line")
+      .attr("x1", x1)
+      .attr("y1", y1)
+      .attr("x2", x2)
+      .attr("y2", y2)
+      .addClass("draw")
+      .appendTo(this.SVG);
+  }
+
 }
 
 var FamilyViz = function() {
@@ -367,9 +399,11 @@ var FamilyViz = function() {
       }
     }
 
+    var m = null;
+    var f = null;
     if (this.p_m) {
       svgHelp.drawWrapBox(this.rp, this.cm, 1 + this.p_msib.length, 1);
-      var m = svgHelp.drawBox(this.rp, this.cm, this.p_m, "drawfocus");
+      m = svgHelp.drawBox(this.rp, this.cm, this.p_m, "drawfocus");
       for(var i=0; i < this.p_msib.length; i++) {
         svgHelp.drawBox(this.rp + i + 1, this.cm, this.p_msib[i]);
       }
@@ -385,19 +419,21 @@ var FamilyViz = function() {
         svgHelp.connect(mgp, m);
       }
       for(var i=0; i< this.p_m_altpar.length; i++) {
-        var pgp = svgHelp.drawCircle(this.rp+i, this.cm-.5, this.p_m_altpar[i]);
-        //svgHelp.connect(pgp, f);
+        var altp = svgHelp.drawCircle(this.rp+i, this.cm-.5, this.p_m, this.p_m_altpar[i]);
+        svgHelp.rsideconnect(altp, m);
       }
     }
 
     if (this.p_f) {
       svgHelp.drawWrapBox(this.rp, this.cf, 1 + this.p_psib.length, 1);
-      var f = svgHelp.drawBox(this.rp, this.cf, this.p_f, "drawfocus");
+      f = svgHelp.drawBox(this.rp, this.cf, this.p_f, "drawfocus");
       for(var i=0; i < this.p_psib.length; i++) {
         svgHelp.drawBox(this.rp + i + 1, this.cf, this.p_psib[i]);
       }
       if (focus) {
         svgHelp.lconnect(f, focus);
+      } else if (m) {
+        svgHelp.lsideconnect(f, m);
       }
       if (this.p_pgp.length > 0) {
         var pgp = svgHelp.drawBox(this.rgp, this.cpgm, this.p_pgp[0]);
@@ -408,21 +444,9 @@ var FamilyViz = function() {
         svgHelp.connect(pgp, f);
       }
       for(var i=0; i< this.p_f_altpar.length; i++) {
-        var pgp = svgHelp.drawCircle(this.rp+i, this.cf+.5, this.p_f_altpar[i]);
-        //svgHelp.connect(pgp, f);
+        var altp = svgHelp.drawCircle(this.rp+i, this.cf+1, this.p_f, this.p_f_altpar[i]);
+        svgHelp.lsideconnect(altp, f);
       }
     }
-
-    /*
-    var childsets = this.p_focus.getChildSets();
-    var coparents = this.p_focus.getCoparents();
-    for (var i=0; i < coparents.length; i++) {
-      var cop = coparents[i];
-      var cs = childsets[i];
-      var pre = cs.length == 1 ? "1 child with " : cs.length + " children with ";
-      var name = cop ? cop.name : "Undefined";
-      var pgp = svgHelp.drawFocusBox(this.rfocus + i + 1, this.cfocus, cs[0], [pre, name]);
-    }
-    */
   }
 }

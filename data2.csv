@@ -204,6 +204,8 @@ Id,Relation,Id2
 41,Spouse Of,45
 41,Spouse Of,46
 42,Spouse Of,46
+44,Spouse Of,66
+66,Spouse Of,44
 #
 1,Parent Of,65
 1,Parent Of,66

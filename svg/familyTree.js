@@ -312,10 +312,19 @@ var FamilyTree = function() {
     return null;
   }
   this.getPersonFromHash = function() {
-    var cid = location.hash.replace("#","");
-    if ($.isNumeric(cid)){
-      cid = Number(cid);
-      return this.getPerson(cid);
+    var hash = location.hash.replace("#","");
+    var m = /^(\d+)(-\d+)?$/.exec(hash);
+    if (m) {
+      return this.getPerson(m[1]);
+    }
+    return null;
+  }
+
+  this.getCoparentFromHash = function() {
+    var hash = location.hash.replace("#","");
+    var m = /^\d+-(\d+)?$/.exec(hash);
+    if (m) {
+      return this.getPerson(m[1]);
     }
     return null;
   }

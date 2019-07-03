@@ -12,7 +12,7 @@ function init(){
       var json = jsyaml.load(data);
       var familyTree = new FamilyTree();
       familyTree.processJsonInputData(json);
-      if (!initDiagram(familyTree.getPersonFromHash())) {
+      if (!initDiagram(familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
         showDirectory(familyTree);
       }
     }, "text");
@@ -20,7 +20,7 @@ function init(){
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processDrupalInputData(data);
-      if (!initDiagram(familyTree.getPersonFromHash())) {
+      if (!initDiagram(familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
         showDirectory(familyTree);
       }
     }, "json");
@@ -28,7 +28,7 @@ function init(){
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processCsvInputData(data);
-      if (!initDiagram(familyTree.getPersonFromHash())) {
+      if (!initDiagram(familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
         showDirectory(familyTree);
       }
     }, "text");
@@ -82,25 +82,36 @@ function initDiagram(fperson, fcopar){
       }
     }
   } else {
-    family.setMother(fperson);
-    var msibs = fperson.getSiblings();
+    var mom = fperson;
+    var dad = fcopar;
+
+    family.setMother(mom);
+    var msibs = mom.getSiblings();
     for(var i=0; i<msibs.length; i++) {
       family.addMaternalSibling(msibs[i]);
     }
-    var pars = fperson.parents;
+    var pars = mom.parents;
     for(var i=0; i<pars.length; i++) {
       family.addMaternalGP(pars[i]);
     }
+    pars = mom.getAltParents(dad);
+    for(var i=0; i<pars.length; i++) {
+      family.addMaternalAltPar(pars[i]);
+    }
 
-    if (fcopar) {
-      family.setFather(fcopar);
-      var msibs = copar.getSiblings();
+    if (dad) {
+      family.setFather(dad);
+      var msibs = dad.getSiblings();
       for(var i=0; i<msibs.length; i++) {
         family.addPaternalSibling(msibs[i]);
       }
-      var pars = fcopar.parents;
+      var pars = dad.parents;
       for(var i=0; i<pars.length; i++) {
         family.addPaternalGP(pars[i]);
+      }
+      pars = dad.getAltParents(mom);
+      for(var i=0; i<pars.length; i++) {
+        family.addPaternalAltPar(pars[i]);
       }
     }
   }
