@@ -93,6 +93,17 @@ var Person = function(id, name, link) {
     return [];
   }
 
+  this.getAltParents = function(coparent) {
+    this.makeChildSets();
+    var arr = [];
+    for(var i=0; i<this.coparents.length; i++) {
+      if (this.coparents[i] != coparent) {
+        arr.push(this.coparents[i]);
+      }
+    }
+    return arr;
+  }
+
   this.makeChildSets = function() {
     if (this.childsets != null) {
       return;

@@ -44,12 +44,6 @@ function initDiagram(fperson, fcopar){
   var copars = fperson.coparents;
 
   var children = fcopar ? fperson.getChildSet(fcopar) : childsets[0];
-  if (childsets.length > 1) {
-    for(var i=0; i<childsets.length; i++) {
-      if (childsets[i] == children) continue;
-      family.addAltPar(copars[i]);
-    }
-  }
 
   if (children.length > 0) {
     for(var i=0; i<children.length; i++) {
@@ -67,6 +61,10 @@ function initDiagram(fperson, fcopar){
       for(var i=0; i<pars.length; i++) {
         family.addMaternalGP(pars[i]);
       }
+      pars = mom.getAltParents(dad);
+      for(var i=0; i<pars.length; i++) {
+        family.addMaternalAltPar(pars[i]);
+      }
     }
     if (dad) {
       family.setFather(dad);
@@ -77,6 +75,10 @@ function initDiagram(fperson, fcopar){
       var pars = dad.parents;
       for(var i=0; i<pars.length; i++) {
         family.addPaternalGP(pars[i]);
+      }
+      pars = dad.getAltParents(mom);
+      for(var i=0; i<pars.length; i++) {
+        family.addPaternalAltPar(pars[i]);
       }
     }
   } else {

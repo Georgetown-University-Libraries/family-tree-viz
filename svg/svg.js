@@ -79,6 +79,82 @@ var Box = function(svgHelper, r, c) {
   }
 }
 
+var Circle = function(svgHelper, r, c) {
+  this.svgHelper = svgHelper;
+  this.r = r;
+  this.c = c;
+  this.cellWidth = 1;
+  this.cellHeight = 1;
+
+  this.getTop = function() {
+    return (this.r - 1) * (this.svgHelper.HEIGHT + this.svgHelper.VGAP);
+  }
+
+  this.getBottom = function() {
+    return this.getTop() + this.svgHelper.HEIGHT;
+  }
+
+  this.getMidVertical = function() {
+    return this.getTop() + (.5 * this.svgHelper.HEIGHT);
+  }
+
+  this.getLeft = function() {
+    return (this.c - 1) * (this.svgHelper.WIDTH + this.svgHelper.HGAP);
+  }
+
+  this.getMidHorizontal = function() {
+    return this.getLeft() + (.5 * this.svgHelper.WIDTH);
+  }
+
+  this.getRight = function() {
+    return this.getLeft() + this.svgHelper.WIDTH;
+  }
+
+  this.setCellHeight = function(x) {
+    this.cellHeight = x;
+  }
+
+  this.setCellWidth = function(x) {
+    this.cellWidth = x;
+  }
+
+  this.getHeight = function() {
+    return this.cellHeight * this.svgHelper.HEIGHT + (this.cellHeight - 1) * this.svgHelper.VGAP;
+  }
+
+  this.getWidth = function() {
+    return this.cellWidth * this.svgHelper.WIDTH + (this.cellWidth - 1) * this.svgHelper.HGAP;
+  }
+
+  this.drawCircle = function(bclass){
+    var y = this.getTop() + this.getHeight() / 2 + 2;
+    var x = this.getLeft() + this.getHeight() / 2 + 2;
+    return this.svgHelper.makeSvgEl("circle")
+      .attr("r", this.getHeight() / 2)
+      .attr("cx", x)
+      .attr("cy", y)
+      .addClass("draw");
+  }
+
+  this.getTextX = function() {
+    return this.getLeft() + this.svgHelper.TOFF;
+  }
+
+  this.getTextY = function() {
+    return this.getMidVertical();
+  }
+
+  this.drawText = function(label) {
+    return this.svgHelper.makeSvgEl("text")
+      .attr("height", this.getHeight() / 2)
+      .attr("width", this.getHeight())
+      .attr("x", this.getTextX())
+      .attr("y", this.getTextY())
+      .text(label)
+      .addClass("text");
+  }
+}
+
 var SvgHelper = function() {
   this.LINES = 3;
   this.LINEOFF = 2;
@@ -119,18 +195,20 @@ var SvgHelper = function() {
     return box;
   }
 
-  this.drawFocusBox = function(r, c, person, arr) {
-    var box = new Box(this, r, c);
+  this.drawCircle = function(r, c, person, copar) {
     var g = this.makeSvgEl("g").appendTo(this.SVG);
-    var sbox = box.drawBox("focus").appendTo(g);
-    box.drawText(arr[0], "ftext", 1).appendTo(g);
-    box.drawText(arr[1], "ftext", 2).appendTo(g);
-    sbox.on("click", function(){
-      location.hash = person.id;
+    var circle = new Circle(this, r, c);
+    var scircle = circle.drawCircle()
+      .appendTo(g);
+    circle.drawText(copar ? copar.getName(1) : "Undefined", "smalltext", 1)
+      .appendTo(g);
+    g.children().on("click", function(){
+      location.hash = person.id + (copar ? "-" + coparid : "");
       location.reload();
     });
-    return box;
+    return circle;
   }
+
   this.drawWrapBox = function(r, c, rh, cw) {
     var box = new Box(this, r, c);
     box.setCellHeight(rh);
@@ -237,7 +315,8 @@ var FamilyViz = function() {
   this.p_sib = [];
   this.p_msib = [];
   this.p_psib = [];
-  this.p_altpar = [];
+  this.p_m_altpar = [];
+  this.p_f_altpar = [];
 
   this.setMother = function(p) {
     this.p_m = p;
@@ -267,8 +346,12 @@ var FamilyViz = function() {
     this.p_pgp.push(p);
     return this;
   }
-  this.addAltPar = function(p) {
-    this.p_altpar.push(p);
+  this.addMaternalAltPar = function(p) {
+    this.p_m_altpar.push(p);
+    return this;
+  }
+  this.addPaternalAltPar = function(p) {
+    this.p_f_altpar.push(p);
     return this;
   }
 
@@ -301,6 +384,10 @@ var FamilyViz = function() {
         var mgp = svgHelp.drawBox(this.rgp, this.cmgf, this.p_mgp[1]);
         svgHelp.connect(mgp, m);
       }
+      for(var i=0; i< this.p_m_altpar.length; i++) {
+        var pgp = svgHelp.drawCircle(this.rp+i, this.cm-.5, this.p_m_altpar[i]);
+        //svgHelp.connect(pgp, f);
+      }
     }
 
     if (this.p_f) {
@@ -319,6 +406,10 @@ var FamilyViz = function() {
       if (this.p_pgp.length > 1) {
         var pgp = svgHelp.drawBox(this.rgp, this.cpgf, this.p_pgp[1]);
         svgHelp.connect(pgp, f);
+      }
+      for(var i=0; i< this.p_f_altpar.length; i++) {
+        var pgp = svgHelp.drawCircle(this.rp+i, this.cf+.5, this.p_f_altpar[i]);
+        //svgHelp.connect(pgp, f);
       }
     }
 
