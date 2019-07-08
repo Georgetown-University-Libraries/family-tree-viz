@@ -41,6 +41,12 @@ function init(){
 
 }
 
+var peopleSort = function(a, b){
+  var x = a.birth - b.birth;
+  x = (x == 0) ? a.id - b.id : x;
+  return x;
+}
+
 function initDiagram(fperson, fcopar){
   if (!fperson) return false;
   var family = new FamilyViz();
@@ -49,6 +55,11 @@ function initDiagram(fperson, fcopar){
   var copars = fperson.coparents;
 
   var children = fcopar ? fperson.getChildSet(fcopar) : childsets[0];
+  if (children == null) {
+    children = [];
+  }
+
+  chilren = children.sort(peopleSort);
 
   var mom = null;
   var dad = null;
@@ -81,10 +92,6 @@ function initDiagram(fperson, fcopar){
     dad = fcopar;
   }
 
-  if (children == null) {
-    children = [];
-  }
-
   if (children.length > 0) {
     for(var i=0; i<children.length; i++) {
       family.addChild(children[i]);
@@ -92,7 +99,7 @@ function initDiagram(fperson, fcopar){
   }
   if (mom != null) {
     family.setMother(mom);
-    var msibs = mom.getSiblings();
+    var msibs = mom.getSiblings().sort(peopleSort);
     for(var i=0; i<msibs.length; i++) {
       family.addMaternalSibling(msibs[i]);
     }
@@ -102,14 +109,14 @@ function initDiagram(fperson, fcopar){
     if (mom.getDad()) {
       family.setMaternalGF(mom.getDad());
     }
-    var pars = mom.getAltParents(dad);
+    var pars = mom.getAltParents(dad).sort(peopleSort);;
     for(var i=0; i<pars.length; i++) {
       family.addMaternalAltPar(pars[i]);
     }
   }
   if (dad) {
     family.setFather(dad);
-    var psibs = dad.getSiblings();
+    var psibs = dad.getSiblings().sort(peopleSort);
     for(var i=0; i<psibs.length; i++) {
       family.addPaternalSibling(psibs[i]);
     }
@@ -119,7 +126,7 @@ function initDiagram(fperson, fcopar){
     if (dad.getDad()) {
       family.setPaternalGF(dad.getDad());
     }
-    var pars = dad.getAltParents(mom);
+    var pars = dad.getAltParents(mom).sort(peopleSort);
     for(var i=0; i<pars.length; i++) {
       family.addPaternalAltPar(pars[i]);
     }

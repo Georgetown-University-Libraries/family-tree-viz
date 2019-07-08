@@ -18,9 +18,9 @@ Id,Name,Link,Gender,Birth,Death
 14,A7F,nolink,F
 15,A8M,nolink,M
 16,A8F,nolink,F
-17,B1,nolink,F
-18,B2,nolink,M
-19,B3,nolink,F
+17,B1,nolink,F,1755,1833
+18,B2,nolink,M,1754,1834
+19,B3,nolink,F,1753,1833
 20,C1,nolink,M
 21,C2,nolink,F
 22,C3,nolink,M
@@ -42,9 +42,9 @@ Id,Name,Link,Gender,Birth,Death
 38,I1,nolink,M
 39,I2,nolink,F
 30,I3,nolink,M
-41,BC1,nolink,F
-42,BC2,nolink,M
-43,BC3,nolink,F
+41,BC1,nolink,F,1820,1844
+42,BC2,nolink,M,1810,1877
+43,BC3,nolink,F,1814,1866
 44,DE1,nolink,M
 45,DE2,nolink,F
 46,DE3,nolink,M
@@ -60,14 +60,14 @@ Id,Name,Link,Gender,Birth,Death
 56,FGHI1,nolink,M
 57,FGHI2,nolink,F
 58,FGHI3,nolink,M
-59,X1,nolink,F
-60,X2,nolink,M
-61,X3,nolink,F
-62,X4,nolink,M
-63,X5,nolink,F
-64,X6,nolink,M
-65,B1A,nolink,F
-66,B1B,nolink,M
+59,X1,nolink,F,1950
+60,X2,nolink,M,1940
+61,X3,nolink,F,1960
+62,X4,nolink,M,1960
+63,X5,nolink,F,1940
+64,X6,nolink,M,1950
+65,B1A,nolink,F,1948
+66,B1B,nolink,M,1947
 
 # A new header starts after a blank line
 Id,Relation,Id2
