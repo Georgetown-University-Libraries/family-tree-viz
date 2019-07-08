@@ -1,7 +1,7 @@
 # This is a very simplistic CSV file currently
 # No embedded commas supported in fields
 # Indicates a comment
-Id,Name,Link
+Id,Name,Link,Gender,Birth,Death
 1,Homer Simpson,nolink,M,1960,
 2,Marge Simpson,nolink,F,1960,
 3,Bart Simpson,nolink,M,1980,
