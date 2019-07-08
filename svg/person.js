@@ -34,17 +34,35 @@ var Person = function(id, name, link) {
   }
 
   this.getMom = function() {
-    if (this.parents.length > 0) {
-      return this.parents[0];
+    var p1 = null;
+    for (var i=0; i < this.parents.length; i++) {
+      var p = this.parents[i];
+      if (p.isFemale()) {
+        return p;
+      } else if (p.isGenderUnknown() && p1 == null) {
+        p1 = p;
+      }
     }
-    return null;
+    return p1;
   }
   this.getDad = function() {
-    if (this.parents.length > 1) {
-      return this.parents[1];
+    var p1 = null;
+    var skippedFirst = false;
+    for (var i=0; i < this.parents.length; i++) {
+      var p = this.parents[i];
+      if (p.isMale()) {
+        return p;
+      } else if (p.isGenderUnknown()) {
+        if (skippedFirst) {
+          return p1 = p;
+        } else {
+          skippedFirst = true;
+        }
+      }
     }
-    return null;
+    return p1;
   }
+
   this.getSiblings = function() {
     var mch = (this.getMom()) ? this.getMom().children : [];
     var fch = (this.getDad()) ? this.getDad().children : [];
@@ -160,6 +178,18 @@ var Person = function(id, name, link) {
     } else {
       this.gender = "?";
     }
+  }
+
+  this.isMale = function() {
+    return this.gender == "♂";
+  }
+
+  this.isFemale = function() {
+    return this.gender == "♀";
+  }
+
+  this.isGenderUnknown = function() {
+    return this.gender == "?";
   }
 
   this.setBirthYear = function(d) {

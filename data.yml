@@ -1,35 +1,61 @@
 People:
 - Id: 1
   Name: Homer Simpson
+  Gender: M
+  Birth: 1960
   Children: [3,4,5]
   Spouse: [2]
 - Id: 2
   Name: Marge Simpson
+  Gender: F
+  Birth: 1960
   Children: [3,4,5]
 - Id: 3
   Name: Bart Simpson
+  Gender: M
+  Birth: 1980
 - Id: 4
   Name: Lisa Simpson
+  Gender: F
+  Birth: 1982
 - Id: 5
   Name: Maggie Simpson
+  Gender: F
+  Birth: 1986
 - Id: 6
   Name: Grandpa Simpson
+  Gender: M
+  Birth: 1930
   Children: [1]
 - Id: 7
   Name: Patty Bouvier
+  Gender: F
+  Birth: 1957
 - Id: 8
   Name: Selma Bouvier
+  Gender: F
+  Birth: 1957
 - Id: 9
   Name: Mrs Bouvier
+  Gender: F
+  Birth: 1940
   Children: [2,7,8]
 - Id: 10
   Name: Ned Flanders
+  Gender: M
+  Birth: 1963
   Spouse: [11]
   Children: [12,13]
 - Id: 11
   Name: Maude Flanders
+  Gender: F
+  Birth: 1963
   Children: [12,13]
 - Id: 12
   Name: Rodd Flanders
+  Gender: M
+  Birth: 1981
 - Id: 13
   Name: Todd Flanders
+  Gender: M
+  Birth: 1983

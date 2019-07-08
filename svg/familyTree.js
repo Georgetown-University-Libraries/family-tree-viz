@@ -106,7 +106,17 @@ var FamilyTree = function() {
   this.processPeopleObject = function(cp, processObj) {
     if ((processObj) && (cp instanceof Object)) {
       var id = Number(cp.Id);
-      var p = new Person(id, cp.Name, this.BASEURL+cp.Link);
+      var link = cp.Link ? this.BASEURL + cp.Link : "";
+      var p = new Person(id, cp.Name, link);
+      if (cp.Gender) {
+        p.setGender(cp.Gender);
+      }
+      if (cp.Birth) {
+        p.setBirthYear(cp.Birth);
+      }
+      if (cp.Death) {
+        p.setDeathYear(cp.Death);
+      }
       this.People[id] = p;
 
       this.processChildArray(cp, p, processObj);

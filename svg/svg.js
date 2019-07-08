@@ -352,8 +352,10 @@ var FamilyViz = function() {
   this.cf = 3.5;
   this.cchild = 2.5;
 
-  this.p_mgp = [];
-  this.p_pgp = [];
+  this.p_mgm;
+  this.p_mgf;
+  this.p_pgm;
+  this.p_pgf;
   this.p_m;
   this.p_f;
   this.p_sib = [];
@@ -382,12 +384,20 @@ var FamilyViz = function() {
     this.p_psib.push(p);
     return this;
   }
-  this.addMaternalGP = function(p) {
-    this.p_mgp.push(p);
+  this.setMaternalGM = function(p) {
+    this.p_mgm = p;
     return this;
   }
-  this.addPaternalGP = function(p) {
-    this.p_pgp.push(p);
+  this.setMaternalGF = function(p) {
+    this.p_mgf = p;
+    return this;
+  }
+  this.setPaternalGM = function(p) {
+    this.p_pgm = p;
+    return this;
+  }
+  this.setPaternalGF = function(p) {
+    this.p_pgf = p;
     return this;
   }
   this.addMaternalAltPar = function(p) {
@@ -422,12 +432,12 @@ var FamilyViz = function() {
       if (focus) {
         svgHelp.rconnect(m, focus);
       }
-      if (this.p_mgp.length > 0) {
-        var mgp = svgHelp.drawBox(this.rgp, this.cmgm, this.p_mgp[0]);
+      if (this.p_mgm) {
+        var mgp = svgHelp.drawBox(this.rgp, this.cmgm, this.p_mgm);
         svgHelp.connect(mgp, m);
       }
-      if (this.p_mgp.length > 1) {
-        var mgp = svgHelp.drawBox(this.rgp, this.cmgf, this.p_mgp[1]);
+      if (this.p_mgf) {
+        var mgp = svgHelp.drawBox(this.rgp, this.cmgf, this.p_mgf);
         svgHelp.connect(mgp, m);
       }
       for(var i=0; i< this.p_m_altpar.length; i++) {
@@ -448,12 +458,12 @@ var FamilyViz = function() {
       } else if (m) {
         svgHelp.lsideconnect(f, m);
       }
-      if (this.p_pgp.length > 0) {
-        var pgp = svgHelp.drawBox(this.rgp, this.cpgm, this.p_pgp[0]);
+      if (this.p_pgm) {
+        var pgp = svgHelp.drawBox(this.rgp, this.cpgm, this.p_pgm);
         svgHelp.connect(pgp, f);
       }
-      if (this.p_pgp.length > 1) {
-        var pgp = svgHelp.drawBox(this.rgp, this.cpgf, this.p_pgp[1]);
+      if (this.p_pgf) {
+        var pgp = svgHelp.drawBox(this.rgp, this.cpgf, this.p_pgf);
         svgHelp.connect(pgp, f);
       }
       for(var i=0; i< this.p_f_altpar.length; i++) {
