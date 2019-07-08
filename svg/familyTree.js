@@ -93,6 +93,14 @@ var Person = function(id, name, link) {
     return [];
   }
 
+  this.childCountLabel = function(coparent) {
+    var arr = this.getChildSet(coparent);
+    if (arr.length == 1) {
+      return "1 Child with ";
+    }
+    return arr.length + " Children with ";
+  }
+
   this.getAltParents = function(coparent) {
     this.makeChildSets();
     var arr = [];

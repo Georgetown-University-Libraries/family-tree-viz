@@ -208,12 +208,12 @@ var SvgHelper = function() {
     return box;
   }
 
-  this.drawCircle = function(r, c, person, copar) {
+  this.drawCircle = function(r, c, person, copar, label) {
     var g = this.makeSvgEl("g").appendTo(this.SVG);
     var circle = new Circle(this, r, c);
     var scircle = circle.drawCircle()
       .appendTo(g);
-    circle.drawText("Children with", 0)
+    circle.drawText(label, 0)
       .appendTo(g);
     circle.drawText(copar ? copar.getName(1) : "Undefined", 1)
       .appendTo(g);
@@ -431,7 +431,8 @@ var FamilyViz = function() {
         svgHelp.connect(mgp, m);
       }
       for(var i=0; i< this.p_m_altpar.length; i++) {
-        var altp = svgHelp.drawCircle(this.rp+i, this.cm-.5, this.p_m, this.p_m_altpar[i]);
+        var altp = svgHelp.drawCircle(this.rp+i, this.cm-.5, this.p_m, this.p_m_altpar[i],
+          this.p_m.childCountLabel(this.p_m_altpar[i]));
         svgHelp.rsideconnect(altp, m);
       }
     }
@@ -456,7 +457,8 @@ var FamilyViz = function() {
         svgHelp.connect(pgp, f);
       }
       for(var i=0; i< this.p_f_altpar.length; i++) {
-        var altp = svgHelp.drawCircle(this.rp+i, this.cf+1, this.p_f, this.p_f_altpar[i]);
+        var altp = svgHelp.drawCircle(this.rp+i, this.cf+1, this.p_f, this.p_f_altpar[i],
+          this.p_f.childCountLabel(this.p_f_altpar[i]));
         svgHelp.lsideconnect(altp, f);
       }
     }
