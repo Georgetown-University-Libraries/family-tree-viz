@@ -1,147 +1,3 @@
-var Person = function(id, name, link) {
-  this.id = id;
-  this.name = name;
-  this.link = link;
-  this.children = [];
-  this.parents = [];
-  this.spouses = [];
-  this.refcount = 0;
-  this.coparents = null;
-  this.childsets = null;
-  this.node;
-
-  this.getName = function(line) {
-    if (line == 1) {
-      return this.name;
-    }
-    var name = "♂♀ (1800-1900)";
-    if (this.children.length > 0) {
-      name += "*";
-    }
-    return name;
-  }
-
-  this.getMom = function() {
-    if (this.parents.length > 0) {
-      return this.parents[0];
-    }
-    return null;
-  }
-  this.getDad = function() {
-    if (this.parents.length > 1) {
-      return this.parents[1];
-    }
-    return null;
-  }
-  this.getSiblings = function() {
-    var mch = (this.getMom()) ? this.getMom().children : [];
-    var fch = (this.getDad()) ? this.getDad().children : [];
-    var sibs = [];
-    if (this.getMom() && this.getDad()) {
-      for(var i=0; i < mch.length; i++) {
-        var ms = mch[i];
-        if (!ms) continue;
-        if (ms.id == this.id) continue;
-        if (fch.indexOf(ms) > -1) {
-          sibs.push(ms);
-        }
-      }
-    } else if (this.getMom()) {
-      for(var i=0; i < mch.length; i++) {
-        var ms = mch[i];
-        if (!ms) continue;
-        if (ms.id == this.id) continue;
-        sibs.push(ms);
-      }
-    } else if (this.getDad()){
-      for(var i=0; i < fch.length; i++) {
-        var ms = fch[i];
-        if (!ms) continue;
-        if (ms.id == this.id) continue;
-        sibs.push(ms);
-      }
-    }
-    return sibs;
-  }
-
-  this.getAltParent = function(p) {
-    if (!p) return null;
-    for(var i=0; i < this.parents.length; i++) {
-      if (this.parents[i].id != p.id) {
-        return this.parents[i];
-      }
-    }
-    return null;
-  }
-
-  this.getChildSets = function() {
-    this.makeChildSets();
-    return this.childsets;
-  }
-
-  this.getCoparents = function() {
-    this.makeChildSets();
-    return this.coparents;
-  }
-
-  this.getChildSet = function(coparent) {
-    this.makeChildSets();
-    var i = this.coparents.indexOf(coparent);
-    if (i > -1) {
-      return this.childsets[i];
-    }
-    return [];
-  }
-
-  this.childCountLabel = function(coparent) {
-    var arr = this.getChildSet(coparent);
-    if (arr.length == 1) {
-      return "1 Child with ";
-    }
-    return arr.length + " Children with ";
-  }
-
-  this.getAltParents = function(coparent) {
-    this.makeChildSets();
-    var arr = [];
-    for(var i=0; i<this.coparents.length; i++) {
-      if (this.coparents[i] != coparent) {
-        arr.push(this.coparents[i]);
-      }
-    }
-    return arr;
-  }
-
-  this.makeChildSets = function() {
-    if (this.childsets != null) {
-      return;
-    }
-    this.coparents = [];
-    this.childsets = [];
-    for(var i=0; i<this.children.length; i++) {
-      var c = this.children[i];
-      if (!c) continue;
-      var p = c.getAltParent(this);
-      var found = false;
-      if (this.coparents.indexOf(p) == -1) {
-        this.coparents.push(p);
-        this.childsets.push([]);
-      }
-      var j = this.coparents.indexOf(p);
-      this.childsets[j].push(c);
-    }
-    for(var i=0; i<this.spouses.length; i++) {
-      var s = this.spouses[i];
-      if (!s) continue;
-      if (this.coparents.indexOf(s) == -1) {
-        this.coparents.push(s);
-        this.childsets.push([]);
-      }
-    }
-  }
-}
-
-
 var FamilyTree = function() {
   this.BASEURL = ""; //Set this to the base url for links
   this.People = [];
@@ -195,6 +51,15 @@ var FamilyTree = function() {
         if (cols.length > 2) {
           var id = Number(cols[0]);
           this.People[id] = new Person(id, cols[1], this.BASEURL+cols[2]);
+          if (cols.length > 3) {
+            this.People[id].setGender(cols[3]);
+          }
+          if (cols.length > 4) {
+            this.People[id].setBirthYear(cols[4]);
+          }
+          if (cols.length > 5) {
+            this.People[id].setDeathYear(cols[5]);
+          }
         }
       } else if (cols.length > 2){
         var p = this.People[cols[0]];

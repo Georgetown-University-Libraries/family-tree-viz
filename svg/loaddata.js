@@ -1,9 +1,14 @@
+var familyTree;
+
 function dofocus(cid) {
   location.hash = (cid) ? cid : "";
   location.reload();
 }
 
-var familyTree;
+$(document).ready(function(){
+  init();
+});
+
 function init(){
   var params = (new URL(document.location)).searchParams;
   var doc = params.get("doc") ? params.get("doc") : "../data.csv";
@@ -122,10 +127,6 @@ function initDiagram(fperson, fcopar){
   family.draw();
   return true;
 }
-
-$(document).ready(function(){
-  init();
-});
 
 function showDirectory(familyTree) {
   $("#svg").hide();
