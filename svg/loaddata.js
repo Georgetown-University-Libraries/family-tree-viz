@@ -12,7 +12,7 @@ function init(){
       var json = jsyaml.load(data);
       var familyTree = new FamilyTree();
       familyTree.processJsonInputData(json);
-      if (!initDiagram(familyTree.getPersonFromHash())) {
+      if (!initDiagram(familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
         showDirectory(familyTree);
       }
     }, "text");
@@ -20,7 +20,7 @@ function init(){
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processDrupalInputData(data);
-      if (!initDiagram(familyTree.getPersonFromHash())) {
+      if (!initDiagram(familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
         showDirectory(familyTree);
       }
     }, "json");
@@ -28,7 +28,7 @@ function init(){
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processCsvInputData(data);
-      if (!initDiagram(familyTree.getPersonFromHash())) {
+      if (!initDiagram(familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
         showDirectory(familyTree);
       }
     }, "text");
@@ -36,17 +36,59 @@ function init(){
 
 }
 
-function initDiagram(person){
-  if (!person) return false;
+function initDiagram(fperson, fcopar){
+  if (!fperson) return false;
   var family = new FamilyViz();
-  family.setFocus(person);
-  var mom = person.parents.length > 0 ? person.parents[0] : null;
-  var dad = person.parents.length > 1 ? person.parents[1] : null;
-  var sibs = person.getSiblings();
-  for(var i=0; i<sibs.length; i++) {
-    family.addSibling(sibs[i]);
+
+  mom = fperson;
+  dad = fcopar;
+
+  var childsets = fperson.getChildSets();
+  var copars = fperson.coparents;
+
+  var children = fcopar ? fperson.getChildSet(fcopar) : childsets[0];
+
+  if (children == null) {
+    children = [];
   }
-  if (mom) {
+
+  if (children.length > 0) {
+    for(var i=0; i<children.length; i++) {
+      family.addChild(children[i]);
+    }
+    mom = children[0].parents.length > 0 ? children[0].parents[0] : null;
+    dad = children[0].parents.length > 1 ? children[0].parents[1] : null;
+    if (mom) {
+      family.setMother(mom);
+      var msibs = mom.getSiblings();
+      for(var i=0; i<msibs.length; i++) {
+        family.addMaternalSibling(msibs[i]);
+      }
+      var pars = mom.parents;
+      for(var i=0; i<pars.length; i++) {
+        family.addMaternalGP(pars[i]);
+      }
+      pars = mom.getAltParents(dad);
+      for(var i=0; i<pars.length; i++) {
+        family.addMaternalAltPar(pars[i]);
+      }
+    }
+    if (dad) {
+      family.setFather(dad);
+      var psibs = dad.getSiblings();
+      for(var i=0; i<psibs.length; i++) {
+        family.addPaternalSibling(psibs[i]);
+      }
+      var pars = dad.parents;
+      for(var i=0; i<pars.length; i++) {
+        family.addPaternalGP(pars[i]);
+      }
+      pars = dad.getAltParents(mom);
+      for(var i=0; i<pars.length; i++) {
+        family.addPaternalAltPar(pars[i]);
+      }
+    }
+  } else {
     family.setMother(mom);
     var msibs = mom.getSiblings();
     for(var i=0; i<msibs.length; i++) {
@@ -56,16 +98,25 @@ function initDiagram(person){
     for(var i=0; i<pars.length; i++) {
       family.addMaternalGP(pars[i]);
     }
-  }
-  if (dad) {
-    family.setFather(dad);
-    var psibs = dad.getSiblings();
-    for(var i=0; i<psibs.length; i++) {
-      family.addPaternalSibling(psibs[i]);
-    }
-    var pars = dad.parents;
+    pars = mom.getAltParents(dad);
     for(var i=0; i<pars.length; i++) {
-      family.addPaternalGP(pars[i]);
+      family.addMaternalAltPar(pars[i]);
+    }
+
+    if (dad) {
+      family.setFather(dad);
+      var msibs = dad.getSiblings();
+      for(var i=0; i<msibs.length; i++) {
+        family.addPaternalSibling(msibs[i]);
+      }
+      var pars = dad.parents;
+      for(var i=0; i<pars.length; i++) {
+        family.addPaternalGP(pars[i]);
+      }
+      pars = dad.getAltParents(mom);
+      for(var i=0; i<pars.length; i++) {
+        family.addPaternalAltPar(pars[i]);
+      }
     }
   }
   family.draw();

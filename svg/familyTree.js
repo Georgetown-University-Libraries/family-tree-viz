@@ -84,6 +84,34 @@ var Person = function(id, name, link) {
     return this.coparents;
   }
 
+  this.getChildSet = function(coparent) {
+    this.makeChildSets();
+    var i = this.coparents.indexOf(coparent);
+    if (i > -1) {
+      return this.childsets[i];
+    }
+    return [];
+  }
+
+  this.childCountLabel = function(coparent) {
+    var arr = this.getChildSet(coparent);
+    if (arr.length == 1) {
+      return "1 Child with ";
+    }
+    return arr.length + " Children with ";
+  }
+
+  this.getAltParents = function(coparent) {
+    this.makeChildSets();
+    var arr = [];
+    for(var i=0; i<this.coparents.length; i++) {
+      if (this.coparents[i] != coparent) {
+        arr.push(this.coparents[i]);
+      }
+    }
+    return arr;
+  }
+
   this.makeChildSets = function() {
     if (this.childsets != null) {
       return;
@@ -101,6 +129,14 @@ var Person = function(id, name, link) {
       }
       var j = this.coparents.indexOf(p);
       this.childsets[j].push(c);
+    }
+    for(var i=0; i<this.spouses.length; i++) {
+      var s = this.spouses[i];
+      if (!s) continue;
+      if (this.coparents.indexOf(s) == -1) {
+        this.coparents.push(s);
+        this.childsets.push([]);
+      }
     }
   }
 }
@@ -284,10 +320,19 @@ var FamilyTree = function() {
     return null;
   }
   this.getPersonFromHash = function() {
-    var cid = location.hash.replace("#","");
-    if ($.isNumeric(cid)){
-      cid = Number(cid);
-      return this.getPerson(cid);
+    var hash = location.hash.replace("#","");
+    var m = /^(\d+)(-\d+)?$/.exec(hash);
+    if (m) {
+      return this.getPerson(m[1]);
+    }
+    return null;
+  }
+
+  this.getCoparentFromHash = function() {
+    var hash = location.hash.replace("#","");
+    var m = /^\d+-(\d+)?$/.exec(hash);
+    if (m) {
+      return this.getPerson(m[1]);
     }
     return null;
   }

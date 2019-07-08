@@ -24,6 +24,12 @@ g:hover .draw, g:hover .drawfocus, g:hover .focus {
   font-size: .8em;
 }
 
+.circletext {
+  xfill:red;
+  stroke-width:0;
+  font-size: .5em;
+}
+
 .link {
   fill:blue;
   stroke-width:0;
