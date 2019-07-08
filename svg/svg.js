@@ -1,32 +1,40 @@
-var Box = function(svgHelper, r, c) {
+var Shape = function(svgHelper, r, c) {
   this.svgHelper = svgHelper;
   this.r = r;
   this.c = c;
   this.cellWidth = 1;
   this.cellHeight = 1;
 
+  this.getHeight = function() {
+    return this.cellHeight * this.svgHelper.HEIGHT + (this.cellHeight - 1) * this.svgHelper.VGAP;
+  }
+
+  this.getWidth = function() {
+    return this.cellWidth * this.svgHelper.WIDTH + (this.cellWidth - 1) * this.svgHelper.HGAP;
+  }
+
   this.getTop = function() {
     return (this.r - 1) * (this.svgHelper.HEIGHT + this.svgHelper.VGAP);
   }
 
   this.getBottom = function() {
-    return this.getTop() + this.svgHelper.HEIGHT;
+    return this.getTop() + this.getHeight();
   }
 
   this.getMidVertical = function() {
-    return this.getTop() + (.5 * this.svgHelper.HEIGHT);
+    return this.getTop() + (.5 * this.getHeight());
   }
 
   this.getLeft = function() {
-    return (this.c - 1) * (this.svgHelper.WIDTH + this.svgHelper.HGAP);
+    return (this.c - 1) * (this.svgHelper.WIDTH + this.svgHelper.HGAP) + 2;
   }
 
   this.getMidHorizontal = function() {
-    return this.getLeft() + (.5 * this.svgHelper.WIDTH);
+    return this.getLeft() + (.5 * this.getWidth());
   }
 
   this.getRight = function() {
-    return this.getLeft() + this.svgHelper.WIDTH;
+    return this.getLeft() + this.getWidth();
   }
 
   this.setCellHeight = function(x) {
@@ -37,15 +45,25 @@ var Box = function(svgHelper, r, c) {
     this.cellWidth = x;
   }
 
-  this.getHeight = function() {
-    return this.cellHeight * this.svgHelper.HEIGHT + (this.cellHeight - 1) * this.svgHelper.VGAP;
+  this.getTextX = function() {
+    return this.getLeft() + this.svgHelper.TOFF;
   }
 
-  this.getWidth = function() {
-    return this.cellWidth * this.svgHelper.WIDTH + (this.cellWidth - 1) * this.svgHelper.HGAP;
+  this.getTextY = function() {
+    return this.getBottom() - this.svgHelper.TOFF;
   }
 
-  this.drawBox = function(bclass){
+  this.draw = function() {
+  }
+
+  this.drawText = function() {
+  }
+}
+
+var Box = function(svgHelper, r, c) {
+  Shape.call(this, svgHelper, r, c);
+
+  this.draw = function(bclass){
     return this.drawBoxOffset(bclass, 0, 0, 0, 0);
   }
 
@@ -58,14 +76,6 @@ var Box = function(svgHelper, r, c) {
       .attr("x", x + xoff)
       .attr("y", y + yoff)
       .addClass(bclass);
-  }
-
-  this.getTextX = function() {
-    return this.getLeft() + this.svgHelper.TOFF;
-  }
-
-  this.getTextY = function() {
-    return this.getBottom() - this.svgHelper.TOFF;
   }
 
   this.drawText = function(label, tclass, line) {
@@ -85,55 +95,15 @@ var Box = function(svgHelper, r, c) {
 }
 
 var Circle = function(svgHelper, r, c) {
-  this.svgHelper = svgHelper;
-  this.r = r;
-  this.c = c;
-  this.cellWidth = 1;
-  this.cellHeight = 1;
-
-  this.getTop = function() {
-    return (this.r - 1) * (this.svgHelper.HEIGHT + this.svgHelper.VGAP);
-  }
-
-  this.getBottom = function() {
-    return this.getTop() + this.svgHelper.HEIGHT;
-  }
-
-  this.getMidVertical = function() {
-    return this.getTop() + (.5 * this.svgHelper.HEIGHT);
-  }
-
-  this.getLeft = function() {
-    return (this.c - 1) * (this.svgHelper.WIDTH + this.svgHelper.HGAP);
-  }
-
-  this.getMidHorizontal = function() {
-    return this.getLeft() + (.5 * this.svgHelper.WIDTH);
-  }
-
-  this.getRight = function() {
-    return this.getLeft() + this.svgHelper.HEIGHT;
-  }
-
-  this.setCellHeight = function(x) {
-    this.cellHeight = x;
-  }
-
-  this.setCellWidth = function(x) {
-    this.cellWidth = x;
-  }
-
-  this.getHeight = function() {
-    return this.cellHeight * this.svgHelper.HEIGHT + (this.cellHeight - 1) * this.svgHelper.VGAP;
-  }
+  Shape.call(this, svgHelper, r, c);
 
   this.getWidth = function() {
-    return this.cellWidth * this.svgHelper.WIDTH + (this.cellWidth - 1) * this.svgHelper.HGAP;
+    return this.getHeight();
   }
 
-  this.drawCircle = function(bclass){
-    var y = this.getTop() + this.getHeight() / 2 + 2;
-    var x = this.getLeft() + this.getHeight() / 2 + 2;
+  this.draw = function(bclass){
+    var y = this.getTop() + this.getHeight() / 2;
+    var x = this.getLeft() + this.getHeight() / 2;
     return this.svgHelper.makeSvgEl("circle")
       .attr("r", this.getHeight() / 2)
       .attr("cx", x)
@@ -186,7 +156,7 @@ var SvgHelper = function() {
   this.drawBox = function(r, c, person, classbox) {
     var g = this.makeSvgEl("g").appendTo(this.SVG);
     var box = new Box(this, r, c);
-    var sbox = box.drawBox(classbox ? classbox: this.classBox)
+    var sbox = box.draw(classbox ? classbox: this.classBox)
       .appendTo(g);
     var tclass = classbox == "drawfocus" ? "focustext" : "text";
     box.drawText(person.getName(1), tclass, 1)
@@ -211,7 +181,7 @@ var SvgHelper = function() {
   this.drawCircle = function(r, c, person, copar, label) {
     var g = this.makeSvgEl("g").appendTo(this.SVG);
     var circle = new Circle(this, r, c);
-    var scircle = circle.drawCircle()
+    var scircle = circle.draw()
       .appendTo(g);
     circle.drawText(label, 0)
       .appendTo(g);

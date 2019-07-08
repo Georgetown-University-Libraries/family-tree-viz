@@ -23,6 +23,6 @@
   - add semantic hints to Svg
   - ~set tab control or keyboard shortcuts to items~
 - Refactor
-  - Common logic to Circle and box
+  - ~Common logic to Circle and box~
   - Enums for coordinates
-  - Move more parental calls to Person object
+  - ~Move more parental calls to Person object~
