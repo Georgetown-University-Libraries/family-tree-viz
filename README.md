@@ -12,7 +12,7 @@ _These demos are built with the InfoVis toolkit._
 - [Demo: data.csv](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../data.csv)
 - [Demo: data.yml](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../data.yml)
 - [Demo: indented.yml](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../indented.yml)
-- [Demo with 5 generations](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../data2.yml)
+- [Demo with 5 generations](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../data2.csv)
 
 ## InfoViz Demos - Veritcal Display
 _These demos are built with the InfoVis toolkit._
