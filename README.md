@@ -4,6 +4,7 @@ Convert a CSV family tree table into a visualization.
 - [Sample Data with Simpsons Characters](data.csv)
 - [Sample Data with Simpsons Characters as YAML file](data.yml)
 - [Sample Data with Simpsons Characters in indented YAML file](indented.yml)
+- [Sample Data with 5 generations](data2.csv)
 
 ## SVG Demos
 _These demos are built with the InfoVis toolkit._
@@ -11,7 +12,7 @@ _These demos are built with the InfoVis toolkit._
 - [Demo: data.csv](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../data.csv)
 - [Demo: data.yml](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../data.yml)
 - [Demo: indented.yml](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../indented.yml)
-- [Demo with 75 people: big.yml](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../big.yml)
+- [Demo with 5 generations](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../data2.yml)
 
 ## InfoViz Demos - Veritcal Display
 _These demos are built with the InfoVis toolkit._
