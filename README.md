@@ -8,7 +8,7 @@ _These demos are built with the InfoVis toolkit._
   - [Sample Data with Simpsons Characters as YAML file](data.yml)
 - [Demo: indented.yml](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../indented.yml)
   - [Sample Data with Simpsons Characters in indented YAML file](indented.yml)
-- [Demo with 5 generations](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../data2.csv)
+- [Demo with 5 generations](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../data2.csv#44)
   - [Sample Data with 5 generations](data2.csv)
 
 ---
