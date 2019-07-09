@@ -58,6 +58,21 @@ var Shape = function(svgHelper, r, c) {
 
   this.drawText = function() {
   }
+
+  this.drawText = function(label, tclass, line) {
+    var shape = this.svgHelper.makeSvgEl("text")
+      .attr("height", (this.getHeight() - 2 * this.svgHelper.LINEOFF) / this.svgHelper.LINES)
+      .attr("width", this.getWidth())
+      .attr("x", this.getTextX())
+      .attr("y", this.getTextY() - this.getHeight() + line * ((this.getHeight() - 2 * this.svgHelper.LINEOFF) / this.svgHelper.LINES) + this.svgHelper.LINEOFF)
+      .text(label)
+      .addClass(tclass ? tclass : "text");
+    if (this.svgHelper.addTabIndex) {
+      shape
+        .attr("tabindex", this.svgHelper.tabindex++);
+    }
+    return shape;
+  }
 }
 
 var Box = function(svgHelper, r, c) {
@@ -77,21 +92,29 @@ var Box = function(svgHelper, r, c) {
       .attr("y", y + yoff)
       .addClass(bclass);
   }
+}
 
-  this.drawText = function(label, tclass, line) {
-    var shape = this.svgHelper.makeSvgEl("text")
-      .attr("height", (this.getHeight() - 2 * this.svgHelper.LINEOFF) / this.svgHelper.LINES)
-      .attr("width", this.getWidth())
-      .attr("x", this.getTextX())
-      .attr("y", this.getTextY() - this.getHeight() + line * ((this.getHeight() - 2 * this.svgHelper.LINEOFF) / this.svgHelper.LINES) + this.svgHelper.LINEOFF)
-      .text(label)
-      .addClass(tclass ? tclass : "text");
-    if (this.svgHelper.addTabIndex) {
-      shape
-        .attr("tabindex", this.svgHelper.tabindex++);
-    }
-    return shape;
+var Ellipse = function(svgHelper, r, c) {
+  Shape.call(this, svgHelper, r, c);
+
+  this.draw = function(bclass){
+    var y = this.getTop() + this.getHeight() / 2;
+    var x = this.getLeft() + this.getWidth() / 2;
+    return this.svgHelper.makeSvgEl("ellipse")
+      .attr("ry", this.getHeight() / 2)
+      .attr("rx", this.getWidth() / 2)
+      .attr("cx", x)
+      .attr("cy", y)
+      .addClass("draw");
   }
+
+  this.getTextX = function() {
+    return this.getLeft() + .25 * this.getWidth();
+  }
+  this.getTextY = function() {
+    return this.getBottom() + 0 * this.getHeight();
+  }
+
 }
 
 var Circle = function(svgHelper, r, c) {
@@ -137,13 +160,16 @@ var Circle = function(svgHelper, r, c) {
 }
 
 var SvgHelper = function() {
+  this.VIEW_WIDTH=1200;
+  this.VIEW_HEIGHT=1200;
+  this.VIZ_COLS=5;
   this.LINES = 3;
   this.LINEOFF = 2;
   this.SVG = $("#svg");
-  this.WIDTH=168;
-  this.HEIGHT=50;
   this.HGAP=40;
   this.VGAP=32;
+  this.WIDTH=(this.VIEW_WIDTH - this.VIZ_COLS * this.HGAP)/this.VIZ_COLS;
+  this.HEIGHT=50;
   this.TOFF = 5;
   this.tabindex = 0;
   this.addTabIndex = false;
@@ -192,6 +218,22 @@ var SvgHelper = function() {
       location.reload();
     });
     return circle;
+  }
+
+  this.drawEllipse = function(r, c, person, copar, label) {
+    var g = this.makeSvgEl("g").appendTo(this.SVG);
+    var ellipse = new Ellipse(this, r, c);
+    var sellipse = ellipse.draw()
+      .appendTo(g);
+    ellipse.drawText(label, "text", 1)
+      .appendTo(g);
+    ellipse.drawText(copar ? copar.getName(1) : "Undefined", "text", 2)
+      .appendTo(g);
+    g.children().on("click", function(){
+      location.hash = person.id + (copar ? "-" + copar.id : "");
+      location.reload();
+    });
+    return ellipse;
   }
 
   this.drawWrapBox = function(r, c, rh, cw) {
@@ -314,13 +356,13 @@ var FamilyViz = function() {
   this.rp     = 2;
   this.rchild = 3;
 
-  this.cmgm = 1;
-  this.cmgf = 2;
-  this.cpgm = 3;
-  this.cpgf = 4;
-  this.cm = 1.5;
-  this.cf = 3.5;
-  this.cchild = 2.5;
+  this.cmgm = 1.5;
+  this.cmgf = 2.5;
+  this.cpgm = 3.5;
+  this.cpgf = 4.5;
+  this.cm = 2;
+  this.cf = 4;
+  this.cchild = 3;
 
   this.p_mgm;
   this.p_mgf;
@@ -411,7 +453,7 @@ var FamilyViz = function() {
         svgHelp.connect(mgp, m);
       }
       for(var i=0; i< this.p_m_altpar.length; i++) {
-        var altp = svgHelp.drawCircle(this.rp+i, this.cm-.5, this.p_m, this.p_m_altpar[i],
+        var altp = svgHelp.drawEllipse(this.rp+i, this.cm-1, this.p_m, this.p_m_altpar[i],
           this.p_m.childCountLabel(this.p_m_altpar[i]));
         svgHelp.rsideconnect(altp, m);
       }
@@ -437,7 +479,7 @@ var FamilyViz = function() {
         svgHelp.connect(pgp, f);
       }
       for(var i=0; i< this.p_f_altpar.length; i++) {
-        var altp = svgHelp.drawCircle(this.rp+i, this.cf+1, this.p_f, this.p_f_altpar[i],
+        var altp = svgHelp.drawEllipse(this.rp+i, this.cf+1, this.p_f, this.p_f_altpar[i],
           this.p_f.childCountLabel(this.p_f_altpar[i]));
         svgHelp.lsideconnect(altp, f);
       }

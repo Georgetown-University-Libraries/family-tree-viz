@@ -15,7 +15,11 @@ var Person = function(id, name, link) {
 
   this.getName = function(line) {
     if (line == 1) {
-      return this.name;
+      var name = this.name;
+      if (this.children.length > 0) {
+        name += " (" + this.children.length + " ch.)";
+      }
+      return name;
     }
     var name = this.gender;
     if (this.birth == 0 && this.death == 0) {
@@ -26,9 +30,6 @@ var Person = function(id, name, link) {
       name += " - ";
       name += this.death == 0 ? "?" : this.death;
       name += ")";
-    }
-    if (this.children.length > 0) {
-      name += "*";
     }
     return name;
   }
