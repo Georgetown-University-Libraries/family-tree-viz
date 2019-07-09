@@ -68,6 +68,17 @@ Id,Name,Link,Gender,Birth,Death
 64,X6,nolink,M,1950
 65,B1A,nolink,F,1948
 66,B1B,nolink,M,1947
+67,X7,nolink,M,1951
+68,X8,nolink,M,1952
+69,X9,nolink,M,1953
+70,X10,nolink,M,1954
+71,X11,nolink,M,1955
+72,X12,nolink,M,1956
+73,X13,nolink,M,1957
+74,X14,nolink,M,1958
+75,X15,nolink,M,1959
+76,X16,nolink,M,1960
+77,X17,nolink,M,1961
 
 # A new header starts after a blank line
 Id,Relation,Id2
@@ -211,3 +222,25 @@ Id,Relation,Id2
 1,Parent Of,66
 3,Parent Of,65
 5,Parent Of,66
+1,Parent Of,67
+3,Parent Of,67
+1,Parent Of,68
+3,Parent Of,68
+1,Parent Of,69
+3,Parent Of,69
+1,Parent Of,70
+3,Parent Of,70
+1,Parent Of,71
+3,Parent Of,71
+1,Parent Of,72
+3,Parent Of,72
+1,Parent Of,73
+3,Parent Of,73
+1,Parent Of,74
+3,Parent Of,74
+1,Parent Of,75
+3,Parent Of,75
+1,Parent Of,76
+3,Parent Of,76
+1,Parent Of,77
+3,Parent Of,77
