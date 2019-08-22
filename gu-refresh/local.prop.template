@@ -1,0 +1,8 @@
+[http-cred]
+BASE:
+USER:
+PASS:
+
+[data]
+PEOPLE_URL:
+RELATION_URL: 
