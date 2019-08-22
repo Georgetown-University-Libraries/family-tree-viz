@@ -151,7 +151,10 @@ function showDirectory(familyTree) {
     $("<td class='birth'/>").text(per.birth == 0 ? "" : per.birth).appendTo(n);
     $("<td class='death'/>").text(per.death == 0 ? "" : per.death).appendTo(n);
     $("<td class='numchild'/>").text(per.children.length).appendTo(n);
+    $("<td class='numparent'/>").text(per.parents.length).appendTo(n);
+    $("<td class='numspouse'/>").text(per.spouses.length).appendTo(n);
 
+    $("#people").show();
     $("#people tbody").append(n);
     sorttable.makeSortable($("#people")[0]);
   }

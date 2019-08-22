@@ -11,6 +11,10 @@ _These demos are built with the InfoVis toolkit._
 - [Demo with 5 generations](https://georgetown-university-libraries.github.io/family-tree-viz/svg/?doc=../data2.csv#44)
   - [Sample Data with 5 generations](data2.csv)
 
+## TODO's
+- Show Stepparents
+- Show Adoptive Parents
+
 ---
 ## Abandoned Viz Options
 
