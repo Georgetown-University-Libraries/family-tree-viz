@@ -181,18 +181,6 @@ var Person = function(id, name, link) {
     }
   }
 
-  this.setBirth = function(birth) {
-    if (this.birth == 0) {
-      this.birth = birth;
-    }
-  }
-
-  this.setDeath = function(death) {
-    if (this.death == 0) {
-      this.death = death;
-    }
-  }
-
   this.isMale = function() {
     return this.gender == "♂";
   }

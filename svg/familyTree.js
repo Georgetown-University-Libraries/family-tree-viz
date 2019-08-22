@@ -95,8 +95,8 @@ var FamilyTree = function() {
       var id = Number(per.field_person_or_group_a_1);
       var birth = per.field_event_year;
 
-      if (this.People[id]) {
-        this.People[id].setBirth(birth);
+      if (this.People[id] && birth != 0) {
+        this.People[id].setBirthYear(birth);
       }
     }
 

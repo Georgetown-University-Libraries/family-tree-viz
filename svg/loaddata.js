@@ -140,16 +140,19 @@ function showDirectory(familyTree) {
   for(var i=0; i<familyTree.People.length; i++) {
     var per = familyTree.People[i];
     if (!per) continue;
-    var n = $("<li/>");
-    var str = per.name + " " + (per.gender == "?" ? "" : per.gender);
-    if (per.birth != 0 || per.death != 0) {
-      str += " (" + (per.birth == 0 ? "" : per.birth) + "-" +
-             (per.death == 0 ? "" : per.death) + ")";
-    }
-    $("<a/>").attr("href","#"+per.id).text(str).appendTo(n).on("click",function(){
+    var n = $("<tr/>");
+    var n1 = $("<td class='name'/>").appendTo(n);
+    $("<a/>").attr("href","#"+per.id).text(per.name).appendTo(n1).on("click",function(){
       location.hash=$(this).attr("href");
       location.reload();
     });
-    $("#people").append(n);
+    $("<td class='id'/>").text(per.id).appendTo(n);
+    $("<td class='gender'/>").text(per.gender == "?" ? "" : per.gender).appendTo(n);
+    $("<td class='birth'/>").text(per.birth == 0 ? "" : per.birth).appendTo(n);
+    $("<td class='death'/>").text(per.death == 0 ? "" : per.death).appendTo(n);
+    $("<td class='numchild'/>").text(per.children.length).appendTo(n);
+
+    $("#people tbody").append(n);
+    sorttable.makeSortable($("#people")[0]);
   }
 }

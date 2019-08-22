@@ -66,3 +66,5 @@ div#status:empty {
   padding: 3px;
   border: none;
 }
+table {border-collapse: collapse;border-right:solid thin black;}
+table td, table th {border: thin solid black; padding: 4px;}
