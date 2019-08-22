@@ -1,5 +1,5 @@
 var FamilyTree = function() {
-  this.BASEURL = "http://dev-gulib-gsa-data.pantheonsite.io"; //Set this to the base url for links
+  this.BASEURL = ""; //Set this to the base url for links
   this.People = [];
 
   this.parsePerson = function(cols) {
@@ -79,6 +79,7 @@ var FamilyTree = function() {
   }
 
   this.processDrupalInputDataV2 = function(data) {
+    this.BASEURL = data.BASE;
     for(var i=0; i<data.people.length; i++) {
       var per = data.people[i];
       var id = Number(per.nid);
