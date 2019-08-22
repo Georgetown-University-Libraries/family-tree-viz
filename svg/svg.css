@@ -56,3 +56,8 @@ svg {
   margin: 10px;
   overflow: scroll;
 }
+
+div#status {
+  padding: 3px;
+  border: thin solid red;
+}

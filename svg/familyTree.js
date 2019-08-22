@@ -1,5 +1,5 @@
 var FamilyTree = function() {
-  this.BASEURL = ""; //Set this to the base url for links
+  this.BASEURL = "http://dev-gulib-gsa-data.pantheonsite.io"; //Set this to the base url for links
   this.People = [];
 
   this.parsePerson = function(cols) {
@@ -78,7 +78,52 @@ var FamilyTree = function() {
     }
   }
 
+  this.processDrupalInputDataV2 = function(data) {
+    for(var i=0; i<data.people.length; i++) {
+      var per = data.people[i];
+      var id = Number(per.field_person_or_group_a_1);
+      var name = per.field_person_or_group_a;
+      var birth = per.field_event_year == "" ? 0 :Number(per.field_event_year);
+      var death = 0;
+      var gender = per.field_gender;
+
+      var link = "/node/" + id;
+      if (!this.People[id]) {
+        this.People[id] = new Person(id, name, link, birth, death);
+      }
+      if (gender != "") {
+        this.People[id].setGender(gender);
+      }
+    }
+    var status = "";
+    for(var i=0; i<data.relation.length; i++) {
+      var rel = data.relation[i];
+      var id1 = Number(rel.field_person_or_group_a);
+      var id2 = Number(rel.field_person_or_group_b);
+      var p1 = this.People[id1];
+      var p2 = this.People[id2];
+
+      if (!p1) {
+        status += id1 + ", ";
+      } else if (!p2) {
+        status += id2 + ", ";
+      } else if (rel.title == "Biological Parent of") {
+        p1.children.push(p2);
+        p2.parents.push(p1);
+      } else if (rel.title == "Spouse of") {
+        p1.spouses.push(p2);
+        p2.spouses.push(p1);
+      }
+    }
+    if (status != "") {
+      $("#status").text("Not found: " + status);
+    }
+  }
+
   this.processDrupalInputData = function(data) {
+    if (data.people && data.relation) {
+      return this.processDrupalInputDataV2(data);
+    }
     for(var i=0; i<data.length; i++) {
       var rel = data[i];
       var id1 = Number(rel.field_person_or_group_a);

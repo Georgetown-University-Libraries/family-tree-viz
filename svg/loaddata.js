@@ -141,7 +141,12 @@ function showDirectory(familyTree) {
     var per = familyTree.People[i];
     if (!per) continue;
     var n = $("<li/>");
-    $("<a/>").attr("href","#"+per.id).text(per.name).appendTo(n).on("click",function(){
+    var str = per.name + " " + (per.gender == "?" ? "" : per.gender);
+    if (per.birth != 0 || per.death != 0) {
+      str += " (" + (per.birth == 0 ? "" : per.birth) + "-" +
+             (per.death == 0 ? "" : per.death) + ")";
+    }
+    $("<a/>").attr("href","#"+per.id).text(str).appendTo(n).on("click",function(){
       location.hash=$(this).attr("href");
       location.reload();
     });
