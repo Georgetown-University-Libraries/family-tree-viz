@@ -61,3 +61,8 @@ div#status {
   padding: 3px;
   border: thin solid red;
 }
+
+div#status:empty {
+  padding: 3px;
+  border: none;
+}

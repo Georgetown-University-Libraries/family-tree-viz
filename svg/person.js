@@ -1,4 +1,4 @@
-var Person = function(id, name, link, birth=0, death=0) {
+var Person = function(id, name, link) {
   this.id = id;
   this.name = name;
   this.link = link;
@@ -9,8 +9,8 @@ var Person = function(id, name, link, birth=0, death=0) {
   this.coparents = null;
   this.childsets = null;
   this.node;
-  this.birth = birth;
-  this.death = death;
+  this.birth = 0;
+  this.death = 0;
   this.gender = "?";
 
   this.getName = function(line) {
@@ -172,16 +172,24 @@ var Person = function(id, name, link, birth=0, death=0) {
   }
 
   this.setGender = function(gender) {
-    if (gender == "M" || gender == "Male") {
-      this.gender = "♂";
-    } else if (gender == "F" || gender == "Female") {
-      this.gender = "♀";
-    } else if (gender == "?") {
-      //if gender == ?, clear the gender field
-      this.gender = "?";
-    } else if (!this.isMale() && !this.isFemale()) {
-      //do not override the gender if it is already set
-      this.gender = "?";
+    if (this.isGenderUnknown()) {
+      if (gender == "M" || gender == "Male") {
+        this.gender = "♂";
+      } else if (gender == "F" || gender == "Female") {
+        this.gender = "♀";
+      }
+    }
+  }
+
+  this.setBirth = function(birth) {
+    if (this.birth == 0) {
+      this.birth = birth;
+    }
+  }
+
+  this.setDeath = function(death) {
+    if (this.death == 0) {
+      this.death = death;
     }
   }
 

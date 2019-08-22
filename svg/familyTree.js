@@ -81,20 +81,35 @@ var FamilyTree = function() {
   this.processDrupalInputDataV2 = function(data) {
     for(var i=0; i<data.people.length; i++) {
       var per = data.people[i];
-      var id = Number(per.field_person_or_group_a_1);
-      var name = per.field_person_or_group_a;
-      var birth = per.field_event_year == "" ? 0 :Number(per.field_event_year);
-      var death = 0;
-      var gender = per.field_gender;
+      var id = Number(per.nid);
+      var name = per.title;
 
       var link = "/node/" + id;
       if (!this.People[id]) {
-        this.People[id] = new Person(id, name, link, birth, death);
+        this.People[id] = new Person(id, name, link);
       }
-      if (gender != "") {
+    }
+
+    for(var i=0; i<data.births.length; i++) {
+      var per = data.births[i];
+      var id = Number(per.field_person_or_group_a_1);
+      var birth = per.field_event_year;
+
+      if (this.People[id]) {
+        this.People[id].setBirth(birth);
+      }
+    }
+
+    for(var i=0; i<data.gender.length; i++) {
+      var per = data.gender[i];
+      var id = Number(per.field_person_or_group_a_1);
+      var gender = per.field_gender;
+
+      if (this.People[id]) {
         this.People[id].setGender(gender);
       }
     }
+
     var status = "";
     for(var i=0; i<data.relation.length; i++) {
       var rel = data.relation[i];

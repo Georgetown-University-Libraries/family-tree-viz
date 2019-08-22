@@ -12,9 +12,8 @@ class DataCommon:
   PASS="PASS"
 
   DATA="data"
-  PEOPLE_URL="PEOPLE_URL"
-  RELATION_URL="RELATION_URL"
-
+  KEYS="KEYS"
+  
   config = {}
   def __init__(self, propfile = "local.prop"):
     self.config = configparser.RawConfigParser()

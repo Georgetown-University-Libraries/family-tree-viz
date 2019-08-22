@@ -4,5 +4,8 @@ USER:
 PASS:
 
 [data]
-PEOPLE_URL:
-RELATION_URL: 
+KEYS: people,births,gender,relation
+people: people/json
+births: births/json
+gender: gender/json
+relation: all-family-relationships-short/json
