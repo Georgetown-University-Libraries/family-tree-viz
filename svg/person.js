@@ -9,9 +9,9 @@ var Person = function(id, name, link) {
   this.coparents = null;
   this.childsets = null;
   this.node;
-  this.gender = "?";
   this.birth = 0;
   this.death = 0;
+  this.gender = "?";
 
   this.getName = function(line) {
     if (line == 1) {
@@ -172,12 +172,12 @@ var Person = function(id, name, link) {
   }
 
   this.setGender = function(gender) {
-    if (gender == "M") {
-      this.gender = "♂";
-    } else if (gender == "F") {
-      this.gender = "♀";
-    } else {
-      this.gender = "?";
+    if (this.isGenderUnknown()) {
+      if (gender == "M" || gender == "Male") {
+        this.gender = "♂";
+      } else if (gender == "F" || gender == "Female") {
+        this.gender = "♀";
+      }
     }
   }
 

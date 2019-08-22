@@ -11,16 +11,31 @@
   <script language="javascript" type="text/javascript" src="../util/js-yaml.min.js"></script>
   <script language="javascript" type="text/javascript" src="svg.js"></script>
   <script language="javascript" type="text/javascript" src="loaddata.js"></script>
+  <script language="javascript" type="text/javascript" src="sorttable.js"></script>
   <script language="javascript" type="text/javascript" src="person.js"></script>
   <script language="javascript" type="text/javascript" src="familyTree.js"></script>
 </head>
 <body>
   <h1>Family Tree</h1>
+  <div id="status"></div>
   <div class="dir"><a href="#" onclick="javascript:location.hash='';location.reload()">Directory</a></div>
   <div id="cont">
       <svg id="svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200px" height="1200px">
       </svg>
   </div>
-  <ul id="people"/>
+  <table id="people" class="sortable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th class="sortable_numeric">Id</th>
+        <th>Gender</th>
+        <th class="sortable_numeric">Birth</th>
+        <th class="sortable_numeric">Death</th>
+        <th class="sortable_numeric">Num Child</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
 </body>
 </html>

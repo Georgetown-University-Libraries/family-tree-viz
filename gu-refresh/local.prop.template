@@ -1,0 +1,11 @@
+[http-cred]
+BASE:
+USER:
+PASS:
+
+[data]
+KEYS: people,births,gender,relation
+people: people/json
+births: births/json
+gender: gender/json
+relation: all-family-relationships-short/json

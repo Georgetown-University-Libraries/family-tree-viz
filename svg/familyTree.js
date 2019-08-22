@@ -78,7 +78,68 @@ var FamilyTree = function() {
     }
   }
 
+  this.processDrupalInputDataV2 = function(data) {
+    this.BASEURL = data.BASE;
+    for(var i=0; i<data.people.length; i++) {
+      var per = data.people[i];
+      var id = Number(per.nid);
+      var name = per.title;
+
+      var link = "/node/" + id;
+      if (!this.People[id]) {
+        this.People[id] = new Person(id, name, link);
+      }
+    }
+
+    for(var i=0; i<data.births.length; i++) {
+      var per = data.births[i];
+      var id = Number(per.field_person_or_group_a_1);
+      var birth = per.field_event_year;
+
+      if (this.People[id] && birth != 0) {
+        this.People[id].setBirthYear(birth);
+      }
+    }
+
+    for(var i=0; i<data.gender.length; i++) {
+      var per = data.gender[i];
+      var id = Number(per.field_person_or_group_a_1);
+      var gender = per.field_gender;
+
+      if (this.People[id]) {
+        this.People[id].setGender(gender);
+      }
+    }
+
+    var status = "";
+    for(var i=0; i<data.relation.length; i++) {
+      var rel = data.relation[i];
+      var id1 = Number(rel.field_person_or_group_a);
+      var id2 = Number(rel.field_person_or_group_b);
+      var p1 = this.People[id1];
+      var p2 = this.People[id2];
+
+      if (!p1) {
+        status += id1 + ", ";
+      } else if (!p2) {
+        status += id2 + ", ";
+      } else if (rel.title == "Biological Parent of") {
+        p1.children.push(p2);
+        p2.parents.push(p1);
+      } else if (rel.title == "Spouse of") {
+        p1.spouses.push(p2);
+        p2.spouses.push(p1);
+      }
+    }
+    if (status != "") {
+      $("#status").text("Not found: " + status);
+    }
+  }
+
   this.processDrupalInputData = function(data) {
+    if (data.people && data.relation) {
+      return this.processDrupalInputDataV2(data);
+    }
     for(var i=0; i<data.length; i++) {
       var rel = data[i];
       var id1 = Number(rel.field_person_or_group_a);
