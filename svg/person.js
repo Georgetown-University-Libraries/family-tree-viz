@@ -1,3 +1,8 @@
+var PersonRel = function(p, rel) {
+  this.p = p;
+  this.rel = rel;
+}
+
 var Person = function(id, name, link) {
   this.id = id;
   this.name = name;
@@ -5,6 +10,7 @@ var Person = function(id, name, link) {
   this.children = [];
   this.parents = [];
   this.spouses = [];
+  this.otherrel = [];
   this.refcount = 0;
   this.coparents = null;
   this.childsets = null;
@@ -199,5 +205,9 @@ var Person = function(id, name, link) {
 
   this.setDeathYear = function(d) {
     this.death = $.isNumeric(d) ? Number(d) : 0;
+  }
+
+  this.addRelation = function(p, rel) {
+    this.otherrel.push(new PersonRel(p, rel));
   }
 }

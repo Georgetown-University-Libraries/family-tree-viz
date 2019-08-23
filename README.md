@@ -16,4 +16,6 @@ _These demos are built with the InfoVis toolkit._
 ---
 ## Abandoned Viz Options
 
+Look at the older release for prototypes built with D3 and InfoVis.  Also look for Yaml input processing.
+
 https://github.com/Georgetown-University-Libraries/family-tree-viz/tree/proto1
