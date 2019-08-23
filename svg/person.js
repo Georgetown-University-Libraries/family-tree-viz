@@ -1,6 +1,11 @@
-var PersonRel = function(p, rel) {
+var PersonRel = function(p, rel, isCopar) {
   this.p = p;
   this.rel = rel;
+  this.isCopar = isCopar;
+
+  this.getCopar = function() {
+    return (this.isCopar) ? this.p : null;
+  }
 }
 
 var Person = function(id, name, link) {
@@ -208,6 +213,6 @@ var Person = function(id, name, link) {
   }
 
   this.addRelation = function(p, rel) {
-    this.otherrel.push(new PersonRel(p, rel));
+    this.otherrel.push(new PersonRel(p, rel, false));
   }
 }

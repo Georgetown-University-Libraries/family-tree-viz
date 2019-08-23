@@ -102,7 +102,10 @@ function initDiagram(fperson, fcopar){
     }
     var pars = mom.getAltParents(dad).sort(peopleSort);;
     for(var i=0; i<pars.length; i++) {
-      family.addMaternalAltPar(pars[i]);
+      family.addMaternalAlt(new PersonRel(pars[i], "Spouse/Coparent", true));
+    }
+    for(var i=0; i<mom.otherrel.length; i++) {
+      family.addMaternalAlt(mom.otherrel[i]);
     }
   }
   if (dad) {
@@ -119,7 +122,10 @@ function initDiagram(fperson, fcopar){
     }
     var pars = dad.getAltParents(mom).sort(peopleSort);
     for(var i=0; i<pars.length; i++) {
-      family.addPaternalAltPar(pars[i]);
+      family.addPaternalAlt(new PersonRel(pars[i], "Spouse/Coparent", true));
+    }
+    for(var i=0; i<dad.otherrel.length; i++) {
+      family.addPaternalAlt(dad.otherrel[i]);
     }
   }
   family.draw();
