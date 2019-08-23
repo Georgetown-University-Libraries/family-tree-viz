@@ -65,20 +65,12 @@ var FamilyTree = function() {
         var p = this.People[cols[0]];
         var cp = this.People[cols[2]];
         var rel = cols[1];
-        if (p && cp) {
-          if (rel == "Parent Of") {
-            cp.parents.push(p);
-            p.children.push(cp);
-          } else if (rel == "Spouse Of") {
-            cp.spouses.push(p);
-            p.spouses.push(cp);
-          }
-        }
+        this.processRelationship(p, rel, cp);
       }
     }
   }
 
-  this.processDrupalInputDataV2 = function(data) {
+  this.processDrupalInputData = function(data) {
     this.BASEURL = data.BASE;
     for(var i=0; i<data.people.length; i++) {
       var per = data.people[i];
@@ -111,56 +103,33 @@ var FamilyTree = function() {
       }
     }
 
-    var status = "";
     for(var i=0; i<data.relation.length; i++) {
       var rel = data.relation[i];
       var id1 = Number(rel.field_person_or_group_a);
       var id2 = Number(rel.field_person_or_group_b);
       var p1 = this.People[id1];
       var p2 = this.People[id2];
-
-      if (!p1) {
-        status += id1 + ", ";
-      } else if (!p2) {
-        status += id2 + ", ";
-      } else if (rel.title == "Biological Parent of") {
-        p1.children.push(p2);
-        p2.parents.push(p1);
-      } else if (rel.title == "Spouse of") {
-        p1.spouses.push(p2);
-        p2.spouses.push(p1);
-      }
-    }
-    if (status != "") {
-      $("#status").text("Not found: " + status);
+      this.processRelationship(p1, rel.title, p2);
     }
   }
 
-  this.processDrupalInputData = function(data) {
-    if (data.people && data.relation) {
-      return this.processDrupalInputDataV2(data);
+  this.processRelationship = function(p1, rel, p2) {
+    if (!p1 || !p2) {
+      return;
     }
-    for(var i=0; i<data.length; i++) {
-      var rel = data[i];
-      var id1 = Number(rel.field_person_or_group_a);
-      var name1 = rel.title_1;
-      var link1 = rel.view_node;
-      if (!this.People[id1]) {
-        this.People[id1] = new Person(id1, name1, this.BASEURL+link1);
-      }
-      var id2 = Number(rel.field_person_or_group_b);
-      var name2 = rel.title_2;
-      var link2 = rel.view_node_1;
-      if (!this.People[id2]) {
-        this.People[id2] = new Person(id2, name2, this.BASEURL+link2);
-      }
-      if (rel.title == "Biological Parent of") {
-        this.People[id1].children.push(this.People[id2]);
-        this.People[id2].parents.push(this.People[id1]);
-      } else if (rel.title == "Spouse of") {
-        this.People[id1].spouses.push(this.People[id2]);
-        this.People[id2].spouses.push(this.People[id1]);
-      }
+    rel = rel.toLowerCase();
+    if (rel == "biological parent of" || rel == "parent of") {
+      p1.children.push(p2);
+      p2.parents.push(p1);
+    } else if (rel == "spouse of") {
+      p1.spouses.push(p2);
+      p2.spouses.push(p1);
+    } else if (rel == "adoptive parent of") {
+      p1.addRelation(p2, "Adopted Child");
+      p2.addRelation(p1, "Adoptive Parent");
+    } else if (rel == "step parent of") {
+      p1.addRelation(p2, "Step Child");
+      p2.addRelation(p1, "Step Parent");
     }
   }
 
@@ -227,26 +196,6 @@ var FamilyTree = function() {
         p.spouses.push(objViz);
       }
     }
-  }
-
-
-  /*
-  Json input data generated from Yaml input.
-
-  People:
-  - Id: 1
-    Name: Homer Simpson
-    Children: [3,4,5]
-    Spouse: [2]
-  - Id: 2
-    Name: Marge Simpson
-    Children: [3,4,5]
-  - Id: 3
-    Name: Bart Simpson
-  */
-  this.processJsonInputData = function(data) {
-    this.processPeopleArray(data.People, true);
-    this.processPeopleArray(data.People, false);
   }
 
   this.getPerson = function(id) {

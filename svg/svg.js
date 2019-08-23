@@ -220,7 +220,7 @@ var SvgHelper = function() {
     return circle;
   }
 
-  this.drawEllipse = function(r, c, person, copar, label) {
+  this.drawEllipse = function(r, c, person, copar, label, isCopar) {
     var g = this.makeSvgEl("g").appendTo(this.SVG);
     var ellipse = new Ellipse(this, r, c);
     var sellipse = ellipse.draw()
@@ -230,7 +230,11 @@ var SvgHelper = function() {
     ellipse.drawText(copar ? copar.getName(1) : "Undefined", "text", 2)
       .appendTo(g);
     g.children().on("click", function(){
-      location.hash = person.id + (copar ? "-" + copar.id : "");
+      if (isCopar) {
+        location.hash = person.id + (copar ? "-" + copar.id : "");
+      } else {
+        location.hash = copar.id;
+      }
       location.reload();
     });
     return ellipse;
@@ -373,8 +377,8 @@ var FamilyViz = function() {
   this.p_sib = [];
   this.p_msib = [];
   this.p_psib = [];
-  this.p_m_altpar = [];
-  this.p_f_altpar = [];
+  this.p_m_alt = [];
+  this.p_f_alt = [];
 
   this.setMother = function(p) {
     this.p_m = p;
@@ -412,12 +416,14 @@ var FamilyViz = function() {
     this.p_pgf = p;
     return this;
   }
-  this.addMaternalAltPar = function(p) {
-    this.p_m_altpar.push(p);
+
+  this.addMaternalAlt = function(prel) {
+    this.p_m_alt.push(prel);
     return this;
   }
-  this.addPaternalAltPar = function(p) {
-    this.p_f_altpar.push(p);
+
+  this.addPaternalAlt = function(prel) {
+    this.p_f_alt.push(prel);
     return this;
   }
 
@@ -452,9 +458,10 @@ var FamilyViz = function() {
         var mgp = svgHelp.drawBox(this.rgp, this.cmgf, this.p_mgf);
         svgHelp.connect(mgp, m);
       }
-      for(var i=0; i< this.p_m_altpar.length; i++) {
-        var altp = svgHelp.drawEllipse(this.rp+i, this.cm-1, this.p_m, this.p_m_altpar[i],
-          this.p_m.childCountLabel(this.p_m_altpar[i]));
+      for(var i=0; i< this.p_m_alt.length; i++) {
+        var prel = this.p_m_alt[i];
+        var altp = svgHelp.drawEllipse(this.rp+i, this.cm-1, this.p_m, prel.p,
+          prel.rel, prel.isCopar);
         svgHelp.rsideconnect(altp, m);
       }
     }
@@ -478,9 +485,10 @@ var FamilyViz = function() {
         var pgp = svgHelp.drawBox(this.rgp, this.cpgf, this.p_pgf);
         svgHelp.connect(pgp, f);
       }
-      for(var i=0; i< this.p_f_altpar.length; i++) {
-        var altp = svgHelp.drawEllipse(this.rp+i, this.cf+1, this.p_f, this.p_f_altpar[i],
-          this.p_f.childCountLabel(this.p_f_altpar[i]));
+      for(var i=0; i< this.p_f_alt.length; i++) {
+        var prel = this.p_f_alt[i];
+        var altp = svgHelp.drawEllipse(this.rp+i, this.cf+1, this.p_f, prel.p,
+            prel.rel, prel.isCopar);
         svgHelp.lsideconnect(altp, f);
       }
     }

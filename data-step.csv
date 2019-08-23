@@ -1,0 +1,42 @@
+# This is a very simplistic CSV file currently
+# No embedded commas supported in fields
+# Indicates a comment
+Id,Name,Link,Gender,Birth,Death
+1,Homer Simpson,nolink,M,1960,
+2,Marge Simpson,nolink,F,1960,
+3,Bart Simpson,nolink,M,1980,
+4,Lisa Simpson,nolink,F,1982,
+5,Maggie Simpson,nolink,F,1986,
+6,Grandpa Simpson,nolink,M,1930
+7,Patty Bouvier,nolink,F,1957,
+8,Selma Bouvier,nolink,F,1957
+9,Mrs Bouvier,nolink,F,1940,
+10,Ned Flanders,nolink,M,1963
+11,Maude Flanders,nolink,F,1963
+12,Rodd Flanders,nolink,M,1981
+13,Todd Flanders,nolink,M,1983
+
+# A new header starts after a blank line
+Id,Relation,Id2
+1,Parent Of,3
+1,Parent Of,4
+1,Parent Of,5
+2,Parent Of,3
+2,Parent Of,4
+2,Parent Of,5
+1,Spouse Of,2
+6,Parent Of,1
+9,Parent Of,2
+9,Parent Of,7
+9,Parent Of,8
+10,Spouse Of,11
+10,Parent Of,12
+10,Parent Of,13
+11,Parent Of,12
+11,Parent Of,13
+10,Adoptive Parent Of,3
+10,Adoptive Parent Of,4
+11,Adoptive Parent Of,3
+11,Adoptive Parent Of,4
+7,Step Parent Of,12
+7,Step Parent Of,13

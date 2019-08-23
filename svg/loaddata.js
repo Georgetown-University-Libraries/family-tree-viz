@@ -12,16 +12,7 @@ $(document).ready(function(){
 function init(){
   var params = (new URL(document.location)).searchParams;
   var doc = params.get("doc") ? params.get("doc") : "../data.csv";
-  if (doc.match(/\.yml$/)) {
-    $.get(doc, function(data){
-      var json = jsyaml.load(data);
-      var familyTree = new FamilyTree();
-      familyTree.processJsonInputData(json);
-      if (!initDiagram(familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
-        showDirectory(familyTree);
-      }
-    }, "text");
-  } else if (doc.match(/\.json$/)) {
+  if (doc.match(/\.json$/)) {
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processDrupalInputData(data);
@@ -111,7 +102,10 @@ function initDiagram(fperson, fcopar){
     }
     var pars = mom.getAltParents(dad).sort(peopleSort);;
     for(var i=0; i<pars.length; i++) {
-      family.addMaternalAltPar(pars[i]);
+      family.addMaternalAlt(new PersonRel(pars[i], "Spouse/Coparent", true));
+    }
+    for(var i=0; i<mom.otherrel.length; i++) {
+      family.addMaternalAlt(mom.otherrel[i]);
     }
   }
   if (dad) {
@@ -128,7 +122,10 @@ function initDiagram(fperson, fcopar){
     }
     var pars = dad.getAltParents(mom).sort(peopleSort);
     for(var i=0; i<pars.length; i++) {
-      family.addPaternalAltPar(pars[i]);
+      family.addPaternalAlt(new PersonRel(pars[i], "Spouse/Coparent", true));
+    }
+    for(var i=0; i<dad.otherrel.length; i++) {
+      family.addPaternalAlt(dad.otherrel[i]);
     }
   }
   family.draw();
@@ -153,6 +150,7 @@ function showDirectory(familyTree) {
     $("<td class='numchild'/>").text(per.children.length).appendTo(n);
     $("<td class='numparent'/>").text(per.parents.length).appendTo(n);
     $("<td class='numspouse'/>").text(per.spouses.length).appendTo(n);
+    $("<td class='numother'/>").text(per.otherrel.length).appendTo(n);
 
     $("#people").show();
     $("#people tbody").append(n);
