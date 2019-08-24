@@ -229,6 +229,9 @@ var Person = function(id, name, link) {
     return arr;
   }
 
+  /*
+  Get the gender character for this person
+  */
   this.setGender = function(gender) {
     if (this.isGenderUnknown()) {
       if (gender == "M" || gender == "Male") {
@@ -239,26 +242,44 @@ var Person = function(id, name, link) {
     }
   }
 
+  /*
+  this person is male (true/false)
+  */
   this.isMale = function() {
     return this.gender == "♂";
   }
 
+  /*
+  this person is female (true/false)
+  */
   this.isFemale = function() {
     return this.gender == "♀";
   }
 
+  /*
+  this person does not have a specified gender (true/false)
+  */
   this.isGenderUnknown = function() {
     return this.gender == "?";
   }
 
+  /*
+  get birth year as an int or return 0
+  */
   this.setBirthYear = function(d) {
     this.birth = $.isNumeric(d) ? Number(d) : 0;
   }
 
+  /*
+  get death year as an int or return 0
+  */
   this.setDeathYear = function(d) {
     this.death = $.isNumeric(d) ? Number(d) : 0;
   }
 
+  /*
+  add an annotated relationship to this person.
+  */
   this.addRelation = function(p, rel) {
     this.otherrel.push(new PersonRel(p, rel, false));
   }
