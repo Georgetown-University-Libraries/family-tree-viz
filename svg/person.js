@@ -1,29 +1,55 @@
+/*
+Person Relationship - this class is used to annotate how one person relates to another person.
+This is used to annotate the following relationships:
+- Other Spouses/Coparents of the people in focus
+- Step parent/child
+- Adoptive parent/child
+*/
 var PersonRel = function(p, rel, isCopar) {
   this.p = p;
   this.rel = rel;
-  this.isCopar = isCopar;
 
-  this.getCopar = function() {
-    return (this.isCopar) ? this.p : null;
-  }
+  //boolean - this flag indicates that a visualization should be displayed from
+  //the perspective of a specific coparent relationship.
+  this.isCopar = isCopar;
 }
 
+/*
+Person object built from a collection of people records and related people records.
+*/
 var Person = function(id, name, link) {
+  //numeric id for the individual.  this will be used in a zero-based array that assumes
+  //there will be a finite number of people.  If more complex ids are needed, an index will
+  //need to be calculated.
   this.id = id;
+  //name of the person
   this.name = name;
+  //link to a website page with details about the person
   this.link = link;
+  //array of the children of this person
   this.children = [];
+  //array of the biological parents of this person
   this.parents = [];
+  //array of the spouses of this person
   this.spouses = [];
+  //array of annotated relationships to this person
+  //spouses, biological parents, and biological children should not be captured here.
   this.otherrel = [];
-  this.refcount = 0;
+  //array of the spouses and biological coparents of this person
   this.coparents = null;
+  //array of the lists of childen of this person (one list will be created for each coparent)
   this.childsets = null;
-  this.node;
+  //birth year for this person as int.  0 indicates no value.
   this.birth = 0;
+  //death year for this person as int.  0 indicates no value.
   this.death = 0;
+  //gender for this person: ? (unset), ♂, ♀
   this.gender = "?";
 
+  //get the text to display in the visualization box for each person.
+  //line refers to the line number to display in the box.
+  //For SVG rendering, the value will be returned line by line.
+  //TODO: return this as an array
   this.getName = function(line) {
     if (line == 1) {
       var name = this.name;
@@ -45,6 +71,9 @@ var Person = function(id, name, link) {
     return name;
   }
 
+  /*
+  Find the mother or the first ungendered parent for the individual.
+  */
   this.getMom = function() {
     var p1 = null;
     for (var i=0; i < this.parents.length; i++) {
@@ -57,6 +86,10 @@ var Person = function(id, name, link) {
     }
     return p1;
   }
+
+  /*
+  Find the father or the second ungendered parent for the individual.
+  */
   this.getDad = function() {
     var p1 = null;
     var skippedFirst = false;
@@ -75,6 +108,9 @@ var Person = function(id, name, link) {
     return p1;
   }
 
+  /*
+  Find the other people with the same parents as the individual in focus.
+  */
   this.getSiblings = function() {
     var mch = (this.getMom()) ? this.getMom().children : [];
     var fch = (this.getDad()) ? this.getDad().children : [];
@@ -106,6 +142,9 @@ var Person = function(id, name, link) {
     return sibs;
   }
 
+  /*
+  From the perspective of this person, find the coparent of parent p.
+  */
   this.getAltParent = function(p) {
     if (!p) return null;
     for(var i=0; i < this.parents.length; i++) {
@@ -116,44 +155,10 @@ var Person = function(id, name, link) {
     return null;
   }
 
-  this.getChildSets = function() {
-    this.makeChildSets();
-    return this.childsets;
-  }
-
-  this.getCoparents = function() {
-    this.makeChildSets();
-    return this.coparents;
-  }
-
-  this.getChildSet = function(coparent) {
-    this.makeChildSets();
-    var i = this.coparents.indexOf(coparent);
-    if (i > -1) {
-      return this.childsets[i];
-    }
-    return [];
-  }
-
-  this.childCountLabel = function(coparent) {
-    var arr = this.getChildSet(coparent);
-    if (arr.length == 1) {
-      return "1 Child with ";
-    }
-    return arr.length + " Children with ";
-  }
-
-  this.getAltParents = function(coparent) {
-    this.makeChildSets();
-    var arr = [];
-    for(var i=0; i<this.coparents.length; i++) {
-      if (this.coparents[i] != coparent) {
-        arr.push(this.coparents[i]);
-      }
-    }
-    return arr;
-  }
-
+  /*
+  Compute the lists of coparents and childsets for this person.
+  This will be initialized only once.
+  */
   this.makeChildSets = function() {
     if (this.childsets != null) {
       return;
@@ -180,6 +185,48 @@ var Person = function(id, name, link) {
         this.childsets.push([]);
       }
     }
+  }
+
+  /*
+  get the child sets for this person as an array.
+  */
+  this.getChildSets = function() {
+    this.makeChildSets();
+    return this.childsets;
+  }
+
+  /*
+  get the coparents for this person as an array.
+  */
+  this.getCoparents = function() {
+    this.makeChildSets();
+    return this.coparents;
+  }
+
+  /*
+  Get the childset between this person and another parent.
+  */
+  this.getChildSet = function(coparent) {
+    this.makeChildSets();
+    var i = this.coparents.indexOf(coparent);
+    if (i > -1) {
+      return this.childsets[i];
+    }
+    return [];
+  }
+
+  /*
+  Get the list of coparents excluding the coparent in focus.
+  */
+  this.getAltParents = function(coparent) {
+    this.makeChildSets();
+    var arr = [];
+    for(var i=0; i<this.coparents.length; i++) {
+      if (this.coparents[i] != coparent) {
+        arr.push(this.coparents[i]);
+      }
+    }
+    return arr;
   }
 
   this.setGender = function(gender) {

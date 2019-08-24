@@ -21,11 +21,17 @@ var FamilyTree = function() {
   # This is a very simplistic CSV file currently
   # No embedded commas supported in fields
   # Indicates a comment
-  Id,Name,Link
-  1,Homer Simpson,nolink
-  3,Bart Simpson,nolink
+  Id,Name,Link,Gender,Birth,Death
+  1,Homer Simpson,nolink,M,1960,
+  3,Bart Simpson,nolink,M,1980,
 
   # A new header starts after a blank line
+  # Supported Relationships:
+  # - Parent Of
+  # - Birth Parent Of
+  # - Spouse Of
+  # - Step Parent Of
+  # - Adoptive Parent Of
   Id,Relation,Id2
   1,Parent Of,3
   */
@@ -70,6 +76,51 @@ var FamilyTree = function() {
     }
   }
 
+  /*
+  Georgetown is developing an application that will assemble this visualization
+  from a collection of Drupal data views.  Each of the data components will be assembeld
+  into a JSON feed that matches the following structure.
+  {
+    "BASE": "http://mywebsite.edu/",
+    "people": [
+      {
+        "nid": "1",
+        "title": "Homer Simpson"
+      },
+      {
+        "nid": "3",
+        "title": "Bart Simpson"
+      }
+    ],
+    "births": [
+      {
+        "field_person_or_group_a_1": "1",
+        "field_event_year": "1960"
+      },
+      {
+        "field_person_or_group_a_1": "3",
+        "field_event_year": "1980"
+      }
+    ],
+    "gender": [
+      {
+        "field_person_or_group_a_1": "1",
+        "field_gender": "Male"
+      },
+      {
+        "field_person_or_group_a_1": "3",
+        "field_gender": "Male"
+      }
+    ],
+    "relation": [
+      {
+        "field_person_or_group_a": "1",
+        "title": "Biological Parent of",
+        "field_person_or_group_b": "3"
+      }
+    ]
+  }
+  */
   this.processDrupalInputData = function(data) {
     this.BASEURL = data.BASE;
     for(var i=0; i<data.people.length; i++) {
@@ -113,6 +164,17 @@ var FamilyTree = function() {
     }
   }
 
+  /*
+  Process relationships between Person objects.
+  Parent/Biological Parent will be used interchangably.
+
+  The code uses the phrase "coparent" and "spouse".  Both are displayed in a similar manner.
+  The code uses the phras "coparent" to incororate married and unmarried parents of the same child.
+
+  The Family Tree visualization is built on the assumption that 1-2 parents
+  will be visualized at a time.
+  Adoptive Parents and Step Parents will be displayed as an "other" relationship.
+  */
   this.processRelationship = function(p1, rel, p2) {
     if (!p1 || !p2) {
       return;
@@ -133,77 +195,21 @@ var FamilyTree = function() {
     }
   }
 
-  this.processPeopleObject = function(cp, processObj) {
-    if ((processObj) && (cp instanceof Object)) {
-      var id = Number(cp.Id);
-      var link = cp.Link ? this.BASEURL + cp.Link : "";
-      var p = new Person(id, cp.Name, link);
-      if (cp.Gender) {
-        p.setGender(cp.Gender);
-      }
-      if (cp.Birth) {
-        p.setBirthYear(cp.Birth);
-      }
-      if (cp.Death) {
-        p.setDeathYear(cp.Death);
-      }
-      this.People[id] = p;
-
-      this.processChildArray(cp, p, processObj);
-      this.processSpouseArray(cp, p, processObj);
-      return p;
-    } else if (cp instanceof Object) {
-      var p = this.People[cp.Id];
-      if (p) {
-        this.processChildArray(cp, p, processObj);
-        this.processSpouseArray(cp, p, processObj);
-      }
-      //return null, the oject has already been processed
-      return null;
-    } else if (!processObj) {
-      var p = this.People[cp];
-      if (p) {
-        this.processChildArray(cp, p, processObj);
-        this.processSpouseArray(cp, p, processObj);
-      }
-      return p;
-    }
-  }
-
-  this.processPeopleArray = function(arrIn, processObj) {
-    for(var i=0; i<arrIn.length; i++) {
-      this.processPeopleObject(arrIn[i], processObj);
-    }
-  }
-
-  this.processChildArray = function(cp, objViz, processObj) {
-    if (!cp.Children) return;
-    for(var i=0; i<cp.Children.length; i++) {
-      var p = this.processPeopleObject(cp.Children[i], processObj);
-      if (p) {
-        objViz.children.push(p);
-        p.parents.push(objViz);
-      }
-    }
-  }
-
-  this.processSpouseArray = function(cp, objViz, processObj) {
-    if (!cp.Spouse) return;
-    for(var i=0; i<cp.Spouse.length; i++) {
-      var p = this.processPeopleObject(cp.Spouse[i], processObj);
-      if (p) {
-        objViz.spouses.push(p);
-        p.spouses.push(objViz);
-      }
-    }
-  }
-
+  /*
+  Retrieve a Person based on an Id
+  */
   this.getPerson = function(id) {
     if (this.People[id]) {
       return this.People[id];
     }
     return null;
   }
+
+  /*
+  Retrieve a person using the id value found in the URL hash
+    #parentId
+    #parentId-coparentId
+  */
   this.getPersonFromHash = function() {
     var hash = location.hash.replace("#","");
     var m = /^(\d+)(-\d+)?$/.exec(hash);
@@ -213,6 +219,10 @@ var FamilyTree = function() {
     return null;
   }
 
+  /*
+  Retrieve a coparent using the id value found in the URL hash
+    parentId-coparentId
+  */
   this.getCoparentFromHash = function() {
     var hash = location.hash.replace("#","");
     var m = /^\d+-(\d+)?$/.exec(hash);

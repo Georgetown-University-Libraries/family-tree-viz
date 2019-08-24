@@ -427,6 +427,98 @@ var FamilyViz = function() {
     return this;
   }
 
+  this.initDiagram = function(fperson, fcopar){
+    if (!fperson) return false;
+
+    var childsets = fperson.getChildSets();
+    var copars = fperson.coparents;
+
+    var children = fcopar ? fperson.getChildSet(fcopar) : childsets[0];
+    if (children == null) {
+      children = [];
+    }
+
+    chilren = children.sort(peopleSort);
+
+    var mom = null;
+    var dad = null;
+    if (fcopar == null) {
+      if (fperson.isMale()) {
+        dad = fperson;
+        if (copars.length > 0) {
+          mom = copars[0];
+        }
+      } else {
+        mom = fperson;
+        if (copars.length > 0) {
+          dad = copars[0];
+        }
+      }
+    } else if (fperson.isGenderUnknown() && fcopar.isGenderUnknown()) {
+      mom = fperson;
+      dad = fcopar;
+    } else if (fperson.isFemale()) {
+      mom = fperson;
+      dad = fcopar;
+    } else if (fperson.isMale()) {
+      mom = fcopar;
+      dad = fperson;
+    } else if (fcopar.isFemale()) {
+      mom = fcopar;
+      dad = fperson;
+    } else {
+      mom = fperson;
+      dad = fcopar;
+    }
+
+    if (children.length > 0) {
+      for(var i=0; i<children.length; i++) {
+        this.addChild(children[i]);
+      }
+    }
+    if (mom != null) {
+      this.setMother(mom);
+      var msibs = mom.getSiblings().sort(peopleSort);
+      for(var i=0; i<msibs.length; i++) {
+        this.addMaternalSibling(msibs[i]);
+      }
+      if (mom.getMom()) {
+        this.setMaternalGM(mom.getMom());
+      }
+      if (mom.getDad()) {
+        this.setMaternalGF(mom.getDad());
+      }
+      var pars = mom.getAltParents(dad).sort(peopleSort);;
+      for(var i=0; i<pars.length; i++) {
+        this.addMaternalAlt(new PersonRel(pars[i], "Spouse/Coparent", true));
+      }
+      for(var i=0; i<mom.otherrel.length; i++) {
+        this.addMaternalAlt(mom.otherrel[i]);
+      }
+    }
+    if (dad) {
+      this.setFather(dad);
+      var psibs = dad.getSiblings().sort(peopleSort);
+      for(var i=0; i<psibs.length; i++) {
+        this.addPaternalSibling(psibs[i]);
+      }
+      if (dad.getMom()) {
+        this.setPaternalGM(dad.getMom());
+      }
+      if (dad.getDad()) {
+        this.setPaternalGF(dad.getDad());
+      }
+      var pars = dad.getAltParents(mom).sort(peopleSort);
+      for(var i=0; i<pars.length; i++) {
+        this.addPaternalAlt(new PersonRel(pars[i], "Spouse/Coparent", true));
+      }
+      for(var i=0; i<dad.otherrel.length; i++) {
+        this.addPaternalAlt(dad.otherrel[i]);
+      }
+    }
+    return true;
+  }
+
   this.draw = function() {
     var svgHelp = new SvgHelper();
 

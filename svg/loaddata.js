@@ -1,14 +1,25 @@
 var familyTree;
 
+/*
+Initialize the family tree visualization
+*/
+$(document).ready(function(){
+  init();
+});
+
+/*
+Change the focus of the visualization to a different person
+*/
 function dofocus(cid) {
   location.hash = (cid) ? cid : "";
   location.reload();
 }
 
-$(document).ready(function(){
-  init();
-});
-
+/*
+Initialize the display using either a CSV file or a JSON file as input.
+The CSV format is designed for easy manipulation and testing of the visualization.
+The JSON format is designed to pull data feeds from a collection of Drupal views.
+*/
 function init(){
   var params = (new URL(document.location)).searchParams;
   var doc = params.get("doc") ? params.get("doc") : "../data.csv";
@@ -32,106 +43,34 @@ function init(){
 
 }
 
+/*
+Sort a list of siblings by birth year, otherwise by id
+*/
 var peopleSort = function(a, b){
   var x = a.birth - b.birth;
   x = (x == 0) ? a.id - b.id : x;
   return x;
 }
 
+/*
+Render the visualization from the perspective of one parent.
+If that parent had children with more than one other parent, then a specific coparent can be provided.
+*/
 function initDiagram(fperson, fcopar){
-  if (!fperson) return false;
   var family = new FamilyViz();
-
-  var childsets = fperson.getChildSets();
-  var copars = fperson.coparents;
-
-  var children = fcopar ? fperson.getChildSet(fcopar) : childsets[0];
-  if (children == null) {
-    children = [];
+  if (family.initDiagram(fperson, fcopar)) {
+    family.draw();
+    return true;
   }
-
-  chilren = children.sort(peopleSort);
-
-  var mom = null;
-  var dad = null;
-  if (fcopar == null) {
-    if (fperson.isMale()) {
-      dad = fperson;
-      if (copars.length > 0) {
-        mom = copars[0];
-      }
-    } else {
-      mom = fperson;
-      if (copars.length > 0) {
-        dad = copars[0];
-      }
-    }
-  } else if (fperson.isGenderUnknown() && fcopar.isGenderUnknown()) {
-    mom = fperson;
-    dad = fcopar;
-  } else if (fperson.isFemale()) {
-    mom = fperson;
-    dad = fcopar;
-  } else if (fperson.isMale()) {
-    mom = fcopar;
-    dad = fperson;
-  } else if (fcopar.isFemale()) {
-    mom = fcopar;
-    dad = fperson;
-  } else {
-    mom = fperson;
-    dad = fcopar;
-  }
-
-  if (children.length > 0) {
-    for(var i=0; i<children.length; i++) {
-      family.addChild(children[i]);
-    }
-  }
-  if (mom != null) {
-    family.setMother(mom);
-    var msibs = mom.getSiblings().sort(peopleSort);
-    for(var i=0; i<msibs.length; i++) {
-      family.addMaternalSibling(msibs[i]);
-    }
-    if (mom.getMom()) {
-      family.setMaternalGM(mom.getMom());
-    }
-    if (mom.getDad()) {
-      family.setMaternalGF(mom.getDad());
-    }
-    var pars = mom.getAltParents(dad).sort(peopleSort);;
-    for(var i=0; i<pars.length; i++) {
-      family.addMaternalAlt(new PersonRel(pars[i], "Spouse/Coparent", true));
-    }
-    for(var i=0; i<mom.otherrel.length; i++) {
-      family.addMaternalAlt(mom.otherrel[i]);
-    }
-  }
-  if (dad) {
-    family.setFather(dad);
-    var psibs = dad.getSiblings().sort(peopleSort);
-    for(var i=0; i<psibs.length; i++) {
-      family.addPaternalSibling(psibs[i]);
-    }
-    if (dad.getMom()) {
-      family.setPaternalGM(dad.getMom());
-    }
-    if (dad.getDad()) {
-      family.setPaternalGF(dad.getDad());
-    }
-    var pars = dad.getAltParents(mom).sort(peopleSort);
-    for(var i=0; i<pars.length; i++) {
-      family.addPaternalAlt(new PersonRel(pars[i], "Spouse/Coparent", true));
-    }
-    for(var i=0; i<dad.otherrel.length; i++) {
-      family.addPaternalAlt(dad.otherrel[i]);
-    }
-  }
-  family.draw();
-  return true;
+  return false;
 }
 
+/*
+Enumerate all known people into a sortable table.
+
+The numchild, numparent, numspouse, and numother columns are used to facilitate visualization
+testing and to facilitate quality checks on the completeness of the family tree.
+*/
 function showDirectory(familyTree) {
   $("#svg").hide();
   for(var i=0; i<familyTree.People.length; i++) {
