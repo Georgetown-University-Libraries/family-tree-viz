@@ -215,4 +215,8 @@ var Person = function(id, name, link) {
   this.addRelation = function(p, rel) {
     this.otherrel.push(new PersonRel(p, rel, false));
   }
+
+  this.getGedcomId = function() {
+    return "@I" + this.id + "@";
+  }
 }

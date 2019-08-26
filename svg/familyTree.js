@@ -1,6 +1,7 @@
 var FamilyTree = function() {
   this.BASEURL = ""; //Set this to the base url for links
   this.People = [];
+  this.Families = [];
 
   this.parsePerson = function(cols) {
     var id = (cols[0]) ? Number(cols[0]) : 0;
@@ -220,5 +221,23 @@ var FamilyTree = function() {
       return this.getPerson(m[1]);
     }
     return null;
+  }
+
+  this.asGedcom = function() {
+    var csvdata = "data:text;download:gedcom.csv;charset=utf-8," + this.getGedcom();
+    var encodedUri = encodeURI(csvdata);
+    $("#gedcom").attr("href", encodedUri).attr("download","gedcom.txt");
+  }
+
+  this.getGedcom = function() {
+    var families = [];
+    var recs = [];
+    for(var i=0; i<this.People.length; i++) {
+      var person = this.People[i];
+      if (!person) continue;
+      recs.push("0 " + person.getGedcomId() + " INDI");
+      recs.push("1 NAME "+person.name);
+    }
+    return recs.join("\n");
   }
 }

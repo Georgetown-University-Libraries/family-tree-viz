@@ -1,0 +1,40 @@
+{
+  "BASE": "http://mywebsite.edu/",
+  "people": [
+    {
+      "nid": "1",
+      "title": "Homer Simpson"
+    },
+    {
+      "nid": "3",
+      "title": "Bart Simpson"
+    }
+  ],
+  "births": [
+    {
+      "field_person_or_group_a_1": "1",
+      "field_event_year": "1960"
+    },
+    {
+      "field_person_or_group_a_1": "3",
+      "field_event_year": "1980"
+    }
+  ],
+  "gender": [
+    {
+      "field_person_or_group_a_1": "1",
+      "field_gender": "Male"
+    },
+    {
+      "field_person_or_group_a_1": "3",
+      "field_gender": "Male"
+    }
+  ],
+  "relation": [
+    {
+      "field_person_or_group_a": "1",
+      "title": "Biological Parent of",
+      "field_person_or_group_b": "3"
+    }
+  ]
+}

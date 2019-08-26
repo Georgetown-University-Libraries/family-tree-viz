@@ -17,7 +17,10 @@
 <body>
   <h1>Family Tree</h1>
   <div id="status"></div>
-  <div class="dir"><a href="#" onclick="javascript:location.hash='';location.reload()">Directory</a></div>
+  <div class="dir">
+    <a class="button" href="#" onclick="javascript:location.hash='';location.reload()">Directory</a>
+    <a class="button" id="gedcom" href="#" onclick="javascript:familyTree.asGedcom()">Download GEDCOM</a>
+  </div>
   <div id="cont">
       <svg id="svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200px" height="1200px">
       </svg>
