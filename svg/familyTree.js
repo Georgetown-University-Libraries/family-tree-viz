@@ -36,6 +36,7 @@ var FamilyTree = function() {
   1,Parent Of,3
   */
   this.processCsvInputData = function(data) {
+    this.BASEURL = "";
     var rows = data.split(/\r?\n/);
 
     var firstblock = true;

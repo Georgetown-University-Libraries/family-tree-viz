@@ -1,3 +1,33 @@
+/*
+Helper Classes to draw 3 generations of a family tree.
+This class assumes that all relationships can be rendered in the following
+grid.
+
+     Maternal     Maternal     Paternal     Paternal
+     Grandmother  Grandfather  Grandmother  Grandfather
+     (1,1.5)      (1,2.5)      (1,3.5)      (1,4.5)
+
+             Birth                    Birth
+             Mother                   Father
+             (2,2)                    (2,4)
+
+[Stepfathers]            Children              [Stepmothers]
+[Adoptive Rel]    (sorted in birth order)     [Adoptive Rel]
+(3,1)                     (3,3)               (3,5)
+(4,1)                     (4,3)               (4,5)
+(n,1)                     (n,3)               (n,5)
+*/
+
+/*
+Shape Class - helper class to draw shapes that will contain labels.
+Shapes can be connected with lines.
+
+Draw a particular shape at table row r and table col c.
+These values are indexed to start at 1.
+
+The svgHelper class will determine the appropriate height and width for the shape.
+The svgHelper class will compute the canvas coordinates for drawing the shape.
+*/
 var Shape = function(svgHelper, r, c) {
   this.svgHelper = svgHelper;
   this.r = r;
@@ -5,68 +35,114 @@ var Shape = function(svgHelper, r, c) {
   this.cellWidth = 1;
   this.cellHeight = 1;
 
+  /*
+  Shape height
+  */
   this.getHeight = function() {
-    return this.cellHeight * this.svgHelper.HEIGHT + (this.cellHeight - 1) * this.svgHelper.VGAP;
+    return this.cellHeight * this.svgHelper.getShapeHeight() + (this.cellHeight - 1) * this.svgHelper.getVGAP();
   }
 
+  /*
+  Shape width
+  */
   this.getWidth = function() {
-    return this.cellWidth * this.svgHelper.WIDTH + (this.cellWidth - 1) * this.svgHelper.HGAP;
+    return this.cellWidth * this.svgHelper.getShapeWidth() + (this.cellWidth - 1) * this.svgHelper.getHGAP();
   }
 
+  /*
+  Shape top coordinate
+  */
   this.getTop = function() {
-    return (this.r - 1) * (this.svgHelper.HEIGHT + this.svgHelper.VGAP);
+    return (this.r - 1) * (this.svgHelper.getShapeHeight() + this.svgHelper.getVGAP());
   }
 
+  /*
+  Shape bottom coordinate
+  */
   this.getBottom = function() {
     return this.getTop() + this.getHeight();
   }
 
+
+  /*
+  Shape verical midpoint (for line drawing)
+  */
   this.getMidVertical = function() {
     return this.getTop() + (.5 * this.getHeight());
   }
 
+  /*
+  Shape left coordinate
+  */
   this.getLeft = function() {
-    return (this.c - 1) * (this.svgHelper.WIDTH + this.svgHelper.HGAP) + 2;
+    return (this.c - 1) * (this.svgHelper.getShapeWidth() + this.svgHelper.getHGAP()) + 2;
   }
 
+  /*
+  Shape horizontal midpoint (for line drawing)
+  */
   this.getMidHorizontal = function() {
     return this.getLeft() + (.5 * this.getWidth());
   }
 
+  /*
+  Shape right coordinate
+  */
   this.getRight = function() {
     return this.getLeft() + this.getWidth();
   }
 
+  /*
+  Set text box height
+  */
   this.setCellHeight = function(x) {
     this.cellHeight = x;
   }
 
+  /*
+  Set text box width
+  */
   this.setCellWidth = function(x) {
     this.cellWidth = x;
   }
 
+  /*
+  Set text box x coordinate
+  */
   this.getTextX = function() {
-    return this.getLeft() + this.svgHelper.TOFF;
+    return this.getLeft() + this.svgHelper.getTextOffset();
   }
 
+  /*
+  Set text box y coordinate
+  */
   this.getTextY = function() {
-    return this.getBottom() - this.svgHelper.TOFF;
+    return this.getBottom() - this.svgHelper.getTextOffset();
   }
 
+  /*
+  Abstract draw method
+  */
   this.draw = function() {
   }
 
+  /*
+  Abstract text draw method
+  */
   this.drawText = function() {
   }
 
+  /*
+  Draw a line of text
+  */
   this.drawText = function(label, tclass, line) {
     var shape = this.svgHelper.makeSvgEl("text")
-      .attr("height", (this.getHeight() - 2 * this.svgHelper.LINEOFF) / this.svgHelper.LINES)
+      .attr("height", (this.getHeight() - 2 * this.svgHelper.getLineOffset()) / this.svgHelper.getLines())
       .attr("width", this.getWidth())
       .attr("x", this.getTextX())
-      .attr("y", this.getTextY() - this.getHeight() + line * ((this.getHeight() - 2 * this.svgHelper.LINEOFF) / this.svgHelper.LINES) + this.svgHelper.LINEOFF)
+      .attr("y", this.getTextY() - this.getHeight() + line * ((this.getHeight() - 2 * this.svgHelper.getLineOffset()) / this.svgHelper.getLines()) + this.svgHelper.getLineOffset())
       .text(label)
-      .addClass(tclass ? tclass : "text");
+      .addClass(tclass ? tclass : this.svgHelper.getTextClass());
     if (this.svgHelper.addTabIndex) {
       shape
         .attr("tabindex", this.svgHelper.tabindex++);
@@ -75,6 +151,9 @@ var Shape = function(svgHelper, r, c) {
   }
 }
 
+/*
+Draw a Rectangle containing up to 3 lines of text
+*/
 var Box = function(svgHelper, r, c) {
   Shape.call(this, svgHelper, r, c);
 
@@ -94,6 +173,9 @@ var Box = function(svgHelper, r, c) {
   }
 }
 
+/*
+Draw an Ellipse containing up to 3 lines of text
+*/
 var Ellipse = function(svgHelper, r, c) {
   Shape.call(this, svgHelper, r, c);
 
@@ -117,6 +199,7 @@ var Ellipse = function(svgHelper, r, c) {
 
 }
 
+/*
 var Circle = function(svgHelper, r, c) {
   Shape.call(this, svgHelper, r, c);
 
@@ -135,7 +218,7 @@ var Circle = function(svgHelper, r, c) {
   }
 
   this.getTextX = function() {
-    return this.getLeft() + this.svgHelper.TOFF;
+    return this.getLeft() + this.svgHelper.getTextOffset();
   }
 
   this.getTextY = function() {
@@ -158,33 +241,68 @@ var Circle = function(svgHelper, r, c) {
     return shape;
   }
 }
+*/
 
-var SvgHelper = function() {
-  this.VIEW_WIDTH=1200;
-  this.VIEW_HEIGHT=1200;
-  this.VIZ_COLS=5;
-  this.LINES = 3;
-  this.LINEOFF = 2;
+/*
+SvgHelper for drawing a grid of family tree shapes with a known size.
+*/
+var SvgHelper = function(base) {
+  this.BASEURL = base;
   this.SVG = $("#svg");
-  this.HGAP=40;
-  this.VGAP=32;
-  this.WIDTH=(this.VIEW_WIDTH - this.VIZ_COLS * this.HGAP)/this.VIZ_COLS;
-  this.HEIGHT=50;
-  this.TOFF = 5;
   this.tabindex = 0;
   this.addTabIndex = false;
   this.makeSvgEl = function(tag) {
     return $(document.createElementNS('http://www.w3.org/2000/svg', tag));
   }
-  this.classBox = "draw";
-  this.classWrapBox = "wrap";
+
+  /*
+  Control the overall shape of the visualization
+  */
+  this.getViewWidth = function() {return 1200;}
+  this.getViewHeight = function() {return 1200;}
+  this.getShapeHeight = function() {return 50;}
+  this.getHGAP = function() {return 40;}
+  this.getVGAP = function() {return 32;}
+
+  /*
+  Pixel refinements to shape placement
+  */
+  this.getLineOffset =  function() {return 2;}
+  this.getTextOffset =  function() {return 5;}
+
+  /*
+  Number of columns in the family tree visualization.
+  If this changes, the placement of relatives will need to change.
+  */
+  this.getVizCols = function() {return 5;}
+  /*
+  Number of lines of text within a shape object.
+  */
+  this.getLines = function() {return 3;}
+
+  /*
+  Computed shapre size values
+  */
+  this.getShapeWidth = function() {
+    return (this.getViewWidth() - this.getVizCols() * this.getHGAP())/this.getVizCols();
+  }
+
+  /*
+  Control the CSS assigned to shape objects
+  */
+  this.getClassBox = function() {return "draw";}
+  this.getClassWrapBox = function() {return "wrap";}
+  this.getTextClass = function() {return "text";}
+  this.getFoucsTextClass = function() {return "focustext";}
+  this.getLinkTextClass = function() {return "link";}
 
   this.drawBox = function(r, c, person, classbox) {
+    var self = this;
     var g = this.makeSvgEl("g").appendTo(this.SVG);
     var box = new Box(this, r, c);
-    var sbox = box.draw(classbox ? classbox: this.classBox)
+    var sbox = box.draw(classbox ? classbox: this.getClassBox())
       .appendTo(g);
-    var tclass = classbox == "drawfocus" ? "focustext" : "text";
+    var tclass = classbox == "drawfocus" ? this.getFoucsTextClass() : this.getTextClass();
     box.drawText(person.getName(1), tclass, 1)
       .appendTo(g);
     box.drawText(person.getName(2), tclass, 2)
@@ -196,14 +314,15 @@ var SvgHelper = function() {
     var link = person.link;
     link = link == null ? "" : link;
     if (link != "" && link != "nolink") {
-      var linktext = box.drawText("Details page ", "link", 3).appendTo(g);
+      var linktext = box.drawText("Details page ", this.getLinkTextClass(), 3).appendTo(g);
       linktext.on("click",function(){
-        location = "http://dev-gu-lit-smr.pantheonsite.io" + link;
+        location = (self.BASEURL == "") ? "" : self.BASEURL + link;
       });
     }
     return box;
   }
 
+  /*
   this.drawCircle = function(r, c, person, copar, label) {
     var g = this.makeSvgEl("g").appendTo(this.SVG);
     var circle = new Circle(this, r, c);
@@ -219,15 +338,16 @@ var SvgHelper = function() {
     });
     return circle;
   }
+  */
 
   this.drawEllipse = function(r, c, person, copar, label, isCopar) {
     var g = this.makeSvgEl("g").appendTo(this.SVG);
     var ellipse = new Ellipse(this, r, c);
     var sellipse = ellipse.draw()
       .appendTo(g);
-    ellipse.drawText(label, "text", 1)
+    ellipse.drawText(label, this.getTextClass(), 1)
       .appendTo(g);
-    ellipse.drawText(copar ? copar.getName(1) : "Undefined", "text", 2)
+    ellipse.drawText(copar ? copar.getName(1) : "Undefined", this.getTextClass(), 2)
       .appendTo(g);
     g.children().on("click", function(){
       if (isCopar) {
@@ -244,7 +364,7 @@ var SvgHelper = function() {
     var box = new Box(this, r, c);
     box.setCellHeight(rh);
     box.setCellWidth(cw);
-    box.drawBoxOffset(this.classWrapBox, -.25 * this.VGAP, -.25 * this.HGAP, .5 * this.VGAP, .5 * this.HGAP)
+    box.drawBoxOffset(this.getClassWrapBox(), -.25 * this.getVGAP(), -.25 * this.getHGAP(), .5 * this.getVGAP(), .5 * this.getHGAP())
       .appendTo(this.SVG);
     return box;
   }
@@ -355,7 +475,8 @@ var SvgHelper = function() {
 
 }
 
-var FamilyViz = function() {
+var FamilyViz = function(base) {
+  this.BASEURL = base;
   this.rgp    = 1;
   this.rp     = 2;
   this.rchild = 3;
@@ -520,7 +641,7 @@ var FamilyViz = function() {
   }
 
   this.draw = function() {
-    var svgHelp = new SvgHelper();
+    var svgHelp = new SvgHelper(this.BASEURL);
 
     var focus = null;
     if (this.p_sib.length > 0) {

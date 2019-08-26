@@ -27,7 +27,7 @@ function init(){
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processDrupalInputData(data);
-      if (!initDiagram(familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
+      if (!initDiagram(familyTree.BASEURL, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
         showDirectory(familyTree);
       }
     }, "json");
@@ -35,7 +35,7 @@ function init(){
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processCsvInputData(data);
-      if (!initDiagram(familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
+      if (!initDiagram(familyTree.BASEURL, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
         showDirectory(familyTree);
       }
     }, "text");
@@ -56,8 +56,8 @@ var peopleSort = function(a, b){
 Render the visualization from the perspective of one parent.
 If that parent had children with more than one other parent, then a specific coparent can be provided.
 */
-function initDiagram(fperson, fcopar){
-  var family = new FamilyViz();
+function initDiagram(base, fperson, fcopar){
+  var family = new FamilyViz(base);
   if (family.initDiagram(fperson, fcopar)) {
     family.draw();
     return true;
