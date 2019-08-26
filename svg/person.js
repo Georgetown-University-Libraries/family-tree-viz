@@ -49,16 +49,15 @@ var Person = function(id, name, link) {
   //get the text to display in the visualization box for each person.
   //line refers to the line number to display in the box.
   //For SVG rendering, the value will be returned line by line.
-  //TODO: return this as an array
-  this.getName = function(line) {
-    if (line == 1) {
-      var name = this.name;
-      if (this.children.length > 0) {
-        name += " (" + this.children.length + " ch.)";
-      }
-      return name;
+  this.getName = function() {
+    var lines = [];
+    var name = this.name;
+    if (this.children.length > 0) {
+      name += " (" + this.children.length + " ch.)";
     }
-    var name = this.gender;
+    lines.push(name);
+
+    name = this.gender;
     if (this.birth == 0 && this.death == 0) {
       name += " (dates unknown)";
     } else {
@@ -68,7 +67,8 @@ var Person = function(id, name, link) {
       name += this.death == 0 ? "?" : this.death;
       name += ")";
     }
-    return name;
+    lines.push(name);
+    return lines;
   }
 
   /*

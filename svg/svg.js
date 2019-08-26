@@ -16,6 +16,12 @@ grid.
 (3,1)                     (3,3)               (3,5)
 (4,1)                     (4,3)               (4,5)
 (n,1)                     (n,3)               (n,5)
+
+             Maternal                 Paternal
+             Sibling                  Sibling
+             (3,2)                    (3,4)
+             (4,2)                    (4,4)
+             (n,2)                    (n,4)
 */
 
 /*
@@ -296,6 +302,9 @@ var SvgHelper = function(base) {
   this.getFoucsTextClass = function() {return "focustext";}
   this.getLinkTextClass = function() {return "link";}
 
+  /*
+  Draw a family tree box for a person at a specific table row and column.
+  */
   this.drawBox = function(r, c, person, classbox) {
     var self = this;
     var g = this.makeSvgEl("g").appendTo(this.SVG);
@@ -303,10 +312,11 @@ var SvgHelper = function(base) {
     var sbox = box.draw(classbox ? classbox: this.getClassBox())
       .appendTo(g);
     var tclass = classbox == "drawfocus" ? this.getFoucsTextClass() : this.getTextClass();
-    box.drawText(person.getName(1), tclass, 1)
-      .appendTo(g);
-    box.drawText(person.getName(2), tclass, 2)
-      .appendTo(g);
+    var lines = person.getName();
+    for(var i = 0; i<lines.length && i<this.getLines(); i++) {
+      box.drawText(lines[i], tclass, i+1)
+        .appendTo(g);
+    }
     g.children().on("click", function(){
       location.hash = person.id;
       location.reload();
@@ -314,7 +324,7 @@ var SvgHelper = function(base) {
     var link = person.link;
     link = link == null ? "" : link;
     if (link != "" && link != "nolink") {
-      var linktext = box.drawText("Details page ", this.getLinkTextClass(), 3).appendTo(g);
+      var linktext = box.drawText("Details page ", this.getLinkTextClass(), this.getLines()).appendTo(g);
       linktext.on("click",function(){
         location = (self.BASEURL == "") ? "" : self.BASEURL + link;
       });
@@ -340,6 +350,11 @@ var SvgHelper = function(base) {
   }
   */
 
+  /*
+  Draw a family tree box for a relationship between 2 people at a specific table row and column.
+  "Coparent" relationships are a visualization of the relationships for person and copar.
+  Coparent relationships will contain a unique hash code that references both persons.
+  */
   this.drawEllipse = function(r, c, person, copar, label, isCopar) {
     var g = this.makeSvgEl("g").appendTo(this.SVG);
     var ellipse = new Ellipse(this, r, c);
@@ -347,7 +362,8 @@ var SvgHelper = function(base) {
       .appendTo(g);
     ellipse.drawText(label, this.getTextClass(), 1)
       .appendTo(g);
-    ellipse.drawText(copar ? copar.getName(1) : "Undefined", this.getTextClass(), 2)
+    var lines = copar ? copar.getName() : ["Undefined", ""];
+    ellipse.drawText(lines[0], this.getTextClass(), 2)
       .appendTo(g);
     g.children().on("click", function(){
       if (isCopar) {
@@ -360,6 +376,9 @@ var SvgHelper = function(base) {
     return ellipse;
   }
 
+  /*
+  Draw a shaeded box around a collection of other boxes drawn on the diagram.
+  */
   this.drawWrapBox = function(r, c, rh, cw) {
     var box = new Box(this, r, c);
     box.setCellHeight(rh);
@@ -369,6 +388,14 @@ var SvgHelper = function(base) {
     return box;
   }
 
+  /*
+  Connect the botton of b1 to the top of b2 using lines at 90 degree angles.
+    b.1
+     |
+     +---+
+         |
+        b.2
+  */
   this.connect = function(b1, b2) {
     var y1 = b1.getBottom();
     var x1 = b1.getMidHorizontal()
@@ -401,6 +428,13 @@ var SvgHelper = function(base) {
       .appendTo(this.SVG);
   }
 
+  /*
+  Connect the left side of b1 to the top of b2 using lines at 90 degree angles.
+
+            +---b.1
+            |
+           b.2
+  */
   this.lconnect = function(b1, b2) {
     var y1 = b1.getMidVertical()
     var x1 = b1.getLeft()
@@ -423,6 +457,13 @@ var SvgHelper = function(base) {
       .appendTo(this.SVG);
   }
 
+  /*
+  Connect the right side of b1 to the top of b2 using lines at 90 degree angles.
+
+      b.1---+
+            |
+           b.2
+  */
   this.rconnect = function(b1, b2) {
     var y1 = b1.getMidVertical()
     var x1 = b1.getRight()
@@ -445,6 +486,15 @@ var SvgHelper = function(base) {
       .appendTo(this.SVG);
   }
 
+  /*
+  Connect the left side of b1 to the right side of b2.
+
+            +b.1
+          /
+        /
+    b.2+
+
+  */
   this.lsideconnect = function(b1, b2) {
     var y1 = b1.getMidVertical()
     var x1 = b1.getLeft()
@@ -459,6 +509,15 @@ var SvgHelper = function(base) {
       .appendTo(this.SVG);
   }
 
+  /*
+  Connect the right side of b1 to the left side of b2.
+
+    b.1+
+        \
+         \
+          +b.2
+
+  */
   this.rsideconnect = function(b1, b2) {
     var y1 = b1.getMidVertical()
     var x1 = b1.getRight()
@@ -475,30 +534,63 @@ var SvgHelper = function(base) {
 
 }
 
+/*
+Build a 3 generation family visualization to display with a focus on the middle generation.
+
+Assumption: display 0-4 grandparents at one time.
+Assumption: display 1-2 parents at one time
+  - other spouses / coparents will be displayed to the side
+Assumption: display the birth children for the parents listed above
+  - adoptive parent/child relationships will be displayed to the side
+
+If the gender is unknown for a parent, the first parent will fall in the maternal column.
+*/
 var FamilyViz = function(base) {
+  //base location for link url
   this.BASEURL = base;
+  //grandparent row
   this.rgp    = 1;
+  //parent row - this is the focal point of the display
   this.rp     = 2;
+  //top row for displaying children
   this.rchild = 3;
 
+  //maternal grandmother col
   this.cmgm = 1.5;
+  //maternal grandfather col
   this.cmgf = 2.5;
+  //paternal grandmother col
   this.cpgm = 3.5;
+  //paternal grandfather col
   this.cpgf = 4.5;
+  //mother col
   this.cm = 2;
+  //father col
   this.cf = 4;
+  //children col
   this.cchild = 3;
 
+  //maternal grandmother - Person object
   this.p_mgm;
+  //maternal grandfather - Person object
   this.p_mgf;
+  //paternal grandmother - Person object
   this.p_pgm;
+  //paternal grandfather - Person object
   this.p_pgf;
+  //mother - Person object
   this.p_m;
+  //father - Person object
   this.p_f;
+  //children of mother/father - Person object
   this.p_sib = [];
+  //maternal siblings - Person object
   this.p_msib = [];
+  //paternal siblings - Person object
   this.p_psib = [];
+  //maternal relationships - PersonRel object
   this.p_m_alt = [];
+  //paternal relationships - PersonRel object
   this.p_f_alt = [];
 
   this.setMother = function(p) {
@@ -548,6 +640,11 @@ var FamilyViz = function(base) {
     return this;
   }
 
+  /*
+  Populate the 3 generations for person fperson using one coparent relationship
+
+  If fcopar is specified, a specific coparent relationship will be displayed.
+  */
   this.initDiagram = function(fperson, fcopar){
     if (!fperson) return false;
 
@@ -640,6 +737,9 @@ var FamilyViz = function(base) {
     return true;
   }
 
+  /*
+  Draw the 3 generations of the family tree
+  */
   this.draw = function() {
     var svgHelp = new SvgHelper(this.BASEURL);
 
