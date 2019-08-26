@@ -23,11 +23,12 @@ The JSON format is designed to pull data feeds from a collection of Drupal views
 function init(){
   var params = (new URL(document.location)).searchParams;
   var doc = params.get("doc") ? params.get("doc") : "../data.csv";
+  var node = $("#svg");
   if (doc.match(/\.json$/)) {
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processDrupalInputData(data);
-      if (!initDiagram(familyTree.BASEURL, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
+      if (!initDiagram(familyTree.BASEURL, node, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
         showDirectory(familyTree);
       }
     }, "json");
@@ -35,7 +36,7 @@ function init(){
     $.get(doc, function(data){
       var familyTree = new FamilyTree();
       familyTree.processCsvInputData(data);
-      if (!initDiagram(familyTree.BASEURL, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
+      if (!initDiagram(familyTree.BASEURL, node, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
         showDirectory(familyTree);
       }
     }, "text");
@@ -56,8 +57,8 @@ var peopleSort = function(a, b){
 Render the visualization from the perspective of one parent.
 If that parent had children with more than one other parent, then a specific coparent can be provided.
 */
-function initDiagram(base, fperson, fcopar){
-  var family = new FamilyViz(base);
+function initDiagram(base, node, fperson, fcopar){
+  var family = new FamilyViz(base, node);
   if (family.initDiagram(fperson, fcopar)) {
     family.draw();
     return true;

@@ -252,7 +252,21 @@ var Circle = function(svgHelper, r, c) {
 /*
 SvgHelper for drawing a grid of family tree shapes with a known size.
 */
-var SvgHelper = function(base) {
+var SvgHelper = function(base, viewBox) {
+  this.setViewBox = function(viewBox) {
+    var attr = viewBox.split("[ ,]");
+    if (attr.length == 4) {
+      this.minx   = attr[0];
+      this.miny   = attr[1];
+      this.width  = attr[2];
+      this.height = attr[3];
+    }
+  }
+  this.minx = 0;
+  this.miny = 0;
+  this.height = 1200;
+  this.width = 1200;
+  this.setViewBox(viewBox);
   this.BASEURL = base;
   this.SVG = $("#svg");
   this.tabindex = 0;
@@ -264,8 +278,8 @@ var SvgHelper = function(base) {
   /*
   Control the overall shape of the visualization
   */
-  this.getViewWidth = function() {return 1200;}
-  this.getViewHeight = function() {return 1200;}
+  this.getViewWidth = function() {return this.height;}
+  this.getViewHeight = function() {return this.width;}
   this.getShapeHeight = function() {return 50;}
   this.getHGAP = function() {return 40;}
   this.getVGAP = function() {return 32;}
@@ -545,7 +559,10 @@ Assumption: display the birth children for the parents listed above
 
 If the gender is unknown for a parent, the first parent will fall in the maternal column.
 */
-var FamilyViz = function(base) {
+var FamilyViz = function(base, node) {
+  //jQuery node to use for SVG display
+  this.node = node;
+
   //base location for link url
   this.BASEURL = base;
   //grandparent row
@@ -741,7 +758,8 @@ var FamilyViz = function(base) {
   Draw the 3 generations of the family tree
   */
   this.draw = function() {
-    var svgHelp = new SvgHelper(this.BASEURL);
+    var viewBox = this.node.attr("viewBox");
+    var svgHelp = new SvgHelper(this.BASEURL, viewBox);
 
     var focus = null;
     if (this.p_sib.length > 0) {
