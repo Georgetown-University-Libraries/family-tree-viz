@@ -1,6 +1,7 @@
 var FamilyTree = function() {
   this.BASEURL = ""; //Set this to the base url for links
   this.People = [];
+  this.Families = [];
 
   this.parsePerson = function(cols) {
     var id = (cols[0]) ? Number(cols[0]) : 0;
@@ -10,7 +11,7 @@ var FamilyTree = function() {
       if (p == null) {
         var name = (cols[1]) ? cols[1] : "";
         var link = (cols[2]) ? cols[2] : "";
-        p = new Person(id, name, this.BASEURL+link);
+        p = new Person(this, id, name, this.BASEURL+link);
       }
       this.People[id] = p;
     }
@@ -57,7 +58,7 @@ var FamilyTree = function() {
       if (firstblock) {
         if (cols.length > 2) {
           var id = Number(cols[0]);
-          this.People[id] = new Person(id, cols[1], this.BASEURL+cols[2]);
+          this.People[id] = new Person(this, id, cols[1], this.BASEURL+cols[2]);
           if (cols.length > 3) {
             this.People[id].setGender(cols[3]);
           }
@@ -131,7 +132,7 @@ var FamilyTree = function() {
 
       var link = "/node/" + id;
       if (!this.People[id]) {
-        this.People[id] = new Person(id, name, link);
+        this.People[id] = new Person(this, id, name, link);
       }
     }
 
@@ -231,5 +232,64 @@ var FamilyTree = function() {
       return this.getPerson(m[1]);
     }
     return null;
+  }
+
+  this.asGedcom = function() {
+    var csvdata = "data:text;download:gedcom.csv;charset=utf-8," + this.getGedcom();
+    var encodedUri = encodeURI(csvdata);
+    $("#gedcom").attr("href", encodedUri).attr("download","gedcom.txt");
+  }
+  this.getGedcom = function() {
+    var recs = [];
+    for(var i=0; i<this.People.length; i++) {
+      var person = this.People[i];
+      if (!person) continue;
+      person.makeChildSets();
+    }
+    for(var i=0; i<this.Families.length; i++) {
+      var f = this.Families[i];
+      recs.push("0 " + f.getGedcomId() + " FAM");
+    }
+    for(var i=0; i<this.People.length; i++) {
+      var person = this.People[i];
+      if (!person) continue;
+      recs.push("0 " + person.getGedcomId() + " INDI");
+      recs.push("1 NAME " + person.name);
+      if (person.isMale()) {
+        recs.push("1 SEX M");
+      } else if (person.isFemale()) {
+        recs.push("1 SEX F");
+      }
+      if (person.birth != 0) {
+        recs.push("1 BIRT");
+        recs.push("2 DATE " + person.birth);
+      }
+      if (person.death != 0) {
+        recs.push("1 BIRT");
+        recs.push("2 DATE " + person.death);
+      }
+
+      for(var j=0; j<person.families.length; j++) {
+        var f = person.families[j];
+        recs.push("1 FAMS " + f.getGedcomId());
+      }
+      if (person.isMale() ) {
+        for(var j=0; j<person.spouses.length; j++) {
+          recs.push("1 WIFE " + person.spouses[j].getGedcomId());
+        }
+      } else if (person.isFemale() ) {
+        for(var j=0; j<person.spouses.length; j++) {
+          recs.push("1 HUSB " + person.spouses[j].getGedcomId());
+        }
+      }
+      var f = person.getGedcomFamily();
+      if (f) {
+        recs.push("1 FAMC " + f.getGedcomId());
+      }
+      for(var j=0; j<person.children.length; j++) {
+        recs.push("1 CHIL " + person.children[j].getGedcomId());
+      }
+    }
+    return recs.join("\n");
   }
 }

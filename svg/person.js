@@ -17,7 +17,9 @@ var PersonRel = function(p, rel, isCopar) {
 /*
 Person object built from a collection of people records and related people records.
 */
-var Person = function(id, name, link) {
+var Person = function(familyTree, id, name, link) {
+  //refernce to the family tree
+  this.familyTree = familyTree;
   //numeric id for the individual.  this will be used in a zero-based array that assumes
   //there will be a finite number of people.  If more complex ids are needed, an index will
   //need to be calculated.
@@ -32,6 +34,9 @@ var Person = function(id, name, link) {
   this.parents = [];
   //array of the spouses of this person
   this.spouses = [];
+  //array of families when generating a gedcom listing
+  this.families = [];
+
   //array of annotated relationships to this person
   //spouses, biological parents, and biological children should not be captured here.
   this.otherrel = [];
@@ -156,6 +161,31 @@ var Person = function(id, name, link) {
   }
 
   /*
+  From the perspective of this person, find Gedcom family.
+  */
+  this.getGedcomFamily = function() {
+    if (this.parents.length > 0) {
+      var p = this.parents[0];
+      var ap = this.getAltParent(p);
+      for(var i=0; i < p.families.length; i++) {
+        var f = p.families[i];
+        if (f.p1.id == p.id && f.p2 && ap) {
+          if (f.p2.id == ap.id) {
+            return f;
+          }
+        } else if (f.p2 && ap) {
+          if (f.p2.id == p.id && f.p1.id == ap.id) {
+            return f;
+          }
+        } else if (f.p1.id == p.id) {
+          return f;
+        }
+      }
+    }
+    return null;
+  }
+
+  /*
   Compute the lists of coparents and childsets for this person.
   This will be initialized only once.
   */
@@ -172,6 +202,7 @@ var Person = function(id, name, link) {
       var found = false;
       if (this.coparents.indexOf(p) == -1) {
         this.coparents.push(p);
+        this.makeFamilyTwoParent(p);
         this.childsets.push([]);
       }
       var j = this.coparents.indexOf(p);
@@ -182,6 +213,7 @@ var Person = function(id, name, link) {
       if (!s) continue;
       if (this.coparents.indexOf(s) == -1) {
         this.coparents.push(s);
+        this.makeFamilyTwoParent(s);
         this.childsets.push([]);
       }
     }
@@ -282,5 +314,59 @@ var Person = function(id, name, link) {
   */
   this.addRelation = function(p, rel) {
     this.otherrel.push(new PersonRel(p, rel, false));
+  }
+
+  /*
+  When printing gedcom, provide a unique id for each item
+  */
+  this.getGedcomId = function() {
+    return "@I" + this.id + "@";
+  }
+
+  /*
+  Gedcom family calculations
+  */
+  this.makeFamilyOneParent = function() {
+    var f = new Family(this, null);
+    this.familyTree.Families.push(f);
+    f.id = this.familyTree.Families.length;
+    this.families.push(f);
+    return f;
+  }
+
+  this.makeFamilyTwoParent = function(p2) {
+    if (p2 == null) {
+      return this.makeFamilyOneParent();
+    }
+    for(var i=0; i<this.families.length; i++) {
+      var f = this.families[i];
+      if (f.p2) {
+        if (f.p2.id == p2.id || f.p1.id == p2.id) {
+          return f;
+        }
+      }
+    }
+    var f = new Family(this, p2);
+    this.familyTree.Families.push(f);
+    f.id = this.familyTree.Families.length;
+    this.families.push(f);
+    p2.families.push(f);
+    return f;
+  }
+}
+
+/*
+Gedcom family id
+*/
+var Family = function(p1, p2) {
+  this.id = -1;
+  this.p1 = p1;
+  this.p2 = p2;
+
+  /*
+  When printing gedcom, provide a unique id for each item
+  */
+  this.getGedcomId = function() {
+    return "@F" + this.id + "@";
   }
 }

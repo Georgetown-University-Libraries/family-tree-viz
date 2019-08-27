@@ -26,7 +26,7 @@ function init(){
   var node = $("#svg");
   if (doc.match(/\.json$/)) {
     $.get(doc, function(data){
-      var familyTree = new FamilyTree();
+      familyTree = new FamilyTree();
       familyTree.processDrupalInputData(data);
       if (!initDiagram(familyTree.BASEURL, node, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
         showDirectory(familyTree);
@@ -34,7 +34,7 @@ function init(){
     }, "json");
   } else {
     $.get(doc, function(data){
-      var familyTree = new FamilyTree();
+      familyTree = new FamilyTree();
       familyTree.processCsvInputData(data);
       if (!initDiagram(familyTree.BASEURL, node, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
         showDirectory(familyTree);
