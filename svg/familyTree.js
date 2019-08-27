@@ -246,14 +246,18 @@ var FamilyTree = function() {
       if (!person) continue;
       person.makeChildSets();
     }
+    for(var i=0; i<this.Families.length; i++) {
+      var f = this.Families[i];
+      recs.push("0 " + f.getGedcomId() + " FAM");
+    }
     for(var i=0; i<this.People.length; i++) {
       var person = this.People[i];
       if (!person) continue;
       recs.push("0 " + person.getGedcomId() + " INDI");
       recs.push("1 NAME " + person.name);
-      if (!person.isMale()) {
+      if (person.isMale()) {
         recs.push("1 SEX M");
-      } else if (!person.isFemale()) {
+      } else if (person.isFemale()) {
         recs.push("1 SEX F");
       }
       if (person.birth != 0) {
@@ -266,7 +270,8 @@ var FamilyTree = function() {
       }
 
       for(var j=0; j<person.families.length; j++) {
-        recs.push("1 FAMS " + person.families[j].getGedcomId());
+        var f = person.families[j];
+        recs.push("1 FAMS " + f.getGedcomId());
       }
       if (person.isMale() ) {
         for(var j=0; j<person.spouses.length; j++) {

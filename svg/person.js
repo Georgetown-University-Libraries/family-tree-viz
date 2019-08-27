@@ -164,21 +164,21 @@ var Person = function(familyTree, id, name, link) {
   From the perspective of this person, find Gedcom family.
   */
   this.getGedcomFamily = function() {
-    if (this.parents.length > 1) {
+    if (this.parents.length > 0) {
       var p = this.parents[0];
       var ap = this.getAltParent(p);
       for(var i=0; i < p.families.length; i++) {
         var f = p.families[i];
-        if (f.p1.id == p.id) {
-          if (f.p2) {
-            if (f.p2.id == ap.id) {
-              return f;
-            }
+        if (f.p1.id == p.id && f.p2 && ap) {
+          if (f.p2.id == ap.id) {
+            return f;
           }
-        } else if (f.p2) {
+        } else if (f.p2 && ap) {
           if (f.p2.id == p.id && f.p1.id == ap.id) {
             return f;
           }
+        } else if (f.p1.id == p.id) {
+          return f;
         }
       }
     }
