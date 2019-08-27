@@ -234,22 +234,35 @@ var FamilyTree = function() {
     return null;
   }
 
+  /*
+  Make a GEDCOM download link
+  */
   this.asGedcom = function() {
     var csvdata = "data:text;download:gedcom.csv;charset=utf-8," + this.getGedcom();
     var encodedUri = encodeURI(csvdata);
     $("#gedcom").attr("href", encodedUri).attr("download","gedcom.txt");
   }
+
+  /*
+  Generate a GEDCOM representation of the family tree
+  */
   this.getGedcom = function() {
     var recs = [];
+
+    //Find all parent child relationships
     for(var i=0; i<this.People.length; i++) {
       var person = this.People[i];
       if (!person) continue;
       person.makeChildSets();
     }
+
+    //Output all known "families" (parent combinations)
     for(var i=0; i<this.Families.length; i++) {
       var f = this.Families[i];
       recs.push("0 " + f.getGedcomId() + " FAM");
     }
+
+    //Output each individual
     for(var i=0; i<this.People.length; i++) {
       var person = this.People[i];
       if (!person) continue;
@@ -265,10 +278,11 @@ var FamilyTree = function() {
         recs.push("2 DATE " + person.birth);
       }
       if (person.death != 0) {
-        recs.push("1 BIRT");
+        recs.push("1 DEAT");
         recs.push("2 DATE " + person.death);
       }
 
+      //Document spousal family relationships
       for(var j=0; j<person.families.length; j++) {
         var f = person.families[j];
         recs.push("1 FAMS " + f.getGedcomId());
@@ -282,10 +296,13 @@ var FamilyTree = function() {
           recs.push("1 HUSB " + person.spouses[j].getGedcomId());
         }
       }
+      //Identify the "family" associated with the person's parents
       var f = person.getGedcomFamily();
       if (f) {
         recs.push("1 FAMC " + f.getGedcomId());
       }
+
+      //List children of the individual
       for(var j=0; j<person.children.length; j++) {
         recs.push("1 CHIL " + person.children[j].getGedcomId());
       }

@@ -162,6 +162,7 @@ var Person = function(familyTree, id, name, link) {
 
   /*
   From the perspective of this person, find Gedcom family.
+  A "family" may be identified by either one parent or 2 parents
   */
   this.getGedcomFamily = function() {
     if (this.parents.length > 0) {
@@ -324,7 +325,7 @@ var Person = function(familyTree, id, name, link) {
   }
 
   /*
-  Gedcom family calculations
+  Assign a GEDCOM family for a single parent
   */
   this.makeFamilyOneParent = function() {
     var f = new Family(this, null);
@@ -334,6 +335,9 @@ var Person = function(familyTree, id, name, link) {
     return f;
   }
 
+  /*
+  Assign a GEDCOM family for a 2 parent combination
+  */
   this.makeFamilyTwoParent = function(p2) {
     if (p2 == null) {
       return this.makeFamilyOneParent();
