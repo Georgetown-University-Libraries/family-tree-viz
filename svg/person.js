@@ -300,14 +300,14 @@ var Person = function(familyTree, id, name, link) {
   get birth year as an int or return 0
   */
   this.setBirthYear = function(d) {
-    this.birth = $.isNumeric(d) ? Number(d) : 0;
+    this.birth = jQuery.isNumeric(d) ? Number(d) : 0;
   }
 
   /*
   get death year as an int or return 0
   */
   this.setDeathYear = function(d) {
-    this.death = $.isNumeric(d) ? Number(d) : 0;
+    this.death = jQuery.isNumeric(d) ? Number(d) : 0;
   }
 
   /*

@@ -240,7 +240,7 @@ var FamilyTree = function() {
   this.asGedcom = function() {
     var csvdata = "data:text;download:gedcom.csv;charset=utf-8," + this.getGedcom();
     var encodedUri = encodeURI(csvdata);
-    $("#gedcom").attr("href", encodedUri).attr("download","gedcom.txt");
+    jQuery("#gedcom").attr("href", encodedUri).attr("download","gedcom.txt");
   }
 
   /*

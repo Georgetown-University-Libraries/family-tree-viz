@@ -3,7 +3,7 @@ var familyTree;
 /*
 Initialize the family tree visualization
 */
-$(document).ready(function(){
+jQuery(document).ready(function(){
   init();
 });
 
@@ -23,8 +23,8 @@ The JSON format is designed to pull data feeds from a collection of Drupal views
 function init(){
   var params = (new URL(document.location)).searchParams;
   var doc = "data.json";
-  var node = $("#svg");
-  $.get(doc, function(data){
+  var node = jQuery("#svg");
+  jQuery.get(doc, function(data){
     familyTree = new FamilyTree();
     familyTree.processDrupalInputData(data);
 
@@ -32,7 +32,7 @@ function init(){
       initDiagram(familyTree.BASEURL, node, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash());
       return;
     }
-    var arr = $("body").attr("class").split(" ");
+    var arr = jQuery("body").attr("class").split(" ");
     var rx = /^page-node-(\d+)$/;
     for(var i=0; i<arr.length; i++) {
       var m = arr[i].match(rx);
@@ -73,27 +73,27 @@ The numchild, numparent, numspouse, and numother columns are used to facilitate 
 testing and to facilitate quality checks on the completeness of the family tree.
 */
 function showDirectory(familyTree) {
-  $("#svg").hide();
+  jQuery("#svg").hide();
   for(var i=0; i<familyTree.People.length; i++) {
     var per = familyTree.People[i];
     if (!per) continue;
-    var n = $("<tr/>");
-    var n1 = $("<td class='name'/>").appendTo(n);
-    $("<a/>").attr("href","#"+per.id).text(per.name).appendTo(n1).on("click",function(){
-      location.hash=$(this).attr("href");
+    var n = jQuery("<tr/>");
+    var n1 = jQuery("<td class='name'/>").appendTo(n);
+    jQuery("<a/>").attr("href","#"+per.id).text(per.name).appendTo(n1).on("click",function(){
+      location.hash=jQuery(this).attr("href");
       location.reload();
     });
-    $("<td class='id'/>").text(per.id).appendTo(n);
-    $("<td class='gender'/>").text(per.gender == "?" ? "" : per.gender).appendTo(n);
-    $("<td class='birth'/>").text(per.birth == 0 ? "" : per.birth).appendTo(n);
-    $("<td class='death'/>").text(per.death == 0 ? "" : per.death).appendTo(n);
-    $("<td class='numchild'/>").text(per.children.length).appendTo(n);
-    $("<td class='numparent'/>").text(per.parents.length).appendTo(n);
-    $("<td class='numspouse'/>").text(per.spouses.length).appendTo(n);
-    $("<td class='numother'/>").text(per.otherrel.length).appendTo(n);
+    jQuery("<td class='id'/>").text(per.id).appendTo(n);
+    jQuery("<td class='gender'/>").text(per.gender == "?" ? "" : per.gender).appendTo(n);
+    jQuery("<td class='birth'/>").text(per.birth == 0 ? "" : per.birth).appendTo(n);
+    jQuery("<td class='death'/>").text(per.death == 0 ? "" : per.death).appendTo(n);
+    jQuery("<td class='numchild'/>").text(per.children.length).appendTo(n);
+    jQuery("<td class='numparent'/>").text(per.parents.length).appendTo(n);
+    jQuery("<td class='numspouse'/>").text(per.spouses.length).appendTo(n);
+    jQuery("<td class='numother'/>").text(per.otherrel.length).appendTo(n);
 
-    $("#people").show();
-    $("#people tbody").append(n);
-    sorttable.makeSortable($("#people")[0]);
+    jQuery("#people").show();
+    jQuery("#people tbody").append(n);
+    sorttable.makeSortable(jQuery("#people")[0]);
   }
 }

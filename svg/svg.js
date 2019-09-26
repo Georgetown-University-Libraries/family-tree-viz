@@ -268,11 +268,11 @@ var SvgHelper = function(base, viewBox) {
   this.width = 1200;
   this.setViewBox(viewBox);
   this.BASEURL = base;
-  this.SVG = $("#svg");
+  this.SVG = jQuery("#svg");
   this.tabindex = 0;
   this.addTabIndex = false;
   this.makeSvgEl = function(tag) {
-    return $(document.createElementNS('http://www.w3.org/2000/svg', tag));
+    return jQuery(document.createElementNS('http://www.w3.org/2000/svg', tag));
   }
 
   /*
