@@ -22,26 +22,26 @@ The JSON format is designed to pull data feeds from a collection of Drupal views
 */
 function init(){
   var params = (new URL(document.location)).searchParams;
-  var doc = params.get("doc") ? params.get("doc") : "../data.csv";
+  var doc = "data.json";
   var node = $("#svg");
-  if (doc.match(/\.json$/)) {
-    $.get(doc, function(data){
-      familyTree = new FamilyTree();
-      familyTree.processDrupalInputData(data);
-      if (!initDiagram(familyTree.BASEURL, node, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
-        showDirectory(familyTree);
-      }
-    }, "json");
-  } else {
-    $.get(doc, function(data){
-      familyTree = new FamilyTree();
-      familyTree.processCsvInputData(data);
-      if (!initDiagram(familyTree.BASEURL, node, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash())) {
-        showDirectory(familyTree);
-      }
-    }, "text");
-  }
+  $.get(doc, function(data){
+    familyTree = new FamilyTree();
+    familyTree.processDrupalInputData(data);
 
+    if (location.hash) {
+      initDiagram(familyTree.BASEURL, node, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash());
+      return;
+    }
+    var arr = $("body").attr("class").split(" ");
+    var rx = /^page-node-(\d+)$/;
+    for(var i=0; i<arr.length; i++) {
+      var m = arr[i].match(rx);
+      if (m) {
+        initDiagram(familyTree.BASEURL, node, familyTree.getPerson(m[1]), null);
+        break;
+      }
+    }
+  }, "json");
 }
 
 /*
