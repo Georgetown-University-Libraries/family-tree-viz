@@ -28,16 +28,12 @@ function init(){
     familyTree = new FamilyTree();
     familyTree.processDrupalInputData(data);
 
-    if (location.hash) {
-      initDiagram(familyTree.BASEURL, node, familyTree.getPersonFromHash(), familyTree.getCoparentFromHash());
-      return;
-    }
     var arr = jQuery("body").attr("class").split(" ");
     var rx = /^page-node-(\d+)$/;
     for(var i=0; i<arr.length; i++) {
       var m = arr[i].match(rx);
       if (m) {
-        initDiagram(familyTree.BASEURL, node, familyTree.getPerson(m[1]), null);
+        initDiagram(familyTree.BASEURL, familyTree.getPerson(m[1]), null);
         break;
       }
     }
@@ -57,8 +53,8 @@ var peopleSort = function(a, b){
 Render the visualization from the perspective of one parent.
 If that parent had children with more than one other parent, then a specific coparent can be provided.
 */
-function initDiagram(base, node, fperson, fcopar){
-  var family = new FamilyViz(base, node);
+function initDiagram(base, fperson, fcopar){
+  var family = new FamilyViz(base, jQuery("#svg"));
   if (family.initDiagram(fperson, fcopar)) {
     family.draw();
     return true;

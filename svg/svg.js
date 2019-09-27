@@ -332,8 +332,7 @@ var SvgHelper = function(base, viewBox) {
         .appendTo(g);
     }
     g.children().on("click", function(){
-      location.hash = person.id;
-      location.reload();
+      initDiagram(familyTree.BASEURL, person, null);
     });
     var link = person.link;
     link = link == null ? "" : link;
@@ -345,24 +344,6 @@ var SvgHelper = function(base, viewBox) {
     }
     return box;
   }
-
-  /*
-  this.drawCircle = function(r, c, person, copar, label) {
-    var g = this.makeSvgEl("g").appendTo(this.SVG);
-    var circle = new Circle(this, r, c);
-    var scircle = circle.draw()
-      .appendTo(g);
-    circle.drawText(label, 0)
-      .appendTo(g);
-    circle.drawText(copar ? copar.getName(1) : "Undefined", 1)
-      .appendTo(g);
-    g.children().on("click", function(){
-      location.hash = person.id + (copar ? "-" + copar.id : "");
-      location.reload();
-    });
-    return circle;
-  }
-  */
 
   /*
   Draw a family tree box for a relationship between 2 people at a specific table row and column.
@@ -381,11 +362,10 @@ var SvgHelper = function(base, viewBox) {
       .appendTo(g);
     g.children().on("click", function(){
       if (isCopar) {
-        location.hash = person.id + (copar ? "-" + copar.id : "");
+        initDiagram(familyTree.BASEURL, person, copar);
       } else {
-        location.hash = copar.id;
+        initDiagram(familyTree.BASEURL, person, null);
       }
-      location.reload();
     });
     return ellipse;
   }
@@ -758,6 +738,7 @@ var FamilyViz = function(base, node) {
   Draw the 3 generations of the family tree
   */
   this.draw = function() {
+    this.node.empty("*");
     var viewBox = this.node.attr("viewBox");
     var svgHelp = new SvgHelper(this.BASEURL, viewBox);
 
