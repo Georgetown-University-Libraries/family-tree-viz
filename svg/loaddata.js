@@ -3,9 +3,9 @@ var familyTree;
 /*
 Initialize the family tree visualization
 */
-jQuery(document).ready(function(){
+window.onload = function () {
   init();
-});
+};
 
 /*
 Change the focus of the visualization to a different person
@@ -22,7 +22,7 @@ The JSON format is designed to pull data feeds from a collection of Drupal views
 */
 function init(){
   var params = (new URL(document.location)).searchParams;
-  var doc = "data.json";
+  var doc = "/sites/default/files/family-tree/data.json";
   var node = jQuery("#svg");
   jQuery.get(doc, function(data){
     familyTree = new FamilyTree();
@@ -44,6 +44,9 @@ function init(){
 Sort a list of siblings by birth year, otherwise by id
 */
 var peopleSort = function(a, b){
+  if (a == null || b == null) {
+    return 0;
+  }
   var x = a.birth - b.birth;
   x = (x == 0) ? a.id - b.id : x;
   return x;
