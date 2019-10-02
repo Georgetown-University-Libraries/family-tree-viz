@@ -253,22 +253,12 @@ var Circle = function(svgHelper, r, c) {
 SvgHelper for drawing a grid of family tree shapes with a known size.
 */
 var SvgHelper = function(base, viewBox) {
-  this.setViewBox = function(viewBox) {
-    var attr = viewBox.split("[ ,]");
-    if (attr.length == 4) {
-      this.minx   = attr[0];
-      this.miny   = attr[1];
-      this.width  = attr[2];
-      this.height = attr[3];
-    }
-  }
   this.minx = 0;
   this.miny = 0;
   this.height = 1200;
   this.width = 1200;
-  this.setViewBox(viewBox);
   this.BASEURL = base;
-  this.SVG = jQuery("#svg");
+  this.SVG = jQuery("#family-tree");
   this.tabindex = 0;
   this.addTabIndex = false;
   this.makeSvgEl = function(tag) {
@@ -321,26 +311,37 @@ var SvgHelper = function(base, viewBox) {
   */
   this.drawBox = function(r, c, person, classbox) {
     var self = this;
-    var g = this.makeSvgEl("g").appendTo(this.SVG);
     var box = new Box(this, r, c);
-    var sbox = box.draw(classbox ? classbox: this.getClassBox())
-      .appendTo(g);
-    var tclass = classbox == "drawfocus" ? this.getFoucsTextClass() : this.getTextClass();
+    var hbox = $("<div/>")
+      .appendTo(this.SVG)
+      .addClass(classbox)
+      .addClass("draw")
+      .css("width", box.getWidth())
+      .css("height", box.getHeight())
+      .css("left", box.getLeft())
+      .css("top", box.getTop());
+
     var lines = person.getName();
+    var text = "";
+    var p = $("<p/>").appendTo(hbox);
     for(var i = 0; i<lines.length && i<this.getLines(); i++) {
-      box.drawText(lines[i], tclass, i+1)
-        .appendTo(g);
+      if (i > 0) {
+        p.append($("<br/>"));
+      }
+      p.append(lines[i]);
     }
-    g.children().on("click", function(){
+
+    hbox.on("click", function(){
       initDiagram(familyTree.BASEURL, person, null);
     });
     var link = person.link;
     link = link == null ? "" : link;
     if (link != "" && link != "nolink") {
-      var linktext = box.drawText("Details page ", this.getLinkTextClass(), this.getLines()).appendTo(g);
-      linktext.on("click",function(){
-        location = (self.BASEURL == "") ? "" : self.BASEURL + link;
-      });
+      $("<a/>")
+        .addClass(this.getLinkTextClass())
+        .text("Details page ")
+        .attr("href", (self.BASEURL == "") ? "" : self.BASEURL + link)
+        .appendTo(p);
     }
     return box;
   }
@@ -377,9 +378,13 @@ var SvgHelper = function(base, viewBox) {
     var box = new Box(this, r, c);
     box.setCellHeight(rh);
     box.setCellWidth(cw);
-    box.drawBoxOffset(this.getClassWrapBox(), -.25 * this.getVGAP(), -.25 * this.getHGAP(), .5 * this.getVGAP(), .5 * this.getHGAP())
-      .appendTo(this.SVG);
-    return box;
+    var hbox = $("<div/>").appendTo(this.SVG);
+    hbox.addClass("wrap");
+    hbox.css("width", box.getWidth() + .5 * this.getHGAP() + 4)
+        .css("height", box.getHeight() + .5 * this.getVGAP() + 4)
+        .css("left", box.getLeft() -.25 * this.getHGAP())
+        .css("top", box.getTop() -.25 * this.getVGAP());
+    return hbox;
   }
 
   /*
@@ -397,29 +402,30 @@ var SvgHelper = function(base, viewBox) {
     var x2 = b2.getMidHorizontal()
     var yy = (y1 + y2) / 2;
     var xx = (x1 + x2) / 2;
-    this.makeSvgEl("line")
-      .attr("x1", x1)
-      .attr("y1", y1)
-      .attr("x2", x1)
-      .attr("y2", yy)
-      .addClass("draw")
-      .appendTo(this.SVG);
 
-    this.makeSvgEl("line")
-      .attr("x1", x1)
-      .attr("y1", yy)
-      .attr("x2", x2)
-      .attr("y2", yy)
-      .addClass("draw")
-      .appendTo(this.SVG);
+    $("<div/>")
+      .addClass("line vert")
+      .appendTo(this.SVG)
+      .css("left", x1)
+      .css("top", y1)
+      .css("height", yy-y1)
+      .css("width", 0);
 
-    this.makeSvgEl("line")
-      .attr("x1", x2)
-      .attr("y1", yy)
-      .attr("x2", x2)
-      .attr("y2", y2)
-      .addClass("draw")
-      .appendTo(this.SVG);
+    $("<div/>")
+      .addClass("line vert")
+      .appendTo(this.SVG)
+      .css("left", x2)
+      .css("top", yy)
+      .css("height", y2-yy)
+      .css("width", 0);
+
+    $("<div/>")
+      .addClass("line horiz")
+      .appendTo(this.SVG)
+      .css("left", x1)
+      .css("top", yy)
+      .css("width", x2-x1)
+      .css("height", 0);
   }
 
   /*
@@ -434,21 +440,20 @@ var SvgHelper = function(base, viewBox) {
     var x1 = b1.getLeft()
     var y2 = b2.getTop();
     var x2 = b2.getMidHorizontal()
-    this.makeSvgEl("line")
-      .attr("x1", x1)
-      .attr("y1", y1)
-      .attr("x2", x2)
-      .attr("y2", y1)
-      .addClass("draw")
-      .appendTo(this.SVG);
-
-    this.makeSvgEl("line")
-      .attr("x1", x2)
-      .attr("y1", y1)
-      .attr("x2", x2)
-      .attr("y2", y2)
-      .addClass("draw")
-      .appendTo(this.SVG);
+    $("<div/>")
+      .addClass("line horiz")
+      .appendTo(this.SVG)
+      .css("left", x2)
+      .css("top", y1)
+      .css("width", x1-x2)
+      .css("height", 0);
+    $("<div/>")
+      .addClass("line vert")
+      .appendTo(this.SVG)
+      .css("left", x2)
+      .css("top", y1)
+      .css("height", y2-y1)
+      .css("width", 0);
   }
 
   /*
@@ -463,21 +468,20 @@ var SvgHelper = function(base, viewBox) {
     var x1 = b1.getRight()
     var y2 = b2.getTop();
     var x2 = b2.getMidHorizontal()
-    this.makeSvgEl("line")
-      .attr("x1", x1)
-      .attr("y1", y1)
-      .attr("x2", x2)
-      .attr("y2", y1)
-      .addClass("draw")
-      .appendTo(this.SVG);
-
-    this.makeSvgEl("line")
-      .attr("x1", x2)
-      .attr("y1", y1)
-      .attr("x2", x2)
-      .attr("y2", y2)
-      .addClass("draw")
-      .appendTo(this.SVG);
+    $("<div/>")
+      .addClass("line horiz")
+      .appendTo(this.SVG)
+      .css("left", x1)
+      .css("top", y1)
+      .css("width", x2-x1)
+      .css("height", 0);
+    $("<div/>")
+      .addClass("line vert")
+      .appendTo(this.SVG)
+      .css("left", x2)
+      .css("top", y1)
+      .css("height", y2-y1)
+      .css("width", 0);
   }
 
   /*

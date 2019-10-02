@@ -23,6 +23,7 @@ The JSON format is designed to pull data feeds from a collection of Drupal views
 function init(){
   var params = (new URL(document.location)).searchParams;
   var doc = "/sites/default/files/family-tree/data.json";
+  doc = "../localdata/json.json";
   var node = jQuery("#svg");
   jQuery.get(doc, function(data){
     familyTree = new FamilyTree();
@@ -57,7 +58,7 @@ Render the visualization from the perspective of one parent.
 If that parent had children with more than one other parent, then a specific coparent can be provided.
 */
 function initDiagram(base, fperson, fcopar){
-  var family = new FamilyViz(base, jQuery("#svg"));
+  var family = new FamilyViz(base, jQuery("#family-tree"));
   if (family.initDiagram(fperson, fcopar)) {
     family.draw();
     return true;
