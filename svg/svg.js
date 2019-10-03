@@ -255,10 +255,10 @@ SvgHelper for drawing a grid of family tree shapes with a known size.
 var SvgHelper = function(base, viewBox) {
   this.minx = 0;
   this.miny = 0;
-  this.height = 1200;
-  this.width = 1200;
-  this.BASEURL = base;
   this.SVG = jQuery("#family-tree");
+  this.height = this.SVG.height();
+  this.width = this.SVG.width();
+  this.BASEURL = base;
   this.tabindex = 0;
   this.addTabIndex = false;
   this.makeSvgEl = function(tag) {
@@ -268,8 +268,8 @@ var SvgHelper = function(base, viewBox) {
   /*
   Control the overall shape of the visualization
   */
-  this.getViewWidth = function() {return this.height;}
-  this.getViewHeight = function() {return this.width;}
+  this.getViewWidth = function() {return this.width;}
+  this.getViewHeight = function() {return this.height;}
   this.getShapeHeight = function() {return 50;}
   this.getHGAP = function() {return 40;}
   this.getVGAP = function() {return 32;}
