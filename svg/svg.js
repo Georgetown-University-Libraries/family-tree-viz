@@ -496,6 +496,7 @@ var FamilyViz = function(base, node) {
 
   //for use as css class
   this.first_col = 0;
+  this.last_row = 0;
 
   //base location for link url
   this.BASEURL = base;
@@ -551,6 +552,15 @@ var FamilyViz = function(base, node) {
   }
   this.getFirstColClass = function() {
     return (this.first_col == 0) ? "" : ("first-col-" + this.first_col);
+  }
+
+  this.setLastRow = function(row) {
+    if (row > this.last_row) {
+      this.last_row = row;
+    }
+  }
+  this.getLastRowClass = function() {
+    return (this.last_row == 0) ? "" : ("last-row-" + this.last_row);
   }
 
   this.setMother = function(p) {
@@ -720,8 +730,10 @@ var FamilyViz = function(base, node) {
     if (this.p_sib.length > 0) {
       svgHelp.drawWrapBox(this.rchild, this.cchild, this.p_sib.length, 1);
       focus = svgHelp.drawBox(this.rchild , this.cchild, this.p_sib[0]);
+      this.setLastRow(this.rchild);
       for(var i=1; i < this.p_sib.length; i++) {
         svgHelp.drawBox(this.rchild + i, this.cchild, this.p_sib[i]);
+        this.setLastRow(this.rchild + i);
       }
     }
 
@@ -730,8 +742,10 @@ var FamilyViz = function(base, node) {
     if (this.p_m) {
       svgHelp.drawWrapBox(this.rp, this.cm, 1 + this.p_msib.length, 1);
       m = svgHelp.drawBox(this.rp, this.cm, this.p_m, "drawfocus");
+      this.setLastRow(this.rp);
       for(var i=0; i < this.p_msib.length; i++) {
         svgHelp.drawBox(this.rp + i + 1, this.cm, this.p_msib[i]);
+        this.setLastRow(this.rp + i + 1);
       }
       if (focus) {
         svgHelp.rconnect(m, focus);
@@ -748,6 +762,7 @@ var FamilyViz = function(base, node) {
         var prel = this.p_m_alt[i];
         var altp = svgHelp.drawAnnotatedBox(this.rp+i, this.cm-1, this.p_m, prel.p,
           prel.rel, prel.isCopar);
+        this.setLastRow(this.rp + i);
         svgHelp.rsideconnect(altp, m);
       }
     }
@@ -755,8 +770,10 @@ var FamilyViz = function(base, node) {
     if (this.p_f) {
       svgHelp.drawWrapBox(this.rp, this.cf, 1 + this.p_psib.length, 1);
       f = svgHelp.drawBox(this.rp, this.cf, this.p_f, "drawfocus");
+      this.setLastRow(this.rp);
       for(var i=0; i < this.p_psib.length; i++) {
         svgHelp.drawBox(this.rp + i + 1, this.cf, this.p_psib[i]);
+        this.setLastRow(this.rp + i + 1);
       }
       if (focus) {
         svgHelp.lconnect(f, focus);
@@ -775,11 +792,16 @@ var FamilyViz = function(base, node) {
         var prel = this.p_f_alt[i];
         var altp = svgHelp.drawAnnotatedBox(this.rp+i, this.cf+1, this.p_f, prel.p,
             prel.rel, prel.isCopar);
+        this.setLastRow(this.rp + i);
         svgHelp.lsideconnect(altp, f);
       }
     }
     svgHelp.SVG
       .removeClass("first-col-1 first-col-1.5 first-col-2 first-col-2.5 first-col-3 first-col-3.5 first-col-4 first-col-4.5 first-col-5")
       .addClass(this.getFirstColClass());
+    svgHelp.SVG
+      .removeClass("last-row-1 last-row-2 last-row-3 last-row-4 last-row-5 last-row-6 last-row-7 last-row-8 last-row-9 last-row-10")
+      .removeClass("last-row-11 last-row-12 last-row-13 last-row-14 last-row-15 last-row-16 last-row-17 last-row-18 last-row-19 last-row-20")
+      .addClass(this.getLastRowClass());
   }
 }
