@@ -352,23 +352,32 @@ var SvgHelper = function(base, viewBox) {
   Coparent relationships will contain a unique hash code that references both persons.
   */
   this.drawEllipse = function(r, c, person, copar, label, isCopar) {
-    var g = this.makeSvgEl("g").appendTo(this.SVG);
-    var ellipse = new Ellipse(this, r, c);
-    var sellipse = ellipse.draw()
-      .appendTo(g);
-    ellipse.drawText(label, this.getTextClass(), 1)
-      .appendTo(g);
+    var self = this;
+    var box = new Box(this, r, c);
+    var hbox = $("<div/>")
+      .appendTo(this.SVG)
+      .addClass("dotdraw draw")
+      .css("width", box.getWidth())
+      .css("height", box.getHeight())
+      .css("left", box.getLeft())
+      .css("top", box.getTop());
     var lines = copar ? copar.getName() : ["Undefined", ""];
-    ellipse.drawText(lines[0], this.getTextClass(), 2)
-      .appendTo(g);
-    g.children().on("click", function(){
+    var text = "";
+    var p = $("<p/>").appendTo(hbox);
+    for(var i = 0; i<lines.length && i<this.getLines(); i++) {
+      if (i > 0) {
+        p.append($("<br/>"));
+      }
+      p.append(lines[i]);
+    }
+    hbox.children().on("click", function(){
       if (isCopar) {
         initDiagram(familyTree.BASEURL, person, copar);
       } else {
         initDiagram(familyTree.BASEURL, person, null);
       }
     });
-    return ellipse;
+    return box;
   }
 
   /*
@@ -487,10 +496,9 @@ var SvgHelper = function(base, viewBox) {
   /*
   Connect the left side of b1 to the right side of b2.
 
-            +b.1
-          /
-        /
-    b.2+
+    b.2--+
+         |
+         +--b.1
 
   */
   this.lsideconnect = function(b1, b2) {
@@ -498,22 +506,40 @@ var SvgHelper = function(base, viewBox) {
     var x1 = b1.getLeft()
     var y2 = b2.getMidVertical();
     var x2 = b2.getRight()
-    this.makeSvgEl("line")
-      .attr("x1", x1)
-      .attr("y1", y1)
-      .attr("x2", x2)
-      .attr("y2", y2)
-      .addClass("draw")
-      .appendTo(this.SVG);
+    var xx = (x1 + x2) / 2;
+
+    $("<div/>")
+      .addClass("line dothoriz")
+      .appendTo(this.SVG)
+      .css("left", xx)
+      .css("top", y1)
+      .css("width", x1-xx)
+      .css("height", 0);
+
+    $("<div/>")
+      .addClass("line dotvert")
+      .appendTo(this.SVG)
+      .css("left", xx)
+      .css("top", y2)
+      .css("height", y1-y2)
+      .css("width", 0);
+
+    $("<div/>")
+      .addClass("line dothoriz")
+      .appendTo(this.SVG)
+      .css("left", x2)
+      .css("top", y2)
+      .css("width", xx-x2)
+      .css("height", 0);
   }
 
   /*
   Connect the right side of b1 to the left side of b2.
 
-    b.1+
-        \
-         \
-          +b.2
+    b.1--+
+         |
+         |
+         +--b.2
 
   */
   this.rsideconnect = function(b1, b2) {
@@ -521,13 +547,31 @@ var SvgHelper = function(base, viewBox) {
     var x1 = b1.getRight()
     var y2 = b2.getMidVertical();
     var x2 = b2.getLeft()
-    this.makeSvgEl("line")
-      .attr("x1", x1)
-      .attr("y1", y1)
-      .attr("x2", x2)
-      .attr("y2", y2)
-      .addClass("draw")
-      .appendTo(this.SVG);
+    var xx = (x1 + x2) / 2;
+
+    $("<div/>")
+      .addClass("line dothoriz")
+      .appendTo(this.SVG)
+      .css("left", xx)
+      .css("top", y1)
+      .css("width", xx-x1)
+      .css("height", 0);
+
+    $("<div/>")
+      .addClass("line dotvert")
+      .appendTo(this.SVG)
+      .css("left", xx)
+      .css("top", y2)
+      .css("height", y1-y2)
+      .css("width", 0);
+
+    $("<div/>")
+      .addClass("line dothoriz")
+      .appendTo(this.SVG)
+      .css("left", xx)
+      .css("top", y2)
+      .css("width", x2-xx)
+      .css("height", 0);
   }
 
 }

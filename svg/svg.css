@@ -7,12 +7,21 @@
     position: absolute;
     z-index: 5;
 }
+
 .vert {
     border-left: 2px solid #012169;
 }
 .horiz {
     border-top: 2px solid #012169;
 }
+
+.dotvert {
+    border-left: 2px dotted #012169;
+}
+.dothoriz {
+    border-top: 2px dotted #012169;
+}
+
 .wrap {
     position: absolute;
     background-color: #eee;
@@ -28,6 +37,9 @@
 }
 .draw {
     border: 1px solid #111;
+}
+.dotdraw {
+    border: 1px dotted #111;
 }
 .drawfocus {
     border: 2px solid #000;
