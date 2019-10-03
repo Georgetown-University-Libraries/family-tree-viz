@@ -1,82 +1,58 @@
-.draw, .focus {
-  fill:white;
-  stroke-width:2;
-  stroke:rgb(0,0,0);
+#family-tree {
+    position:relative;
+    height: 1200px;
+    width: 1200px;
+}
+.line {
+    position: absolute;
+    z-index: 5;
 }
 
-.drawfocus {
-  fill:white;
-  stroke-width:4;
-  stroke:rgb(0,0,0);
+.vert {
+    border-left: 2px solid #012169;
+}
+.horiz {
+    border-top: 2px solid #012169;
+}
+
+.dotvert {
+    border-left: 2px dotted #012169;
+}
+.dothoriz {
+    border-top: 2px dotted #012169;
 }
 
 .wrap {
-  fill: #DDD;
+    position: absolute;
+    background-color: #eee;
+    border: 1px solid #aaa;
+    z-index: 2;
+}
+.draw, .drawfocus {
+    position: absolute;
+    background-color: #fff;
+    z-index: 20;
+    font-size: 0.8em;
+    padding: 3px;
+}
+.draw {
+    border: 1px solid #111;
+}
+.dotdraw {
+    border: 1px dotted #111;
+    border-radius: 8px;
+}
+.drawfocus {
+    border: 2px solid #000;
+}
+.draw p, .drawfocus p {
+    padding: 0;
+    margin: 0;
+}
+.draw:hover, .drawfocus:hover {
+    background-color: #f8e08e;
 }
 
-g:hover .draw, g:hover .drawfocus, g:hover .focus {
-  fill:yellow;
-}
-
-.text, .focustext, .ftext {
-  xfill:red;
-  stroke-width:0;
-  font-size: .8em;
-}
-
-.circletext {
-  xfill:red;
-  stroke-width:0;
-  font-size: .4em;
-}
-
-.link {
-  fill:blue;
-  stroke-width:0;
-  font-size: .8em;
-}
-
-.link:hover {
-  font-weight: bold;
-}
-
-.bold {
-  font-weight: bold;
-}
-
-.focus, .ftext {
-  display: none;
-}
-
-div.dir {
-  margin-bottom: 10px;
-}
-
-svg {
-  margin: 10px;
-  overflow: scroll;
-}
-
-div#status {
-  padding: 3px;
-  border: thin solid red;
-}
-
-div#status:empty {
-  padding: 3px;
-  border: none;
-}
-table {border-collapse: collapse;border-right:solid thin black;}
-table td, table th {border: thin solid black; padding: 4px;}
-
-a.button {
-  font: bold 11px Arial;
+#family-tree abbr {
   text-decoration: none;
-  background-color: #EEEEEE;
-  color: #333333;
-  padding: 2px 6px 2px 6px;
-  border-top: 1px solid #CCCCCC;
-  border-right: 1px solid #333333;
-  border-bottom: 1px solid #333333;
-  border-left: 1px solid #CCCCCC;
 }

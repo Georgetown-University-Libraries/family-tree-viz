@@ -62,11 +62,11 @@ var Person = function(familyTree, id, name, link) {
     }
     lines.push(name);
 
-    name = this.gender;
+    name = this.getGenderAnnotated();
     if (this.birth == 0 && this.death == 0) {
       name += " (dates unknown)";
     } else {
-      name += "(";
+      name += " (";
       name += this.birth == 0 ? "?" : this.birth;
       name += " - ";
       name += this.death == 0 ? "?" : this.death;
@@ -296,18 +296,31 @@ var Person = function(familyTree, id, name, link) {
     return this.gender == "?";
   }
 
+  this.getGenderAnnotated = function() {
+    var n = "<abbr title='";
+    if (this.isMale()) {
+      n += "Male";
+    } else if (this.isFemale()) {
+      n += "Female";
+    } else {
+      n += "Gender Unknown";
+    }
+    n += "'>" + this.gender + "</abbr>";
+    return n;
+  }
+
   /*
   get birth year as an int or return 0
   */
   this.setBirthYear = function(d) {
-    this.birth = $.isNumeric(d) ? Number(d) : 0;
+    this.birth = jQuery.isNumeric(d) ? Number(d) : 0;
   }
 
   /*
   get death year as an int or return 0
   */
   this.setDeathYear = function(d) {
-    this.death = $.isNumeric(d) ? Number(d) : 0;
+    this.death = jQuery.isNumeric(d) ? Number(d) : 0;
   }
 
   /*

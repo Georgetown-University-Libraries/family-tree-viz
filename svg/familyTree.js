@@ -130,7 +130,7 @@ var FamilyTree = function() {
       var id = Number(per.nid);
       var name = per.title;
 
-      var link = "/node/" + id;
+      var link = "node/" + id;
       if (!this.People[id]) {
         this.People[id] = new Person(this, id, name, link);
       }
@@ -240,7 +240,7 @@ var FamilyTree = function() {
   this.asGedcom = function() {
     var csvdata = "data:text;download:gedcom.csv;charset=utf-8," + this.getGedcom();
     var encodedUri = encodeURI(csvdata);
-    $("#gedcom").attr("href", encodedUri).attr("download","gedcom.txt");
+    jQuery("#gedcom").attr("href", encodedUri).attr("download","gedcom.txt");
   }
 
   /*
