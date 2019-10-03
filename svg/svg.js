@@ -334,9 +334,9 @@ var SvgHelper = function(base, viewBox) {
     jQuery("<div/>")
       .addClass("line horiz")
       .appendTo(this.SVG)
-      .css("left", x1)
+      .css("left", x1 < x2 ? x1 : x2)
       .css("top", yy)
-      .css("width", x2-x1)
+      .css("width", x1 < x2 ? x2-x1 : x1-x2)
       .css("height", 0);
   }
 
@@ -494,6 +494,9 @@ var FamilyViz = function(base, node) {
   //jQuery node to use for SVG display
   this.node = node;
 
+  //for use as css class
+  this.first_col = 0;
+
   //base location for link url
   this.BASEURL = base;
   //grandparent row
@@ -541,16 +544,28 @@ var FamilyViz = function(base, node) {
   //paternal relationships - PersonRel object
   this.p_f_alt = [];
 
+  this.setFirstCol = function(col) {
+    if (this.first_col == 0 || col < this.first_col) {
+      this.first_col = col;
+    }
+  }
+  this.getFirstColClass = function() {
+    return (this.first_col == 0) ? "" : ("first-col-" + this.first_col);
+  }
+
   this.setMother = function(p) {
     this.p_m = p;
+    this.setFirstCol(this.cm);
     return this;
   }
   this.setFather = function(p) {
     this.p_f = p;
+    this.setFirstCol(this.cf);
     return this;
   }
   this.addChild = function(p) {
     this.p_sib.push(p);
+    this.setFirstCol(this.cchild);
     return this;
   }
   this.addMaternalSibling = function(p) {
@@ -563,18 +578,22 @@ var FamilyViz = function(base, node) {
   }
   this.setMaternalGM = function(p) {
     this.p_mgm = p;
+    this.setFirstCol(this.cmgm);
     return this;
   }
   this.setMaternalGF = function(p) {
     this.p_mgf = p;
+    this.setFirstCol(this.cmgf);
     return this;
   }
   this.setPaternalGM = function(p) {
     this.p_pgm = p;
+    this.setFirstCol(this.cpgm);
     return this;
   }
   this.setPaternalGF = function(p) {
     this.p_pgf = p;
+    this.setFirstCol(this.cpgf);
     return this;
   }
 
@@ -657,9 +676,11 @@ var FamilyViz = function(base, node) {
       var pars = mom.getAltParents(dad).sort(peopleSort);;
       for(var i=0; i<pars.length; i++) {
         this.addMaternalAlt(new PersonRel(pars[i], "Spouse/Coparent", true));
+        this.setFirstCol(this.cm - 1);
       }
       for(var i=0; i<mom.otherrel.length; i++) {
         this.addMaternalAlt(mom.otherrel[i]);
+        this.setFirstCol(this.cm - 1);
       }
     }
     if (dad) {
@@ -677,9 +698,11 @@ var FamilyViz = function(base, node) {
       var pars = dad.getAltParents(mom).sort(peopleSort);
       for(var i=0; i<pars.length; i++) {
         this.addPaternalAlt(new PersonRel(pars[i], "Spouse/Coparent", true));
+        this.setFirstCol(this.cf + 1);
       }
       for(var i=0; i<dad.otherrel.length; i++) {
         this.addPaternalAlt(dad.otherrel[i]);
+        this.setFirstCol(this.cf + 1);
       }
     }
     return true;
@@ -755,5 +778,8 @@ var FamilyViz = function(base, node) {
         svgHelp.lsideconnect(altp, f);
       }
     }
+    svgHelp.SVG
+      .removeClass("first-col-1 first-col-1.5 first-col-2 first-col-2.5 first-col-3 first-col-3.5 first-col-4 first-col-4.5 first-col-5")
+      .addClass(this.getFirstColClass());
   }
 }
