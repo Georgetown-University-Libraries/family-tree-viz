@@ -26,7 +26,7 @@
     position: absolute;
     background-color: #eee;
     border: 1px solid #aaa;
-    z-index: 10;
+    z-index: 2;
 }
 .draw, .drawfocus {
     position: absolute;
@@ -40,6 +40,7 @@
 }
 .dotdraw {
     border: 1px dotted #111;
+    border-radius: 8px;
 }
 .drawfocus {
     border: 2px solid #000;
@@ -50,4 +51,8 @@
 }
 .draw:hover, .drawfocus:hover {
     background-color: #f8e08e;
+}
+
+#family-tree abbr {
+  text-decoration: none;
 }

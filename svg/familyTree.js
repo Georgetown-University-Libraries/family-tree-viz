@@ -130,7 +130,7 @@ var FamilyTree = function() {
       var id = Number(per.nid);
       var name = per.title;
 
-      var link = "/node/" + id;
+      var link = "node/" + id;
       if (!this.People[id]) {
         this.People[id] = new Person(this, id, name, link);
       }

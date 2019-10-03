@@ -325,10 +325,8 @@ var SvgHelper = function(base, viewBox) {
     var text = "";
     var p = jQuery("<p/>").appendTo(hbox);
     for(var i = 0; i<lines.length && i<this.getLines(); i++) {
-      if (i > 0) {
-        p.append(jQuery("<br/>"));
-      }
       p.append(lines[i]);
+      p.append(jQuery("<br/>"));
     }
 
     hbox.on("click", function(){
