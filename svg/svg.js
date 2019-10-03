@@ -312,7 +312,7 @@ var SvgHelper = function(base, viewBox) {
   this.drawBox = function(r, c, person, classbox) {
     var self = this;
     var box = new Box(this, r, c);
-    var hbox = $("<div/>")
+    var hbox = jQuery("<div/>")
       .appendTo(this.SVG)
       .addClass(classbox)
       .addClass("draw")
@@ -323,10 +323,10 @@ var SvgHelper = function(base, viewBox) {
 
     var lines = person.getName();
     var text = "";
-    var p = $("<p/>").appendTo(hbox);
+    var p = jQuery("<p/>").appendTo(hbox);
     for(var i = 0; i<lines.length && i<this.getLines(); i++) {
       if (i > 0) {
-        p.append($("<br/>"));
+        p.append(jQuery("<br/>"));
       }
       p.append(lines[i]);
     }
@@ -337,7 +337,7 @@ var SvgHelper = function(base, viewBox) {
     var link = person.link;
     link = link == null ? "" : link;
     if (link != "" && link != "nolink") {
-      $("<a/>")
+      jQuery("<a/>")
         .addClass(this.getLinkTextClass())
         .text("Details page ")
         .attr("href", (self.BASEURL == "") ? "" : self.BASEURL + link)
@@ -354,7 +354,7 @@ var SvgHelper = function(base, viewBox) {
   this.drawEllipse = function(r, c, person, copar, label, isCopar) {
     var self = this;
     var box = new Box(this, r, c);
-    var hbox = $("<div/>")
+    var hbox = jQuery("<div/>")
       .appendTo(this.SVG)
       .addClass("dotdraw draw")
       .css("width", box.getWidth())
@@ -363,10 +363,10 @@ var SvgHelper = function(base, viewBox) {
       .css("top", box.getTop());
     var lines = copar ? copar.getName() : ["Undefined", ""];
     var text = "";
-    var p = $("<p/>").appendTo(hbox);
+    var p = jQuery("<p/>").appendTo(hbox);
     for(var i = 0; i<lines.length && i<this.getLines(); i++) {
       if (i > 0) {
-        p.append($("<br/>"));
+        p.append(jQuery("<br/>"));
       }
       p.append(lines[i]);
     }
@@ -387,7 +387,7 @@ var SvgHelper = function(base, viewBox) {
     var box = new Box(this, r, c);
     box.setCellHeight(rh);
     box.setCellWidth(cw);
-    var hbox = $("<div/>").appendTo(this.SVG);
+    var hbox = jQuery("<div/>").appendTo(this.SVG);
     hbox.addClass("wrap");
     hbox.css("width", box.getWidth() + .5 * this.getHGAP() + 4)
         .css("height", box.getHeight() + .5 * this.getVGAP() + 4)
@@ -412,7 +412,7 @@ var SvgHelper = function(base, viewBox) {
     var yy = (y1 + y2) / 2;
     var xx = (x1 + x2) / 2;
 
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line vert")
       .appendTo(this.SVG)
       .css("left", x1)
@@ -420,7 +420,7 @@ var SvgHelper = function(base, viewBox) {
       .css("height", yy-y1)
       .css("width", 0);
 
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line vert")
       .appendTo(this.SVG)
       .css("left", x2)
@@ -428,7 +428,7 @@ var SvgHelper = function(base, viewBox) {
       .css("height", y2-yy)
       .css("width", 0);
 
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line horiz")
       .appendTo(this.SVG)
       .css("left", x1)
@@ -449,14 +449,14 @@ var SvgHelper = function(base, viewBox) {
     var x1 = b1.getLeft()
     var y2 = b2.getTop();
     var x2 = b2.getMidHorizontal()
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line horiz")
       .appendTo(this.SVG)
       .css("left", x2)
       .css("top", y1)
       .css("width", x1-x2)
       .css("height", 0);
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line vert")
       .appendTo(this.SVG)
       .css("left", x2)
@@ -477,14 +477,14 @@ var SvgHelper = function(base, viewBox) {
     var x1 = b1.getRight()
     var y2 = b2.getTop();
     var x2 = b2.getMidHorizontal()
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line horiz")
       .appendTo(this.SVG)
       .css("left", x1)
       .css("top", y1)
       .css("width", x2-x1)
       .css("height", 0);
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line vert")
       .appendTo(this.SVG)
       .css("left", x2)
@@ -508,7 +508,7 @@ var SvgHelper = function(base, viewBox) {
     var x2 = b2.getRight()
     var xx = (x1 + x2) / 2;
 
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line dothoriz")
       .appendTo(this.SVG)
       .css("left", xx)
@@ -516,7 +516,7 @@ var SvgHelper = function(base, viewBox) {
       .css("width", x1-xx)
       .css("height", 0);
 
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line dotvert")
       .appendTo(this.SVG)
       .css("left", xx)
@@ -524,7 +524,7 @@ var SvgHelper = function(base, viewBox) {
       .css("height", y1-y2)
       .css("width", 0);
 
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line dothoriz")
       .appendTo(this.SVG)
       .css("left", x2)
@@ -549,7 +549,7 @@ var SvgHelper = function(base, viewBox) {
     var x2 = b2.getLeft()
     var xx = (x1 + x2) / 2;
 
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line dothoriz")
       .appendTo(this.SVG)
       .css("left", xx)
@@ -557,7 +557,7 @@ var SvgHelper = function(base, viewBox) {
       .css("width", xx-x1)
       .css("height", 0);
 
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line dotvert")
       .appendTo(this.SVG)
       .css("left", xx)
@@ -565,7 +565,7 @@ var SvgHelper = function(base, viewBox) {
       .css("height", y1-y2)
       .css("width", 0);
 
-    $("<div/>")
+    jQuery("<div/>")
       .addClass("line dothoriz")
       .appendTo(this.SVG)
       .css("left", xx)
