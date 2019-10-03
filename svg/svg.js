@@ -33,6 +33,9 @@ These values are indexed to start at 1.
 
 The svgHelper class will determine the appropriate height and width for the shape.
 The svgHelper class will compute the canvas coordinates for drawing the shape.
+
+To simplify styling, the code was adapted from SVG rendering to positional placement
+of HTML objects.
 */
 var Shape = function(svgHelper, r, c) {
   this.svgHelper = svgHelper;
@@ -113,20 +116,6 @@ var Shape = function(svgHelper, r, c) {
   }
 
   /*
-  Set text box x coordinate
-  */
-  this.getTextX = function() {
-    return this.getLeft() + this.svgHelper.getTextOffset();
-  }
-
-  /*
-  Set text box y coordinate
-  */
-  this.getTextY = function() {
-    return this.getBottom() - this.svgHelper.getTextOffset();
-  }
-
-  /*
   Abstract draw method
   */
   this.draw = function() {
@@ -136,24 +125,6 @@ var Shape = function(svgHelper, r, c) {
   Abstract text draw method
   */
   this.drawText = function() {
-  }
-
-  /*
-  Draw a line of text
-  */
-  this.drawText = function(label, tclass, line) {
-    var shape = this.svgHelper.makeSvgEl("text")
-      .attr("height", (this.getHeight() - 2 * this.svgHelper.getLineOffset()) / this.svgHelper.getLines())
-      .attr("width", this.getWidth())
-      .attr("x", this.getTextX())
-      .attr("y", this.getTextY() - this.getHeight() + line * ((this.getHeight() - 2 * this.svgHelper.getLineOffset()) / this.svgHelper.getLines()) + this.svgHelper.getLineOffset())
-      .text(label)
-      .addClass(tclass ? tclass : this.svgHelper.getTextClass());
-    if (this.svgHelper.addTabIndex) {
-      shape
-        .attr("tabindex", this.svgHelper.tabindex++);
-    }
-    return shape;
   }
 }
 
@@ -178,76 +149,6 @@ var Box = function(svgHelper, r, c) {
       .addClass(bclass);
   }
 }
-
-/*
-Draw an Ellipse containing up to 3 lines of text
-*/
-var Ellipse = function(svgHelper, r, c) {
-  Shape.call(this, svgHelper, r, c);
-
-  this.draw = function(bclass){
-    var y = this.getTop() + this.getHeight() / 2;
-    var x = this.getLeft() + this.getWidth() / 2;
-    return this.svgHelper.makeSvgEl("ellipse")
-      .attr("ry", this.getHeight() / 2)
-      .attr("rx", this.getWidth() / 2)
-      .attr("cx", x)
-      .attr("cy", y)
-      .addClass("draw");
-  }
-
-  this.getTextX = function() {
-    return this.getLeft() + .25 * this.getWidth();
-  }
-  this.getTextY = function() {
-    return this.getBottom() + 0 * this.getHeight();
-  }
-
-}
-
-/*
-var Circle = function(svgHelper, r, c) {
-  Shape.call(this, svgHelper, r, c);
-
-  this.getWidth = function() {
-    return this.getHeight();
-  }
-
-  this.draw = function(bclass){
-    var y = this.getTop() + this.getHeight() / 2;
-    var x = this.getLeft() + this.getHeight() / 2;
-    return this.svgHelper.makeSvgEl("circle")
-      .attr("r", this.getHeight() / 2)
-      .attr("cx", x)
-      .attr("cy", y)
-      .addClass("draw");
-  }
-
-  this.getTextX = function() {
-    return this.getLeft() + this.svgHelper.getTextOffset();
-  }
-
-  this.getTextY = function() {
-    return this.getMidVertical();
-  }
-
-  this.drawText = function(label, pos) {
-    var y = this.getTextY() + (this.getHeight() * (.25 * pos));
-    var shape = this.svgHelper.makeSvgEl("text")
-      .attr("height", this.getHeight() * .25)
-      .attr("width", this.getHeight())
-      .attr("x", this.getTextX())
-      .attr("y", y)
-      .text(label)
-      .addClass("circletext");
-    if (this.svgHelper.addTabIndex) {
-      shape
-        .attr("tabindex", this.svgHelper.tabindex++);
-    }
-    return shape;
-  }
-}
-*/
 
 /*
 SvgHelper for drawing a grid of family tree shapes with a known size.
@@ -275,16 +176,11 @@ var SvgHelper = function(base, viewBox) {
   this.getVGAP = function() {return 32;}
 
   /*
-  Pixel refinements to shape placement
-  */
-  this.getLineOffset =  function() {return 2;}
-  this.getTextOffset =  function() {return 5;}
-
-  /*
   Number of columns in the family tree visualization.
   If this changes, the placement of relatives will need to change.
   */
   this.getVizCols = function() {return 5;}
+
   /*
   Number of lines of text within a shape object.
   */
@@ -349,7 +245,7 @@ var SvgHelper = function(base, viewBox) {
   "Coparent" relationships are a visualization of the relationships for person and copar.
   Coparent relationships will contain a unique hash code that references both persons.
   */
-  this.drawEllipse = function(r, c, person, copar, label, isCopar) {
+  this.drawAnnotatedBox = function(r, c, person, copar, label, isCopar) {
     var self = this;
     var box = new Box(this, r, c);
     var hbox = jQuery("<div/>")
@@ -818,7 +714,7 @@ var FamilyViz = function(base, node) {
       }
       for(var i=0; i< this.p_m_alt.length; i++) {
         var prel = this.p_m_alt[i];
-        var altp = svgHelp.drawEllipse(this.rp+i, this.cm-1, this.p_m, prel.p,
+        var altp = svgHelp.drawAnnotatedBox(this.rp+i, this.cm-1, this.p_m, prel.p,
           prel.rel, prel.isCopar);
         svgHelp.rsideconnect(altp, m);
       }
@@ -845,7 +741,7 @@ var FamilyViz = function(base, node) {
       }
       for(var i=0; i< this.p_f_alt.length; i++) {
         var prel = this.p_f_alt[i];
-        var altp = svgHelp.drawEllipse(this.rp+i, this.cf+1, this.p_f, prel.p,
+        var altp = svgHelp.drawAnnotatedBox(this.rp+i, this.cf+1, this.p_f, prel.p,
             prel.rel, prel.isCopar);
         svgHelp.lsideconnect(altp, f);
       }
