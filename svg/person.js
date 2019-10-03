@@ -56,21 +56,21 @@ var Person = function(familyTree, id, name, link) {
   //For SVG rendering, the value will be returned line by line.
   this.getName = function() {
     var lines = [];
-    var name = this.name;
+    var name = "<span class='name'>" + this.name + "</span>";
     if (this.children.length > 0) {
-      name += " (" + this.children.length + " ch.)";
+      name += "<span class='person-note'> (" + this.children.length + " ch.)</span>";
     }
     lines.push(name);
 
     name = this.getGenderAnnotated();
     if (this.birth == 0 && this.death == 0) {
-      name += " (dates unknown)";
+      name += "<span class='dates-unknown'> (dates unknown)</span>";
     } else {
-      name += " (";
+      name += "<span class='dates'> (";
       name += this.birth == 0 ? "?" : this.birth;
       name += " - ";
       name += this.death == 0 ? "?" : this.death;
-      name += ")";
+      name += ")</span>";
     }
     lines.push(name);
     return lines;

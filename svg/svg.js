@@ -221,7 +221,10 @@ var SvgHelper = function(base, viewBox) {
     var text = "";
     var p = jQuery("<p/>").appendTo(hbox);
     for(var i = 0; i<lines.length && i<this.getLines(); i++) {
-      p.append(lines[i]);
+      jQuery("<span/>")
+        .addClass("line"+(i+1))
+        .append(lines[i])
+        .appendTo(p);
       p.append(jQuery("<br/>"));
     }
 
@@ -231,11 +234,14 @@ var SvgHelper = function(base, viewBox) {
     var link = person.link;
     link = link == null ? "" : link;
     if (link != "" && link != "nolink") {
+      var span = jQuery("<span/>")
+        .addClass("line"+(lines.length+1))
+        .appendTo(p);
       jQuery("<a/>")
         .addClass(this.getLinkTextClass())
         .text("Details page ")
         .attr("href", (self.BASEURL == "") ? "" : self.BASEURL + link)
-        .appendTo(p);
+        .appendTo(span);
     }
     return box;
   }
@@ -262,7 +268,10 @@ var SvgHelper = function(base, viewBox) {
       if (i > 0) {
         p.append(jQuery("<br/>"));
       }
-      p.append(lines[i]);
+      jQuery("<span/>")
+        .addClass("line"+(i+1))
+        .append(lines[i])
+        .appendTo(p);
     }
     hbox.children().on("click", function(){
       if (isCopar) {
