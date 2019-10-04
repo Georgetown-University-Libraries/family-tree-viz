@@ -262,10 +262,17 @@ var SvgHelper = function(base, viewBox) {
       .appendTo(this.SVG)
       .addClass("dotdraw draw")
       .css("width", box.getWidth())
-      .css("height", box.getHeight())
+      .css("height", box.getHeight() + 8)
       .css("left", box.getLeft())
       .css("top", box.getTop());
-    var lines = copar ? copar.getName() : ["Undefined", ""];
+    var nlines = copar ? copar.getName() : ["Undefined", ""];
+    var lines = [];
+    if (label != "" && label != null) {
+      lines.push("<span class='label'>" + label + ": </span>");
+    }
+    for(var i=0; i<nlines.length; i++) {
+      lines.push(nlines[i]);
+    }
     var text = "";
     var p = jQuery("<p/>").appendTo(hbox);
     for(var i = 0; i<lines.length && i<this.getLines(); i++) {
