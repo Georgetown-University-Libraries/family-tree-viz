@@ -227,15 +227,20 @@ var SvgHelper = function(base, viewBox) {
         .appendTo(p);
       p.append(jQuery("<br/>"));
     }
-
+    this.appendDetailLink(person, p, lines.length+1);
     hbox.on("click", function(){
       initDiagram(familyTree.BASEURL, person, null);
     });
+    return box;
+  }
+
+  this.appendDetailLink = function(person, p, linec) {
+    var self = this;
     var link = person.link;
     link = link == null ? "" : link;
     if (link != "" && link != "nolink") {
       var span = jQuery("<span/>")
-        .addClass("line"+(lines.length+1))
+        .addClass("line"+linec)
         .appendTo(p);
       jQuery("<a/>")
         .addClass(this.getLinkTextClass())
@@ -243,7 +248,6 @@ var SvgHelper = function(base, viewBox) {
         .attr("href", (self.BASEURL == "") ? "" : self.BASEURL + link)
         .appendTo(span);
     }
-    return box;
   }
 
   /*
@@ -265,13 +269,14 @@ var SvgHelper = function(base, viewBox) {
     var text = "";
     var p = jQuery("<p/>").appendTo(hbox);
     for(var i = 0; i<lines.length && i<this.getLines(); i++) {
-      if (i > 0) {
-        p.append(jQuery("<br/>"));
-      }
       jQuery("<span/>")
         .addClass("line"+(i+1))
         .append(lines[i])
         .appendTo(p);
+      p.append(jQuery("<br/>"));
+    }
+    if (copar) {
+      this.appendDetailLink(copar, p, lines.length+1);
     }
     hbox.children().on("click", function(){
       if (isCopar) {
