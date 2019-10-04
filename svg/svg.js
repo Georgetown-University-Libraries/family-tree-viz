@@ -262,7 +262,7 @@ var SvgHelper = function(base, viewBox) {
       .appendTo(this.SVG)
       .addClass("dotdraw draw")
       .css("width", box.getWidth())
-      .css("height", box.getHeight() + 8)
+      .css("height", box.getHeight() + 18)
       .css("left", box.getLeft())
       .css("top", box.getTop());
     var nlines = copar ? copar.getName() : ["Undefined", ""];
