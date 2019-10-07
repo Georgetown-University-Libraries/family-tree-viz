@@ -1,6 +1,6 @@
 The master branch is designed to work with a Drupal based project.
 
-Download a prior release of the code to view sample data
+You can test the data visualization by saving copying one of the json files in this directory to `localdata/json.json`.
 
 ---
 ## Abandoned Viz Options
