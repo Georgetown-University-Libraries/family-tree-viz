@@ -73,15 +73,18 @@ The numchild, numparent, numspouse, and numother columns are used to facilitate 
 testing and to facilitate quality checks on the completeness of the family tree.
 */
 function showDirectory(familyTree) {
-  jQuery("#svg").hide();
+  jQuery("#family-tree").hide();
   for(var i=0; i<familyTree.People.length; i++) {
     var per = familyTree.People[i];
     if (!per) continue;
     var n = jQuery("<tr/>");
     var n1 = jQuery("<td class='name'/>").appendTo(n);
-    jQuery("<a/>").attr("href","#"+per.id).text(per.name).appendTo(n1).on("click",function(){
-      location.hash=jQuery(this).attr("href");
-      location.reload();
+    jQuery("<a/>").attr("href","#").attr("person", per.id).text(per.name).appendTo(n1).on("click",function(){
+      var id = $(this).attr("person");
+      var per = familyTree.People[id];
+      jQuery("#people").hide();
+      jQuery("#family-tree").show();
+      initDiagram(familyTree.BASEURL, per, null);
     });
     jQuery("<td class='id'/>").text(per.id).appendTo(n);
     jQuery("<td class='gender'/>").text(per.gender == "?" ? "" : per.gender).appendTo(n);
@@ -94,6 +97,5 @@ function showDirectory(familyTree) {
 
     jQuery("#people").show();
     jQuery("#people tbody").append(n);
-    sorttable.makeSortable(jQuery("#people")[0]);
   }
 }

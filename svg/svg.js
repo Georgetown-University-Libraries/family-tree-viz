@@ -451,10 +451,10 @@ var SvgHelper = function(base, viewBox) {
   /*
   Connect the right side of b1 to the left side of b2.
 
-    b.1--+
-         |
-         |
          +--b.2
+         |
+         |
+    b.1--+
 
   */
   this.rsideconnect = function(b1, b2) {
@@ -467,7 +467,7 @@ var SvgHelper = function(base, viewBox) {
     jQuery("<div/>")
       .addClass("line dothoriz")
       .appendTo(this.SVG)
-      .css("left", xx)
+      .css("left", x1)
       .css("top", y1)
       .css("width", xx-x1)
       .css("height", 0);

@@ -17,7 +17,7 @@
   <h1>Family Tree</h1>
   <div id="status"></div>
   <div class="dir">
-    <a class="button" href="#" onclick="javascript:location.hash='';location.reload()">Directory</a>
+    <a class="button" href="#" onclick="javascript:showDirectory(familyTree)">Directory</a>
     <a class="button" id="gedcom" href="#" onclick="javascript:familyTree.asGedcom()"
     title="GEDCOM is a data exchange format used by many genealogy software packages and services">Download GEDCOM</a>
   </div>
@@ -25,5 +25,22 @@
       <div id="family-tree">
       </div>
   </div>
+  <table id="people" class="sortable" style="display:none">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th class="sortable_numeric">Id</th>
+        <th>Gender</th>
+        <th class="sortable_numeric">Birth</th>
+        <th class="sortable_numeric">Death</th>
+        <th class="sortable_numeric">Num Child</th>
+        <th class="sortable_numeric">Num Parent</th>
+        <th class="sortable_numeric">Num Coparent</th>
+        <th class="sortable_numeric">Num Other</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
 </body>
 </html>

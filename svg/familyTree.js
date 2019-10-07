@@ -146,6 +146,18 @@ var FamilyTree = function() {
       }
     }
 
+    if (data.deaths) {
+      for(var i=0; i<data.deaths.length; i++) {
+        var per = data.deaths[i];
+        var id = Number(per.field_person_or_group_a_1);
+        var death = per.field_event_year;
+
+        if (this.People[id] && death != 0) {
+          this.People[id].setDeathYear(death);
+        }
+      }
+    }
+
     for(var i=0; i<data.gender.length; i++) {
       var per = data.gender[i];
       var id = Number(per.field_person_or_group_a_1);
