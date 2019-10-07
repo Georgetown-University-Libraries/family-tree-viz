@@ -259,6 +259,36 @@
       "field_person_or_group_a": "11",
       "title": "Parent Of",
       "field_person_or_group_b": "13"
+    },
+    {
+      "field_person_or_group_a": "10",
+      "title": "Adoptive Parent Of",
+      "field_person_or_group_b": "3"
+    },
+    {
+      "field_person_or_group_a": "10",
+      "title": "Adoptive Parent Of",
+      "field_person_or_group_b": "4"
+    },
+    {
+      "field_person_or_group_a": "11",
+      "title": "Adoptive Parent Of",
+      "field_person_or_group_b": "3"
+    },
+    {
+      "field_person_or_group_a": "11",
+      "title": "Adoptive Parent Of",
+      "field_person_or_group_b": "4"
+    },
+    {
+      "field_person_or_group_a": "7",
+      "title": "Step Parent Of",
+      "field_person_or_group_b": "12"
+    },
+    {
+      "field_person_or_group_a": "7",
+      "title": "Step Parent Of",
+      "field_person_or_group_b": "13"
     }
   ],
   "deaths": [
