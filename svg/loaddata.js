@@ -60,7 +60,7 @@ If that parent had children with more than one other parent, then a specific cop
 function initDiagram(base, fperson, fcopar){
   var family = new FamilyViz(base, jQuery("#family-tree"));
   if (family.initDiagram(fperson, fcopar)) {
-    family.draw();
+    family.draw(fperson);
     return true;
   }
   return false;

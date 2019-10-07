@@ -49,7 +49,7 @@
     padding: 0;
     margin: 0;
 }
-.draw:hover, .drawfocus:hover {
+.draw:hover, .drawfocus:hover, .draw:focus, .drawfoucs:focus {
     background-color: #f8e08e;
 }
 
