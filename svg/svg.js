@@ -237,8 +237,13 @@ var SvgHelper = function(base, viewBox) {
       })
       .on("keydown", function(e){
         if (e.which == 13 || e.which == 32) {
-          $(this).click();
+          jQuery(this).click();
+          e.stopPropagation();
+          e.preventDefault();
         }
+      })
+      .on("mouseover", function() {
+        jQuery(this).find("a").focus();
       });
 
     return box;
@@ -310,9 +315,14 @@ var SvgHelper = function(base, viewBox) {
       })
       .on("keydown", function(e){
         if (e.which == 13 || e.which == 32) {
-          $(this).click();
+          jQuery(this).click();
+          e.stopPropagation();
+          e.preventDefault();
         }
       })
+      .on("mouseover", function() {
+        jQuery(this).find("a").focus();
+      });
     return box;
   }
 
