@@ -80,7 +80,7 @@ function showDirectory(familyTree) {
     var n = jQuery("<tr/>");
     var n1 = jQuery("<td class='name'/>").appendTo(n);
     jQuery("<a/>").attr("href","#").attr("person", per.id).text(per.name).appendTo(n1).on("click",function(){
-      var id = $(this).attr("person");
+      var id = jQuery(this).attr("person");
       var per = familyTree.People[id];
       jQuery("#people").hide();
       jQuery("#family-tree").show();

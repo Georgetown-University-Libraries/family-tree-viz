@@ -160,7 +160,6 @@ var SvgHelper = function(base, viewBox) {
   this.height = this.SVG.height();
   this.width = this.SVG.width();
   this.BASEURL = base;
-  this.tabindex = 0;
   this.addTabIndex = false;
   this.makeSvgEl = function(tag) {
     return jQuery(document.createElementNS('http://www.w3.org/2000/svg', tag));
@@ -209,9 +208,6 @@ var SvgHelper = function(base, viewBox) {
     var self = this;
     var box = new Box(this, r, c);
     var hbox = jQuery("<div/>")
-      .attr("tabindex", "0")
-      .attr("aria-label", "Focus the family tree on " + person.name)
-      .attr("aria-role", "button")
       .appendTo(this.SVG)
       .addClass(classbox)
       .addClass("draw")
@@ -230,20 +226,23 @@ var SvgHelper = function(base, viewBox) {
         .appendTo(p);
       p.append(jQuery("<br/>"));
     }
+    p.find("a.name")
+      .attr("aria-label", "Focus the family tree on " + person.name);
     this.appendDetailLink(person, p, lines.length+1);
     hbox
       .on("click", function(){
         initDiagram(familyTree.BASEURL, person, null);
       })
+      .on("mouseover", function() {
+        jQuery(this).find("a.name").focus();
+      });
+    hbox.find("a.name")
       .on("keydown", function(e){
         if (e.which == 13 || e.which == 32) {
           jQuery(this).click();
           e.stopPropagation();
           e.preventDefault();
         }
-      })
-      .on("mouseover", function() {
-        jQuery(this).find("a").focus();
       });
 
     return box;
@@ -276,9 +275,6 @@ var SvgHelper = function(base, viewBox) {
     var box = new Box(this, r, c);
     var labelname = person.name + (isCopar ? " and " + copar.name : "");
     var hbox = jQuery("<div/>")
-      .attr("tabindex", "0")
-      .attr("aria-label", "Focus the family tree on " + labelname)
-      .attr("aria-role", "button")
       .appendTo(this.SVG)
       .addClass("dotdraw draw")
       .css("width", box.getWidth())
@@ -305,6 +301,8 @@ var SvgHelper = function(base, viewBox) {
     if (copar) {
       this.appendDetailLink(copar, p, lines.length+1);
     }
+    p.find("a.name")
+      .attr("aria-label", "Focus the family tree on " + labelname);
     hbox.children()
       .on("click", function(){
         if (isCopar) {
@@ -313,15 +311,17 @@ var SvgHelper = function(base, viewBox) {
           initDiagram(familyTree.BASEURL, person, null);
         }
       })
+      .on("mouseover", function() {
+        jQuery(this).find("a.name").focus();
+      });
+    hbox
+      .find("a.name")
       .on("keydown", function(e){
         if (e.which == 13 || e.which == 32) {
           jQuery(this).click();
           e.stopPropagation();
           e.preventDefault();
         }
-      })
-      .on("mouseover", function() {
-        jQuery(this).find("a").focus();
       });
     return box;
   }

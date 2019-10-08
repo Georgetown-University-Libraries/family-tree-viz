@@ -53,6 +53,14 @@
     background-color: #f8e08e;
 }
 
+a.name {
+  text-decoration: none;
+}
+
+a:focus {
+  font-weight: bold;
+}
+
 #family-tree abbr {
   text-decoration: none;
 }
