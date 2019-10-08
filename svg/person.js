@@ -56,7 +56,7 @@ var Person = function(familyTree, id, name, link) {
   //For SVG rendering, the value will be returned line by line.
   this.getName = function() {
     var lines = [];
-    var name = "<span class='name'>" + this.name + "</span>";
+    var name = "<span class='name'><a class='name' href='#'>" + this.name + "</a></span>";
     if (this.children.length > 0) {
       name += "<span class='person-note'> (" + this.children.length + " ch.)</span>";
     }

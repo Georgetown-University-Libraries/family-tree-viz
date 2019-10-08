@@ -160,7 +160,6 @@ var SvgHelper = function(base, viewBox) {
   this.height = this.SVG.height();
   this.width = this.SVG.width();
   this.BASEURL = base;
-  this.tabindex = 0;
   this.addTabIndex = false;
   this.makeSvgEl = function(tag) {
     return jQuery(document.createElementNS('http://www.w3.org/2000/svg', tag));
@@ -227,10 +226,25 @@ var SvgHelper = function(base, viewBox) {
         .appendTo(p);
       p.append(jQuery("<br/>"));
     }
+    p.find("a.name")
+      .attr("aria-label", "Focus the family tree on " + person.name);
     this.appendDetailLink(person, p, lines.length+1);
-    hbox.on("click", function(){
-      initDiagram(familyTree.BASEURL, person, null);
-    });
+    hbox
+      .on("click", function(){
+        initDiagram(familyTree.BASEURL, person, null);
+      })
+      .on("mouseover", function() {
+        jQuery(this).find("a.name").focus();
+      });
+    hbox.find("a.name")
+      .on("keydown", function(e){
+        if (e.which == 13 || e.which == 32) {
+          jQuery(this).click();
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      });
+
     return box;
   }
 
@@ -245,6 +259,7 @@ var SvgHelper = function(base, viewBox) {
       jQuery("<a/>")
         .addClass(this.getLinkTextClass())
         .text("Details page ")
+        .attr("aria-label", "Details page for " + person.name)
         .attr("href", (self.BASEURL == "") ? "" : self.BASEURL + link)
         .appendTo(span);
     }
@@ -258,6 +273,7 @@ var SvgHelper = function(base, viewBox) {
   this.drawAnnotatedBox = function(r, c, person, copar, label, isCopar) {
     var self = this;
     var box = new Box(this, r, c);
+    var labelname = person.name + (isCopar ? " and " + copar.name : "");
     var hbox = jQuery("<div/>")
       .appendTo(this.SVG)
       .addClass("dotdraw draw")
@@ -285,13 +301,28 @@ var SvgHelper = function(base, viewBox) {
     if (copar) {
       this.appendDetailLink(copar, p, lines.length+1);
     }
-    hbox.children().on("click", function(){
-      if (isCopar) {
-        initDiagram(familyTree.BASEURL, person, copar);
-      } else {
-        initDiagram(familyTree.BASEURL, person, null);
-      }
-    });
+    p.find("a.name")
+      .attr("aria-label", "Focus the family tree on " + labelname);
+    hbox.children()
+      .on("click", function(){
+        if (isCopar) {
+          initDiagram(familyTree.BASEURL, person, copar);
+        } else {
+          initDiagram(familyTree.BASEURL, person, null);
+        }
+      })
+      .on("mouseover", function() {
+        jQuery(this).find("a.name").focus();
+      });
+    hbox
+      .find("a.name")
+      .on("keydown", function(e){
+        if (e.which == 13 || e.which == 32) {
+          jQuery(this).click();
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      });
     return box;
   }
 
@@ -303,8 +334,8 @@ var SvgHelper = function(base, viewBox) {
     box.setCellHeight(rh);
     box.setCellWidth(cw);
     var hbox = jQuery("<div/>").appendTo(this.SVG);
-    hbox.addClass("wrap");
-    hbox.css("width", box.getWidth() + .5 * this.getHGAP() + 4)
+    hbox.addClass("wrap")
+        .css("width", box.getWidth() + .5 * this.getHGAP() + 4)
         .css("height", box.getHeight() + .5 * this.getVGAP() + 4)
         .css("left", box.getLeft() -.25 * this.getHGAP())
         .css("top", box.getTop() -.25 * this.getVGAP());
@@ -733,35 +764,20 @@ var FamilyViz = function(base, node) {
   /*
   Draw the 3 generations of the family tree
   */
-  this.draw = function() {
+  this.draw = function(person) {
     this.node.empty("*");
     var viewBox = this.node.attr("viewBox");
     var svgHelp = new SvgHelper(this.BASEURL, viewBox);
 
     var focus = null;
     if (this.p_sib.length > 0) {
-      svgHelp.drawWrapBox(this.rchild, this.cchild, this.p_sib.length, 1);
-      focus = svgHelp.drawBox(this.rchild , this.cchild, this.p_sib[0]);
-      this.setLastRow(this.rchild);
-      for(var i=1; i < this.p_sib.length; i++) {
-        svgHelp.drawBox(this.rchild + i, this.cchild, this.p_sib[i]);
-        this.setLastRow(this.rchild + i);
-      }
+      focus = new Box(svgHelp, this.rchild, this.cchild);
     }
-
     var m = null;
     var f = null;
+
     if (this.p_m) {
-      svgHelp.drawWrapBox(this.rp, this.cm, 1 + this.p_msib.length, 1);
-      m = svgHelp.drawBox(this.rp, this.cm, this.p_m, "drawfocus");
-      this.setLastRow(this.rp);
-      for(var i=0; i < this.p_msib.length; i++) {
-        svgHelp.drawBox(this.rp + i + 1, this.cm, this.p_msib[i]);
-        this.setLastRow(this.rp + i + 1);
-      }
-      if (focus) {
-        svgHelp.rconnect(m, focus);
-      }
+      m = new Box(svgHelp, this.rp, this.cm);
       if (this.p_mgm) {
         var mgp = svgHelp.drawBox(this.rgp, this.cmgm, this.p_mgm);
         svgHelp.connect(mgp, m);
@@ -770,18 +786,32 @@ var FamilyViz = function(base, node) {
         var mgp = svgHelp.drawBox(this.rgp, this.cmgf, this.p_mgf);
         svgHelp.connect(mgp, m);
       }
-      for(var i=0; i< this.p_m_alt.length; i++) {
-        var prel = this.p_m_alt[i];
-        var altp = svgHelp.drawAnnotatedBox(this.rp+i, this.cm-1, this.p_m, prel.p,
-          prel.rel, prel.isCopar);
-        this.setLastRow(this.rp + i);
-        svgHelp.rsideconnect(altp, m);
+      svgHelp.drawWrapBox(this.rp, this.cm, 1 + this.p_msib.length, 1);
+      var cname = "drawfocus" + (person == this.p_m ? " treefocus" : "primarycoparent");
+      svgHelp.drawBox(this.rp, this.cm, this.p_m, cname);
+      this.setLastRow(this.rp);
+      for(var i=0; i < this.p_msib.length; i++) {
+        svgHelp.drawBox(this.rp + i + 1, this.cm, this.p_msib[i]);
+        this.setLastRow(this.rp + i + 1);
+      }
+      if (focus) {
+        svgHelp.rconnect(m, focus);
       }
     }
 
     if (this.p_f) {
+      f = new Box(svgHelp, this.rp, this.cf);
+      if (this.p_pgm) {
+        var pgp = svgHelp.drawBox(this.rgp, this.cpgm, this.p_pgm);
+        svgHelp.connect(pgp, f);
+      }
+      if (this.p_pgf) {
+        var pgp = svgHelp.drawBox(this.rgp, this.cpgf, this.p_pgf);
+        svgHelp.connect(pgp, f);
+      }
       svgHelp.drawWrapBox(this.rp, this.cf, 1 + this.p_psib.length, 1);
-      f = svgHelp.drawBox(this.rp, this.cf, this.p_f, "drawfocus");
+      var cname = "drawfocus" + (person == this.p_f ? " treefocus" : "primarycoparent");
+      svgHelp.drawBox(this.rp, this.cf, this.p_f, cname);
       this.setLastRow(this.rp);
       for(var i=0; i < this.p_psib.length; i++) {
         svgHelp.drawBox(this.rp + i + 1, this.cf, this.p_psib[i]);
@@ -792,14 +822,29 @@ var FamilyViz = function(base, node) {
       } else if (m) {
         svgHelp.lsideconnect(f, m);
       }
-      if (this.p_pgm) {
-        var pgp = svgHelp.drawBox(this.rgp, this.cpgm, this.p_pgm);
-        svgHelp.connect(pgp, f);
+    }
+
+    if (this.p_sib.length > 0) {
+      svgHelp.drawWrapBox(this.rchild, this.cchild, this.p_sib.length, 1);
+      focus = svgHelp.drawBox(this.rchild , this.cchild, this.p_sib[0]);
+      this.setLastRow(this.rchild);
+      for(var i=1; i < this.p_sib.length; i++) {
+        svgHelp.drawBox(this.rchild + i, this.cchild, this.p_sib[i]);
+        this.setLastRow(this.rchild + i);
       }
-      if (this.p_pgf) {
-        var pgp = svgHelp.drawBox(this.rgp, this.cpgf, this.p_pgf);
-        svgHelp.connect(pgp, f);
+    }
+
+    if (this.p_m) {
+      for(var i=0; i< this.p_m_alt.length; i++) {
+        var prel = this.p_m_alt[i];
+        var altp = svgHelp.drawAnnotatedBox(this.rp+i, this.cm-1, this.p_m, prel.p,
+          prel.rel, prel.isCopar);
+        this.setLastRow(this.rp + i);
+        svgHelp.rsideconnect(altp, m);
       }
+    }
+
+    if (this.p_f) {
       for(var i=0; i< this.p_f_alt.length; i++) {
         var prel = this.p_f_alt[i];
         var altp = svgHelp.drawAnnotatedBox(this.rp+i, this.cf+1, this.p_f, prel.p,
@@ -808,6 +853,7 @@ var FamilyViz = function(base, node) {
         svgHelp.lsideconnect(altp, f);
       }
     }
+
     svgHelp.SVG
       .removeClass("first-col-1 first-col-1.5 first-col-2 first-col-2.5 first-col-3 first-col-3.5 first-col-4 first-col-4.5 first-col-5")
       .addClass(this.getFirstColClass());

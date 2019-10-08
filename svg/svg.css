@@ -49,8 +49,16 @@
     padding: 0;
     margin: 0;
 }
-.draw:hover, .drawfocus:hover {
+.draw:hover, .drawfocus:hover, .draw:focus, .drawfocus:focus {
     background-color: #f8e08e;
+}
+
+a.name {
+  text-decoration: none;
+}
+
+a:focus {
+  font-weight: bold;
 }
 
 #family-tree abbr {
